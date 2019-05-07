@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "axis=y,width=two": { "model": "tfcr:block/branch/block_branch_2" },
+    "axis=z,width=two": { "model": "tfcr:block/branch/block_branch_2", "x": 90 },
+    "axis=x,width=two": { "model": "tfcr:block/branch/block_branch_2", "x": 90, "y": 90 },
+    "axis=y,width=four": { "model": "tfcr:block/branch/block_branch_4" },
+    "axis=z,width=four": { "model": "tfcr:block/branch/block_branch_4", "x": 90 },
+    "axis=x,width=four": { "model": "tfcr:block/branch/block_branch_4", "x": 90, "y": 90 },
+    "axis=y,width=six": { "model": "tfcr:block/branch/block_branch_6" },
+    "axis=z,width=six": { "model": "tfcr:block/branch/block_branch_6", "x": 90 },
+    "axis=x,width=six": { "model": "tfcr:block/branch/block_branch_6", "x": 90, "y": 90 },
+    "axis=y,width=eight": { "model": "tfcr:block/branch/block_branch_8" },
+    "axis=z,width=eight": { "model": "tfcr:block/branch/block_branch_8", "x": 90 },
+    "axis=x,width=eight": { "model": "tfcr:block/branch/block_branch_8", "x": 90, "y": 90 },
+    "axis=y,width=ten": { "model": "tfcr:block/branch/block_branch_10" },
+    "axis=z,width=ten": { "model": "tfcr:block/branch/block_branch_10", "x": 90 },
+    "axis=x,width=ten": { "model": "tfcr:block/branch/block_branch_10", "x": 90, "y": 90 },
+    "axis=y,width=twelve": { "model": "tfcr:block/branch/block_branch_12" },
+    "axis=z,width=twelve": { "model": "tfcr:block/branch/block_branch_12", "x": 90 },
+    "axis=x,width=twelve": { "model": "tfcr:block/branch/block_branch_12", "x": 90, "y": 90 },
+    "axis=y,width=fourteen": { "model": "tfcr:block/branch/block_branch_14" },
+    "axis=z,width=fourteen": { "model": "tfcr:block/branch/block_branch_14", "x": 90 },
+    "axis=x,width=fourteen": { "model": "tfcr:block/branch/block_branch_14", "x": 90, "y": 90 }
+  }
+}
