@@ -1,0 +1,6 @@
+{
+  "parent": "block/tinted_cross",
+  "textures": {
+    "cross": "tfcr:blocks/marsh_marigold"
+  }
+}

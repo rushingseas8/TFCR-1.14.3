@@ -22,7 +22,8 @@ public class ModItems {
         System.out.println("Register items called");
         event.getRegistry().registerAll(
                 new ItemOre(OreType.BISMUTHINITE, new Item.Properties().group(ItemGroup.MATERIALS)).setRegistryName(TFCR.MODID, "ore/bismuthinite"),
-                new ItemBlock(ModBlocks.block_branch, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(TFCR.MODID, "block_branch")
+                new ItemBlock(ModBlocks.block_branch, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(TFCR.MODID, "block_branch"),
+                new ItemBlock(ModBlocks.marsh_marigold, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(TFCR.MODID, "marsh_marigold")
         );
     }
 }
