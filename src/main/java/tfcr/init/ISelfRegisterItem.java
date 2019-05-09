@@ -8,6 +8,15 @@ import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 
 public interface ISelfRegisterItem {
+
+    /**
+     * Provides a default capability for self-registering this as an Item.
+     *
+     * During the "registerItems" method in ModItems, this method will be called
+     * on every object that implements this interface. Blocks will get registered
+     * as default ItemBlocks in the Building blocks creative category.
+     * @param itemRegistry The registry where we will register this Item.
+     */
     default void registerItem(IForgeRegistry<Item> itemRegistry) {
         if (this instanceof Item) {
             itemRegistry.register((Item)this);

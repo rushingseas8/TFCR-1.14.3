@@ -1,32 +1,28 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
 public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegisterItem {
 
-    public static final EnumProperty<EnumAxis> AXIS = EnumProperty.create("axis", EnumAxis.class);
+    public static final EnumProperty<EnumFacing.Axis> AXIS = BlockStateProperties.AXIS;
+
+    private boolean hasTileEntity;
 
     private int diameter;
+    // TODO carry wood type as field
 
     // TODO add all different wood types, instead of just placeholder ash variant
     public BlockBranch(int diameter) {
@@ -35,12 +31,14 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         this.diameter = diameter;
 
         this.setRegistryName(TFCR.MODID, "branch/block_branch_" + diameter);
-        this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, EnumAxis.Y));
+        this.setDefaultState(this.stateContainer.getBaseState()
+            .with(AXIS, EnumFacing.Axis.Y)
+        );
     }
 
     /**
      * The shape this block takes up. Displayed as the outline around it.
-     * @param state Unused.
+     * @param state The IBlockState for this block. Used to get Axis info.
      * @param worldIn Unused.
      * @param pos Unused.
      * @return The Voxel bounding box of this shape.
@@ -90,34 +88,17 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         builder.add(AXIS);
     }
 
+    /**
+     * Returns an IBlockState with a different Axis value depending on the placement direction.
+     *
+     * TODO this isn't quite right- it should not be based on facing direction, but placing direction.
+     * See the log placement code? update: test if it's now correct
+     *
+     * @param context
+     * @return
+     */
     @Override
     public IBlockState getStateForPlacement(BlockItemUseContext context) {
-        return getDefaultState()
-            .with(AXIS, EnumAxis.fromFacingAxis(context.getNearestLookingDirection().getAxis()));
-    }
-
-    public enum EnumAxis implements IStringSerializable {
-        X,
-        Y,
-        Z;
-
-        /**
-         * Used to map EnumFacing -> EnumAxis for placement.
-         * @param axis The facing axis.
-         * @return The EnumAxis Property for this Block.
-         */
-        public static EnumAxis fromFacingAxis(EnumFacing.Axis axis) {
-            switch(axis) {
-                case X: return X;
-                case Y: return Y;
-                case Z: return Z;
-                default: return Y;
-            }
-        }
-
-        @Override
-        public String getName() {
-            return this.name().toLowerCase();
-        }
+        return getDefaultState().with(AXIS, context.getFace().getAxis());
     }
 }
