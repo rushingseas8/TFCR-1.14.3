@@ -1,7 +1,17 @@
 {
   "variants": {
-    "": {
-      "model": "tfcr:block/marsh_marigold"
-    }
+    "": [{
+      "model": "tfcr:block/flowers/marsh_marigold_0"
+    }, {
+      "model": "tfcr:block/flowers/marsh_marigold_0_reversed"
+    }, {
+      "model": "tfcr:block/flowers/marsh_marigold_1"
+    }, {
+      "model": "tfcr:block/flowers/marsh_marigold_1_reversed"
+    }, {
+      "model": "tfcr:block/flowers/marsh_marigold_2"
+    }, {
+      "model": "tfcr:block/flowers/marsh_marigold_2_reversed"
+    }]
   }
 }

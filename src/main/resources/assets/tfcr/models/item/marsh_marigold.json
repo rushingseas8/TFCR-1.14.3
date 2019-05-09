@@ -1,3 +1,6 @@
 {
-  "parent": "tfcr:block/marsh_marigold"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "tfcr:blocks/flowers/marsh_marigold_0"
+  }
 }
