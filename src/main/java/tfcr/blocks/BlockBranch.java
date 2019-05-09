@@ -5,6 +5,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.BlockRenderLayer;
@@ -13,36 +16,26 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
+import tfcr.init.ISelfRegisterBlock;
+import tfcr.init.ISelfRegisterItem;
 
-public class BlockBranch extends Block {
+public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegisterItem {
 
-    public String name;
-
-    public static final EnumProperty<EnumDiameter> DIAMETER = EnumProperty.create("width", EnumDiameter.class);
     public static final EnumProperty<EnumAxis> AXIS = EnumProperty.create("axis", EnumAxis.class);
 
-    public BlockBranch() {
+    private int diameter;
+
+    // TODO add all different wood types, instead of just placeholder ash variant
+    public BlockBranch(int diameter) {
         super(Block.Properties.from(Blocks.OAK_WOOD));
-        this.setRegistryName(TFCR.MODID, "block_branch");
-//        setDefaultState(getDefaultState().with(DIAMETER, EnumDiameter.TWO).with(AXIS, EnumAxis.Y));
-        this.setDefaultState(this.stateContainer.getBaseState().with(DIAMETER, EnumDiameter.TWO).with(AXIS, EnumAxis.Y));
 
-        // TODO put all variants of block state in creative inventory
-        // see Block#fillItemGroup
-    }
+        this.diameter = diameter;
 
-    // Not needed. Solid is correct, just needed to set the right shape.
-//    @Override
-//    public BlockRenderLayer getRenderLayer() {
-//        return BlockRenderLayer.CUTOUT;
-//    }
-
-
-    // Doesn't do anything?
-    @Override
-    public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-        return Block.makeCuboidShape(0, 0, 0, 4, 4, 4);
+        this.setRegistryName(TFCR.MODID, "branch/block_branch_" + diameter);
+        this.setDefaultState(this.stateContainer.getBaseState().with(AXIS, EnumAxis.Y));
     }
 
     /**
@@ -54,24 +47,22 @@ public class BlockBranch extends Block {
      */
     @Override
     public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-        int diameter = state.get(DIAMETER).diameter;
+        //int diameter = state.get(DIAMETER).diameter;
         int radius = diameter / 2;
 
+        int min = 8 - radius;
+        int max = 8 + radius;
+
+        switch(state.get(AXIS)) {
+            case X: return Block.makeCuboidShape(0, min, min, 16, max, max);
+            case Y: return Block.makeCuboidShape(min, 0, min, max, 16, max);
+            case Z: return Block.makeCuboidShape(min,  min, 0, max, max, 16);
+        }
+
         // TODO get the proper AABB based on the direction we're facing + diameter.
-        return Block.makeCuboidShape(0, 0, 0, 8, 8, 8);
+        return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
     }
 
-    /**
-     * The collision box of this block.
-     * @param state Unused.
-     * @param worldIn Unused.
-     * @param pos Unused.
-     * @return The collision Voxel of this block.
-     */
-    @Override
-    public VoxelShape getCollisionShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-        return Block.makeCuboidShape(0, 0, 0, 12, 12, 12);
-    }
 
     @Override
     public boolean isBlockNormalCube(IBlockState state) {
@@ -96,46 +87,13 @@ public class BlockBranch extends Block {
      */
     @Override
     public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
-        builder.add(DIAMETER).add(AXIS);
+        builder.add(AXIS);
     }
 
     @Override
     public IBlockState getStateForPlacement(BlockItemUseContext context) {
-//        IBlockReader reader = context.getWorld();
-//        BlockPos pos = context.getPos();
-
-        System.out.println("Get state for placement called");
-
         return getDefaultState()
-            .with(DIAMETER, EnumDiameter.FOUR)
             .with(AXIS, EnumAxis.fromFacingAxis(context.getNearestLookingDirection().getAxis()));
-    }
-
-    /**
-     * An Enum representing the diameter of this branch.
-     */
-    public enum EnumDiameter implements IStringSerializable {
-        TWO(2),
-        FOUR(4),
-        SIX(6),
-        EIGHT(8),
-        TEN(10),
-        TWELVE(12),
-        FOURTEEN(14);
-
-        /**
-         * The diameter of this branch Block in pixels.
-         */
-        private int diameter;
-
-        EnumDiameter(int diameter) {
-            this.diameter = diameter;
-        }
-
-        @Override
-        public String getName() {
-            return this.name().toLowerCase();
-        }
     }
 
     public enum EnumAxis implements IStringSerializable {

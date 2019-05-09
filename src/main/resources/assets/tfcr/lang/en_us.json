@@ -1,6 +1,14 @@
 {
-  "block.tfcr.block_branch": "Branch",
-  "block.tfcr.marsh_marigold": "Marsh Marigold",
+	"block.tfcr.branch.block_branch_2": "2 wide branch",
+	"block.tfcr.branch.block_branch_4": "4 wide branch",
+	"block.tfcr.branch.block_branch_6": "6 wide branch",
+	"block.tfcr.branch.block_branch_8": "8 wide branch",
+	"block.tfcr.branch.block_branch_10": "10 wide branch",
+	"block.tfcr.branch.block_branch_12": "12 wide branch",
+	"block.tfcr.branch.block_branch_14": "14 wide branch",
 
-  "item.tfcr.ore.bismuthinite": "Bismuthinite"
+	"block.tfcr.block_branch": "Branch",
+	"block.tfcr.marsh_marigold": "Marsh Marigold",
+
+	"item.tfcr.ore.bismuthinite": "Bismuthinite"
 }
