@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "": [{
+      "model": "tfcr:block/flowers/lavender/lavender_0"
+    }, {
+      "model": "tfcr:block/flowers/lavender/lavender_0_reversed"
+    }, {
+      "model": "tfcr:block/flowers/lavender/lavender_1"
+    }, {
+      "model": "tfcr:block/flowers/lavender/lavender_1_reversed"
+    }, {
+      "model": "tfcr:block/flowers/lavender/lavender_2"
+    }, {
+      "model": "tfcr:block/flowers/lavender/lavender_2_reversed"
+    }]
+  }
+}

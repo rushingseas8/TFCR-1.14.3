@@ -9,6 +9,9 @@
 
 	"block.tfcr.block_branch": "Branch",
 	"block.tfcr.marsh_marigold": "Marsh Marigold",
+	"block.tfcr.thistle": "Thistle",
+	"block.tfcr.lavender": "Lavender",
+	"block.tfcr.chamomile": "Chamomile",
 
 	"item.tfcr.ore.bismuthinite": "Bismuthinite"
 }

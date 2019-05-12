@@ -10,11 +10,13 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import tfcr.TFCR;
+import tfcr.init.ISelfRegisterBlock;
+import tfcr.init.ISelfRegisterItem;
 
 /**
  * Generic TFCR flower block.
  */
-public class BlockFlowerTFCR extends BlockFlower {
+public class BlockFlowerTFCR extends BlockFlower implements ISelfRegisterBlock, ISelfRegisterItem {
 
     public BlockFlowerTFCR(String name) {
         super(Block.Properties.from(Blocks.POPPY));

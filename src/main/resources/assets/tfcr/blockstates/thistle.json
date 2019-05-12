@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "": [{
+      "model": "tfcr:block/flowers/thistle/thistle_0"
+    }, {
+      "model": "tfcr:block/flowers/thistle/thistle_0_reversed"
+    }, {
+      "model": "tfcr:block/flowers/thistle/thistle_1"
+    }, {
+      "model": "tfcr:block/flowers/thistle/thistle_1_reversed"
+    }, {
+      "model": "tfcr:block/flowers/thistle/thistle_2"
+    }, {
+      "model": "tfcr:block/flowers/thistle/thistle_2_reversed"
+    }]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "tfcr:block/tinted_cross_reversed",
+  "textures": {
+    "cross": "tfcr:blocks/flowers/lavender_2"
+  }
+}

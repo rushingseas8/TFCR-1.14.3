@@ -33,6 +33,11 @@ public class ModBlocks {
             allBlocks.add(new BlockBranch(i));
         }
 
+        allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
+        allBlocks.add(new BlockFlowerTFCR("thistle"));
+        allBlocks.add(new BlockFlowerTFCR("lavender"));
+        allBlocks.add(new BlockFlowerTFCR("chamomile"));
+
         System.out.println("Done initializing.");
     }
 
