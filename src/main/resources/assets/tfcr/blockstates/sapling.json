@@ -17,6 +17,15 @@
     },
     "age=5": {
       "model": "tfcr:block/sapling/age_5"
+    },
+    "age=6": {
+      "model": "tfcr:block/sapling/age_6"
+    },
+    "age=7": {
+      "model": "tfcr:block/sapling/age_7"
+    },
+    "age=8": {
+      "model": "tfcr:block/sapling/age_8"
     }
   }
 }

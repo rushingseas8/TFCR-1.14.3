@@ -22,7 +22,9 @@ public class ModBlocks {
 //    public static final BlockBranch block_branch = null;
 //    public static final BlockFlowerTFCR marsh_marigold = null;
 
-    public static final BlockBranch block_branch_8 = new BlockBranch(8);
+
+
+//    public static final BlockBranch block_branch_8 = new BlockBranch(8);
     public static ArrayList<Block> allBlocks = new ArrayList<>();
 
     /**
@@ -33,17 +35,16 @@ public class ModBlocks {
         System.out.println("Initializing block references.");
 
         // Add all branch variations
-        for (int i = 2; i <= 14; i += 2) {
-            if (i == 8) {
-                allBlocks.add(block_branch_8);
-                continue;
-            }
-            allBlocks.add(new BlockBranch(i));
-        }
+        BlockBranch.init();
+        allBlocks.addAll(BlockBranch.getAllBlocks());
+
+        // Sapling variants
+        BlockSapling.init();
+        allBlocks.addAll(BlockSapling.getAllBlocks());
 
         // Add other one-off blocks
         allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
-        allBlocks.add(new BlockSapling());
+
 
         System.out.println("Done initializing.");
     }

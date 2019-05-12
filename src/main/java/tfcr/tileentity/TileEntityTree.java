@@ -1,5 +1,6 @@
 package tfcr.tileentity;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ import tfcr.blocks.BlockSapling;
 import tfcr.init.ModBlocks;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 
 public class TileEntityTree extends TileEntity implements ITickable {
     public static TileEntityType<TileEntityTree> TREE;
@@ -28,54 +30,103 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
     public TileEntityTree() {
         super(TREE);
+        System.out.println("TileEntityTree init");
     }
 
-    int count = 0;
-    int age = 0;
+    // Local count of ticks. We only take action once every N ticks.
+    private int count = 0;
+
+    // How old this TileEntity is. Later will be used to determine tree shape.
+    private int age = 0;
+
+    // Are we done growing? True when we hit age cap, or this variant of tree
+    // cannot grow any further in the current constraints.
+    // Currently makes this stop ticking forever; later should be rarely ticked.
+    private boolean doneGrowing = false;
+
+    private int variant = -1;
+
+    private ArrayList<BlockPos> treeBlocks;
+
+    @Override
+    public void remove() {
+        super.remove();
+        System.out.println("Cleaning up responsible blocks");
+        if (hasWorld() && !world.isRemote) {
+            for (BlockPos pos : treeBlocks) {
+                world.removeBlock(pos);
+            }
+        }
+    }
 
     @Override
     public void tick() {
-        // Should be server-side only
-        if (!world.isRemote) {
+        if (variant == -1 && hasWorld() && !world.isRemote) {
+            variant = world.getRandom().nextInt(2);
+            treeBlocks = new ArrayList<>();
+            System.out.println("Initializing variant to: " + variant);
+        }
+
+        if (doneGrowing) {
             return;
         }
 
         count++;
         if (count % 100 == 0) {
-            System.out.println("Tile entity tree tick. Type = " + age);
+            if (!world.isRemote) {
+                age++;
 
-            age++;
-            if (age > 5) {
-                age = 5;
+                System.out.println("Tile entity tree tick. Age = " + age);
+
+                // Logs not added in, TODO remove the -1 when logs added
+                if (age > BlockSapling.getMaxAge() - 1) {
+                    System.out.println("Done growing now");
+                    age = BlockSapling.getMaxAge() - 1;
+                    doneGrowing = true;
+                }
+
+                if (age == 1) {
+                    // now responsible for up blocks
+                    for (int i = 1; i < 5; i++) {
+                        treeBlocks.add(pos.up(i));
+                    }
+                }
+
+//                IBlockState newState = this.world.getBlockState(pos).with(BlockSapling.AGE, age);
+                IBlockState newState;
+                if (age < 1) {
+                    newState = BlockSapling.get().getDefaultState().with(BlockSapling.AGE, age);
+                } else if (age < 7) {
+                    newState = BlockBranch.get(2 * age).getDefaultState().with(BlockBranch.ROOT, true);
+                } else {
+                    // TODO replace with log block
+                    newState = BlockBranch.get(14).getDefaultState().with(BlockBranch.ROOT, true);
+                }
+
+                if (variant == 0) {
+                    for (int i = 1; i < 5; i++) {
+                        world.setBlockState(pos.up(i), BlockBranch.get(2 * age).getDefaultState(), 3);
+                    }
+                } else {
+                    for (int i = 1; i < 5; i++) {
+                        world.setBlockState(pos.up(i), BlockBranch.get(Math.max(2, 2 * (age - 1))).getDefaultState(), 3);
+                    }
+                }
+
+                world.setBlockState(pos, newState, 3);
+
+                markDirty();
             }
-
-            markDirty();
-
-//            IBlockState newState = ModBlocks.block_branch_8.getDefaultState()
-//                .with(BlockRotatedPillar.AXIS, EnumFacing.Axis.Y);
-            IBlockState newState = getBlockState().with(BlockSapling.AGE, age);
-
-            //world.getBlockState(pos).onReplaced(world, pos, newState, false);
-            world.setBlockState(pos, newState, 7);
-
-//            updateContainingBlockInfo();
-//            getBlockState();
-
-            System.out.println(world.getBlockState(pos));
-
-            markDirty();
-
-            //world.addTileEntity()
         }
-        //System.out.println("Tile entity tree tick!");
     }
 
     @Nonnull
     @Override
     public NBTTagCompound write(NBTTagCompound compound) {
-        //return super.write(compound);
         compound = super.write(compound);
         compound.setInt("age", age);
+        compound.setBoolean("doneGrowing", doneGrowing);
+        compound.setInt("variant", variant);
         System.out.println("Wrote age: " + age);
         return compound;
     }
@@ -84,6 +135,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
     public void read(NBTTagCompound compound) {
         super.read(compound);
         this.age = compound.getInt("age");
+        this.doneGrowing = compound.getBoolean("doneGrowing");
+        this.variant = compound.getInt("variant");
         System.out.println("Read type: " + age);
     }
 
