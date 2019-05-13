@@ -2,6 +2,7 @@ package tfcr.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,6 +71,9 @@ public class ModBlocks {
 //                new BlockBranch(2),
 //                new BlockFlowerTFCR("marsh_marigold")
 //        );
+
+        // Register sapling tick
+        MinecraftForge.EVENT_BUS.register(BlockSapling.class);
     }
 
     @SubscribeEvent

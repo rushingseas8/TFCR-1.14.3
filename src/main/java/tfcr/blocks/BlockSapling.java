@@ -4,7 +4,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
@@ -16,6 +24,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import tfcr.TFCR;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
@@ -26,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelfRegisterItem {
 
@@ -153,7 +165,42 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
 //        return getTargetBlockForAge(age).getSoundType(state, world, pos, entity);
     }
 
-//    @Override
+    private static final UUID saplingSlowUUID = UUID.fromString("83BD3C05-50EB-460B-8961-615633A6D813");
+    private static final AttributeModifier saplingSlow = new AttributeModifier(saplingSlowUUID, "SAPLING_SLOW", -0.8D, 1);
+
+    @Override
+    public void onEntityCollision(IBlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+
+        System.out.println("On entity collision with sapling");
+        if (entityIn instanceof EntityLivingBase) {
+            IAttributeInstance movement = ((EntityLivingBase) entityIn).getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+//            if (movement.getModifier(saplingSlowUUID) != null) {
+//                movement.removeModifier(saplingSlowUUID);
+//            }
+            if (movement.hasModifier(saplingSlow)) {
+                movement.removeModifier(saplingSlow);
+            }
+            movement.applyModifier(saplingSlow);
+            System.out.println("Applied slowness");
+        }
+        //super.onEntityCollision(state, worldIn, pos, entityIn);
+    }
+
+    // TODO not quite working as intented
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
+        if (playerTickEvent.side == LogicalSide.SERVER) {
+            System.out.println("Player tick for sapling event called server-side");
+            IAttributeInstance movement = playerTickEvent.player.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+            if (movement.getModifier(saplingSlowUUID) != null) {
+                if (movement.hasModifier(saplingSlow)) {
+                    movement.removeModifier(saplingSlow);
+                }
+            }
+        }
+    }
+
+    //    @Override
 //    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
 //        int age = state.get(AGE);
 //        if (age <= 1) {
