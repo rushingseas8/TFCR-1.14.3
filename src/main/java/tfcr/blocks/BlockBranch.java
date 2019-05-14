@@ -88,6 +88,9 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @return A new ArrayList containing every BlockBranch.
      */
     public static List<BlockBranch> getAllBlocks() {
+        if (allBlocks == null) {
+            init();
+        }
         return Arrays.asList(allBlocks);
     }
 

@@ -60,6 +60,9 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
     }
 
     public static List<BlockSapling> getAllBlocks() {
+        if (sapling == null) {
+            init();
+        }
         return Collections.singletonList(sapling);
     }
 
@@ -163,41 +166,6 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
             return this.soundType;
 //        }
 //        return getTargetBlockForAge(age).getSoundType(state, world, pos, entity);
-    }
-
-    private static final UUID saplingSlowUUID = UUID.fromString("83BD3C05-50EB-460B-8961-615633A6D813");
-    private static final AttributeModifier saplingSlow = new AttributeModifier(saplingSlowUUID, "SAPLING_SLOW", -0.8D, 1);
-
-    @Override
-    public void onEntityCollision(IBlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-
-        System.out.println("On entity collision with sapling");
-        if (entityIn instanceof EntityLivingBase) {
-            IAttributeInstance movement = ((EntityLivingBase) entityIn).getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-//            if (movement.getModifier(saplingSlowUUID) != null) {
-//                movement.removeModifier(saplingSlowUUID);
-//            }
-            if (movement.hasModifier(saplingSlow)) {
-                movement.removeModifier(saplingSlow);
-            }
-            movement.applyModifier(saplingSlow);
-            System.out.println("Applied slowness");
-        }
-        //super.onEntityCollision(state, worldIn, pos, entityIn);
-    }
-
-    // TODO not quite working as intented
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
-        if (playerTickEvent.side == LogicalSide.SERVER) {
-            System.out.println("Player tick for sapling event called server-side");
-            IAttributeInstance movement = playerTickEvent.player.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-            if (movement.getModifier(saplingSlowUUID) != null) {
-                if (movement.hasModifier(saplingSlow)) {
-                    movement.removeModifier(saplingSlow);
-                }
-            }
-        }
     }
 
     //    @Override
