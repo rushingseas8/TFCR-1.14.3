@@ -121,65 +121,15 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
         super.onReplaced(state, worldIn, pos, newState, isMoving);
     }
 
-//    private Block getTargetBlockForAge(int age) {
-//        switch(age) {
-//            case 0:
-//            case 1: return sapling;
-//            case 2: return BlockBranch.get(2);
-//            case 3: return BlockBranch.get(4);
-//            case 4: return BlockBranch.get(6);
-//            case 5: return BlockBranch.get(8);
-//            case 6: return BlockBranch.get(10);
-//            case 7: return BlockBranch.get(12);
-//            case 8: return BlockBranch.get(14);
-//            default: throw new IllegalArgumentException("Invalid age for BlockSapling: " + age);
-//        }
-//    }
+    private static final float SLOWDOWN = 0.1f;
 
-    // TODO add more drops
+    /**
+     * Slow down entities passing through this block.
+     */
     @Override
-    public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
-        int age = state.get(AGE);
-//        System.out.println("Age: " + age);
-//        if (age <= 1) {
-//            drops.clear();
-//            drops.add(new ItemStack(this, 1));
-//            return;
-//        }
-//        getTargetBlockForAge(age).getDrops(state, drops, world, pos, fortune);
+    public void onEntityCollision(IBlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+        entityIn.motionX *= SLOWDOWN;
+        entityIn.motionY *= SLOWDOWN;
+        entityIn.motionZ *= SLOWDOWN;
     }
-
-    // TODO copy directly from block branch
-    @Override
-    public float getBlockHardness(IBlockState state, IBlockReader world, BlockPos pos) {
-        int age = state.get(AGE);
-//        if (age <= 1) {
-            return this.blockHardness;
-//        }
-//        return getTargetBlockForAge(age).getBlockHardness(state, world, pos);
-    }
-
-    @Override
-    public SoundType getSoundType(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity) {
-        int age = state.get(AGE);
-//        if (age <= 1) {
-            return this.soundType;
-//        }
-//        return getTargetBlockForAge(age).getSoundType(state, world, pos, entity);
-    }
-
-    //    @Override
-//    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-//        int age = state.get(AGE);
-//        if (age <= 1) {
-//            return super.getShape(state, worldIn, pos);
-//        }
-//        return getTargetBlockForAge(age).getShape(state, worldIn, pos);
-        //return super.getShape(state, worldIn, pos);
-//    }
-
-//    @Override
-//    public VoxelShape getCollisionShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
-//        return getShape(state, worldIn, pos);
-//    }
 }

@@ -1,10 +1,13 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -54,7 +57,7 @@ public class ModBlocks {
 
         // Add other one-off blocks
         allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
-
+        allBlocks.add(new BlockDoublePlant(Block.Properties.from(Blocks.TALL_GRASS)).setRegistryName(TFCR.MODID, "tall_sapling"));
 
         System.out.println("Done initializing.");
     }
@@ -104,41 +107,41 @@ public class ModBlocks {
      * TODO Is this the best place to put this code?
      * @param playerTickEvent A player tick event.
      */
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
-        if (playerTickEvent.side == LogicalSide.SERVER) {
-
-            EntityPlayer player = playerTickEvent.player;
-            World world = player.getEntityWorld();
-
-            // Get all blocks that any part of the player model is colliding with.
-            Iterable<BlockPos.MutableBlockPos> playerColliding = BlockPos.getAllInBoxMutable(
-                    (int) Math.floor(player.posX - (player.width / 2)),
-                    (int) Math.floor(player.posY - (player.height / 2)),
-                    (int) Math.floor(player.posZ - (player.width / 2)),
-                    (int) Math.floor(player.posX + (player.width / 2)),
-                    (int) Math.floor(player.posY + (player.height / 2)),
-                    (int) Math.floor(player.posZ + (player.width / 2))
-            );
-
-            boolean shouldSlow = false;
-            for (BlockPos bp : playerColliding) {
-                shouldSlow |= world.getBlockState(bp).getBlock() instanceof BlockSapling;
-            }
-
-            IAttributeInstance movement = playerTickEvent.player.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-
-            if (shouldSlow) {
-                // Add modifier, if it's not already applied
-                if (!movement.hasModifier(saplingSlow)) {
-                    movement.applyModifier(saplingSlow);
-                }
-            } else {
-                // Remove modifier, if it exists
-                if (movement.hasModifier(saplingSlow)) {
-                    movement.removeModifier(saplingSlow);
-                }
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent) {
+//        if (playerTickEvent.side == LogicalSide.SERVER) {
+//
+//            EntityPlayer player = playerTickEvent.player;
+//            World world = player.getEntityWorld();
+//
+//            // Get all blocks that any part of the player model is colliding with.
+//            Iterable<BlockPos.MutableBlockPos> playerColliding = BlockPos.getAllInBoxMutable(
+//                    (int) Math.floor(player.posX - (player.width / 2)),
+//                    (int) Math.floor(player.posY - (player.height / 2)),
+//                    (int) Math.floor(player.posZ - (player.width / 2)),
+//                    (int) Math.floor(player.posX + (player.width / 2)),
+//                    (int) Math.floor(player.posY + (player.height / 2)),
+//                    (int) Math.floor(player.posZ + (player.width / 2))
+//            );
+//
+//            boolean shouldSlow = false;
+//            for (BlockPos bp : playerColliding) {
+//                shouldSlow |= world.getBlockState(bp).getBlock() instanceof BlockSapling;
+//            }
+//
+//            IAttributeInstance movement = playerTickEvent.player.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+//
+//            if (shouldSlow) {
+//                // Add modifier, if it's not already applied
+//                if (!movement.hasModifier(saplingSlow)) {
+//                    movement.applyModifier(saplingSlow);
+//                }
+//            } else {
+//                // Remove modifier, if it exists
+//                if (movement.hasModifier(saplingSlow)) {
+//                    movement.removeModifier(saplingSlow);
+//                }
+//            }
+//        }
+//    }
 }
