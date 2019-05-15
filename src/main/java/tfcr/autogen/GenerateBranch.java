@@ -30,8 +30,23 @@ public class GenerateBranch {
             "      \"model\": \"tfcr:block/branch/block_branch_NUM_both_extend\",\n" +
             "      \"x\": 90\n" +
             "    },\n" +
-            "    \"axis=x\": {\n" +
+            "    \"axis=x,extend_positive=false,extend_negative=false\": {\n" +
             "      \"model\": \"tfcr:block/branch/block_branch_NUM\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=true,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/block_branch_NUM_pos_extend\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=false,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/block_branch_NUM_neg_extend\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=true,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/block_branch_NUM_both_extend\",\n" +
             "      \"x\": 90,\n" +
             "      \"y\": 90\n" +
             "    }\n" +
@@ -100,7 +115,7 @@ public class GenerateBranch {
             GenerateBase.writeToFile(filePath, toWrite);
 
             // Model JSON 2 (extend negative only)
-            filePath = modelDir + "block_branch_ " + i + "_neg_extend.json";
+            filePath = modelDir + "block_branch_" + i + "_neg_extend.json";
             toWrite = modelJSON
                     .replace("LOWXUV", "" + (4 - (i / 4f)))
                     .replace("HIGHXUV", "" + (4 + (i / 4f)))
@@ -116,7 +131,7 @@ public class GenerateBranch {
             GenerateBase.writeToFile(filePath, toWrite);
 
             // Model JSON 3 (extend positive only)
-            filePath = modelDir + "block_branch_ " + i + "_pos_extend.json";
+            filePath = modelDir + "block_branch_" + i + "_pos_extend.json";
             toWrite = modelJSON
                     .replace("LOWXUV", "" + (4 - (i / 4f)))
                     .replace("HIGHXUV", "" + (4 + (i / 4f)))
@@ -132,7 +147,7 @@ public class GenerateBranch {
             GenerateBase.writeToFile(filePath, toWrite);
 
             // Model JSON 4 (extend both)
-            filePath = modelDir + "block_branch_ " + i + "_both_extend.json";
+            filePath = modelDir + "block_branch_" + i + "_both_extend.json";
             toWrite = modelJSON
                     .replace("LOWXUV", "" + (4 - (i / 4f)))
                     .replace("HIGHXUV", "" + (4 + (i / 4f)))

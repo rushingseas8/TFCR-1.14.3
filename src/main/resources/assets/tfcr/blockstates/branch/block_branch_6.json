@@ -3,12 +3,39 @@
     "axis=y": {
       "model": "tfcr:block/branch/block_branch_6"
     },
-    "axis=z": {
+    "axis=z,extend_positive=false,extend_negative=false": {
       "model": "tfcr:block/branch/block_branch_6",
       "x": 90
     },
-    "axis=x": {
+    "axis=z,extend_positive=true,extend_negative=false": {
+      "model": "tfcr:block/branch/block_branch_6_pos_extend",
+      "x": 90
+    },
+    "axis=z,extend_positive=false,extend_negative=true": {
+      "model": "tfcr:block/branch/block_branch_6_neg_extend",
+      "x": 90
+    },
+    "axis=z,extend_positive=true,extend_negative=true": {
+      "model": "tfcr:block/branch/block_branch_6_both_extend",
+      "x": 90
+    },
+    "axis=x,extend_positive=false,extend_negative=false": {
       "model": "tfcr:block/branch/block_branch_6",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=true,extend_negative=false": {
+      "model": "tfcr:block/branch/block_branch_6_pos_extend",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=false,extend_negative=true": {
+      "model": "tfcr:block/branch/block_branch_6_neg_extend",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=true,extend_negative=true": {
+      "model": "tfcr:block/branch/block_branch_6_both_extend",
       "x": 90,
       "y": 90
     }
