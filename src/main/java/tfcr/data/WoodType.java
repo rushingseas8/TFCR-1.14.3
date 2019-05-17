@@ -31,6 +31,28 @@ public enum WoodType implements IStringSerializable {
 //    WHITE_CEDAR	("White_Cedar",	ModBlocks.WOOD_WHITE_CEDAR, ModBlocks.LEAVES_WHITE_CEDAR, -5, 24),
 //    WHITE_ELM	("White_Elm",	ModBlocks.WOOD_WHITE_ELM, 	ModBlocks.LEAVES_WHITE_ELM, 4, 30),
 //    WILLOW		("Willow",		ModBlocks.WOOD_WILLOW, 		ModBlocks.LEAVES_WILLOW, 10, 30)
+
+
+    ACACIA		("Acacia", 28, 50),
+    ASH			("Ash", 4, 24),
+    ASPEN		("Aspen", -5, 18),
+    BIRCH		("Birch", -10, 12),
+    BLACKWOOD	("Blackwood", 0, 0),
+    CHESTNUT	("Chestnut", 3, 24),
+    DOUGLAS_FIR	("Douglas Fir", 1, 14),
+    HICKORY		("Hickory", 4, 28),
+    KAPOK		("Kapok", 30, 50),
+    MAPLE		("Maple", 3, 20),
+    OAK			("Oak", 5, 25),
+    PALM		("Palm", 0, 0),
+    PINE		("Pine", -15, 24),
+    ROSEWOOD	("Rosewood", 0, 0),
+    SEQUOIA		("Sequoia", 10, 16),
+    SPRUCE		("Spruce", -5, 24),
+    SYCAMORE	("Sycamore", 6, 30),
+    WHITE_CEDAR	("White Cedar", -5, 24),
+    WHITE_ELM	("White Elm", 4, 30),
+    WILLOW		("Willow", 10, 30)
     ;
 
     // The common name of this tree.
@@ -43,6 +65,10 @@ public enum WoodType implements IStringSerializable {
 
     // The probability of spawning at a given temperature.
     public BellCurve temperatureCurve;
+
+    WoodType(String name, int minTemp, int maxTemp) {
+        this(name, (IBlockState) null, (IBlockState)null, minTemp, maxTemp);
+    }
 
     WoodType(String name, Block log, Block leaf, int minTemp, int maxTemp) {
         this(name, log.getDefaultState(), leaf.getDefaultState(), minTemp, maxTemp);
@@ -57,6 +83,6 @@ public enum WoodType implements IStringSerializable {
 
     @Override
     public String getName() {
-        return name.toLowerCase();
+        return name.replace(" ", "_").toLowerCase();
     }
 }

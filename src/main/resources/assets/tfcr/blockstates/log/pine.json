@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "tfcr:block/log/pine"
+    },
+    "axis=z": {
+      "model": "tfcr:block/log/pine",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "tfcr:block/log/pine",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "parent": "minecraft:block/cube",
+    "textures": {
+        "side": "tfcr:blocks/wood/bark/wood_kapok",
+        "end": "tfcr:blocks/wood/log/wood_kapok"
+    },
+    "elements": [{
+        "from": [ 3, 0, 3 ],
+        "to": [ 13, 24, 13 ],
+        "faces": {
+            "down":  { "uv": [ 3, 3, 13, 13 ], "texture": "#end", "cullface": "down" },
+            "up":    { "uv": [ 3, 3, 13, 13 ], "texture": "#end", "cullface": "up"   },
+            "north": { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
+            "south": { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
+            "west":  { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
+            "east":  { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" }
+        }
+    }]
+}
