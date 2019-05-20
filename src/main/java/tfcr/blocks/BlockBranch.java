@@ -11,6 +11,7 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -32,7 +33,7 @@ import java.util.List;
 /**
  * A block for wooden branches; that is, wooden logs that are thinner than a full block wide.
  *
- * TODO: add different wood types
+ * TODO add all leafy variations
  * TODO: add model variation (or texture change) to make adjacent same-axis branches look better.
  *  (e.g., if a 14 wide branch is below a 12 wide branch along the y axis, then the 14 wide should
  *  have the outer rim be a bark texture instead of a log texture.)
@@ -44,21 +45,23 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     private static final EnumProperty<EnumFacing.Axis> AXIS = BlockStateProperties.AXIS;
     public static final BooleanProperty ROOT = BooleanProperty.create("root");
-
     private static final BooleanProperty EXTEND_NEGATIVE = BooleanProperty.create("extend_negative");
     private static final BooleanProperty EXTEND_POSITIVE = BooleanProperty.create("extend_positive");
 
     private int diameter;
     private WoodType woodType;
+    private boolean leaflogged;
 
-    // TODO add all different wood types, instead of just placeholder ash variant
-    public BlockBranch(WoodType woodType, int diameter) {
+    public BlockBranch(WoodType woodType, int diameter, boolean leaflogged) {
         super(Block.Properties.from(Blocks.OAK_WOOD));
 
         this.diameter = diameter;
         this.woodType = woodType;
+        this.leaflogged = leaflogged;
 
-        this.setRegistryName(TFCR.MODID, "branch/" + woodType.getName() + "/block_branch_" + diameter);
+        this.setRegistryName(TFCR.MODID,"branch/" +
+                woodType.getName() + "/block_branch_" + diameter + (leaflogged ? "_leafy" : ""));
+
         this.setDefaultState(this.stateContainer.getBaseState()
             .with(AXIS, EnumFacing.Axis.Y)
             .with(ROOT, false)
@@ -68,12 +71,14 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
     }
 
     public static void init() {
-        allBlocks = new BlockBranch[WoodType.values().length * 7];
+        allBlocks = new BlockBranch[WoodType.values().length * 7 * 2];
         WoodType[] values = WoodType.values();
-        for (int woodIndex = 0; woodIndex < values.length; woodIndex++) {
-            WoodType woodType = values[woodIndex];
-            for (int width = 0; width < 7; width++) {
-                allBlocks[(woodIndex * 7) + width] = new BlockBranch(woodType, (width + 1) * 2);
+        for (int leafy = 0; leafy < 2; leafy++) {
+            for (int woodIndex = 0; woodIndex < values.length; woodIndex++) {
+                WoodType woodType = values[woodIndex];
+                for (int width = 0; width < 7; width++) {
+                    allBlocks[(leafy * 7 * values.length) + (woodIndex * 7) + width] = new BlockBranch(woodType, (width + 1) * 2, leafy == 0);
+                }
             }
         }
     }
@@ -94,18 +99,20 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @param diameter The diameter of the branch.
      * @return A fixed instance of a BlockBranch.
      */
-    public static BlockBranch get(WoodType woodType, int diameter) {
+    public static BlockBranch get(WoodType woodType, int diameter, boolean leaflogged) {
         if (diameter % 2 != 0 || diameter < 1 || diameter > 14) {
             throw new IllegalArgumentException("Failed to get BlockBranch with diameter: " + diameter);
         }
         if (allBlocks == null) {
             init();
         }
-        return allBlocks[(woodType.ordinal() * 7) + (diameter / 2) - 1];
+        return allBlocks[((leaflogged ? 0 : 1) * 7 * 2) + (woodType.ordinal() * 7) + (diameter / 2) - 1];
     }
 
     /**
      * The shape this block takes up. Displayed as the outline around it.
+     * TODO update for leafy variations
+     *
      * @param state The IBlockState for this block. Used to get Axis info.
      * @param worldIn Unused.
      * @param pos Unused.
@@ -136,6 +143,10 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
     }
 
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
 
     @Override
     public boolean isBlockNormalCube(IBlockState state) {

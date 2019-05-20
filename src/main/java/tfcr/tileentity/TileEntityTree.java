@@ -100,19 +100,19 @@ public class TileEntityTree extends TileEntity implements ITickable {
                 if (age < 1) {
                     newState = BlockSapling.get().getDefaultState().with(BlockSapling.AGE, age);
                 } else if (age < 7) {
-                    newState = BlockBranch.get(WoodType.ASH, 2 * age).getDefaultState().with(BlockBranch.ROOT, true);
+                    newState = BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState().with(BlockBranch.ROOT, true);
                 } else {
                     // TODO replace with log block
-                    newState = BlockBranch.get(WoodType.ASH, 14).getDefaultState().with(BlockBranch.ROOT, true);
+                    newState = BlockBranch.get(WoodType.ASH, 14, false).getDefaultState().with(BlockBranch.ROOT, true);
                 }
 
                 if (variant == 0) {
                     for (int i = 1; i < 5; i++) {
-                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, 2 * age).getDefaultState(), 3);
+                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState(), 3);
                     }
                 } else {
                     for (int i = 1; i < 5; i++) {
-                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, Math.max(2, 2 * (age - 1))).getDefaultState(), 3);
+                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, Math.max(2, 2 * (age - 1)), false).getDefaultState(), 3);
                     }
                 }
 
