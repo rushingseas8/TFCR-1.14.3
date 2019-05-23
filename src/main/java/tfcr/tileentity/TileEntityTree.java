@@ -18,7 +18,9 @@ import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.blocks.BlockBranch;
+import tfcr.blocks.BlockLog;
 import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BlockTallSapling;
 import tfcr.data.WoodType;
 import tfcr.init.ModBlocks;
 
@@ -123,10 +125,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
 //
 //                world.setBlockState(pos, newState, 3);
 
-                if (age == 2) {
-                    spawnStructure("oak_age_2");
-                } else if (age == 3) {
-                    spawnStructure("oak_age_3");
+                if (age > 0 && age <= 3) {
+                    spawnStructure("oak_age_" + age);
                 }
                 markDirty();
             }
@@ -135,12 +135,14 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
     private void spawnStructure(String name) {
         System.out.println("Trying to spawn structure at pos: " + pos);
+        // Only spawn structures on the server world
         if (world.isRemote) {
             System.out.println("Remote- failing");
             return;
         }
         // TODO try to cleanup old structure before spawning new one
 
+        // Access the Template for the tree's structure
         ResourceLocation location = new ResourceLocation(TFCR.MODID, name);
         Template structure = ((WorldServer) world).getStructureTemplateManager().getTemplate(location);
         if (structure == null) {
@@ -152,24 +154,44 @@ public class TileEntityTree extends TileEntity implements ITickable {
         BlockPos size = structure.getSize();
         BlockPos center = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
 
+        // Add the structure to the world.
+        // TODO maybe make variant determine a random rotation/mirroring.
         PlacementSettings settings = new PlacementSettings().setCenterOffset(center);
         structure.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
         System.out.println("Successfully added blocks.");
 
+        // Validate the tree after it is added into the world, by making sure
+        // there is a TileEntityTree after the structure blocks are placed down.
         IBlockState newRoot = world.getBlockState(pos);
-        if (!(newRoot.getBlock() instanceof BlockBranch)) {
-            System.out.println("Trunk at pos: " + pos + " is type: " + newRoot.getBlock().toString());
-            return;
-        }
-        // Make sure this is a root
-        world.setBlockState(pos, newRoot.with(BlockBranch.ROOT, true));
-
+        Block blockType = newRoot.getBlock();
         TileEntityTree tileEntityTree = ((TileEntityTree) world.getTileEntity(pos));
-        if (tileEntityTree == null) {
-            System.out.println("No TE found at new root pos!");
+
+        if (blockType instanceof BlockSapling) {
+            // Valid, for now do nothing else
+        } else if (blockType instanceof BlockTallSapling) {
+            // Valid, for now do nothing else
+        } else if (blockType instanceof BlockBranch) {
+            // Ensure this is a root
+            world.setBlockState(pos, newRoot.with(BlockBranch.ROOT, true));
+        } else if (blockType instanceof BlockLog) {
+            // Valid, for now do nothing else
+        } else {
+            // Some other block was generated which can't support a TileEntityTree.
+            // This means there's a bug somewhere in the code, so we report it.
+            // Either way, we return, since there won't be a TileEntityTree to modify.
+            // TODO crash? Log error?
+            System.out.println("TileEntityTree created invalid trunk block: " + newRoot.getBlock().toString());
             return;
         }
 
+        // Ensure root block has proper TileEntity
+        if (tileEntityTree == null) {
+            System.out.println("No TE found for root block: " + newRoot.getBlock().toString());
+            return;
+        }
+
+        // Update the TileEntity there, since it is recreated if the Block type changes.
+        // TODO update all other values.
         tileEntityTree.age = this.age;
         System.out.println("Updated base of tree to have TileEntity.");
     }

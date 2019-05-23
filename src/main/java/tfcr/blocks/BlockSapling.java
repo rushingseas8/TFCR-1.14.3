@@ -2,6 +2,7 @@ package tfcr.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -17,6 +18,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -105,10 +107,17 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
     @Override
     public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
         System.out.println("Sapling onReplaced called.");
-        if (newState.getBlock() instanceof BlockBranch) {
-            System.out.println("Sapling replaced by branch");
+        if (newState.getBlock() instanceof BlockTallSapling) {
+            System.out.println("Sapling replaced by tall sapling.");
+            if (newState.get(BlockDoublePlant.HALF) == DoubleBlockHalf.LOWER) {
+                System.out.println("Keeping TileEntity.");
+                return;
+            }
+            System.out.println("Tall sapling was invalid. Removing.");
+        } else if (newState.getBlock() instanceof BlockBranch) {
+            System.out.println("Sapling replaced by branch.");
             if (newState.get(BlockBranch.ROOT)) {
-                System.out.println("Branch is considered root. Not removing TileEntity.");
+                System.out.println("Keeping TileEntity.");
                 return; // no replace
             }
         } else {
