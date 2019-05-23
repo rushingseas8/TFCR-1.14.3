@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "half=lower": {
+            "model": "tfcr:block/tall_sapling_lower"
+        },
+        "half=upper": {
+            "model": "tfcr:block/tall_sapling_upper"
+        }
+    }
+}

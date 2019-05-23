@@ -36,6 +36,8 @@ import java.util.UUID;
 @ObjectHolder(TFCR.MODID)
 public class ModBlocks {
 
+
+    public static final Block tall_sapling = new BlockDoublePlant(Block.Properties.from(Blocks.TALL_GRASS)).setRegistryName(TFCR.MODID, "tall_sapling");
     public static ArrayList<Block> allBlocks = new ArrayList<>();
 
     /**
@@ -59,7 +61,7 @@ public class ModBlocks {
 
         // Add other one-off blocks
         allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
-        allBlocks.add(new BlockDoublePlant(Block.Properties.from(Blocks.TALL_GRASS)).setRegistryName(TFCR.MODID, "tall_sapling"));
+        allBlocks.add(tall_sapling);
 
         System.out.println("Done initializing.");
     }

@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import tfcr.blocks.BlockBranch;
+import tfcr.blocks.BlockSapling;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,17 @@ import java.util.Map;
 public class TreeStructure {
     // Each entry in the arraylist contains the shape of a tree for a given age.
     private ArrayList<HashMap<Vec3i, IBlockState>> structure;
+
+    public TreeStructure() {
+        this.structure = new ArrayList<>(BlockSapling.getMaxAge());
+        for (int i = 0; i < BlockSapling.getMaxAge(); i++) {
+            this.structure.add(new HashMap<>());
+        }
+    }
+
+    public void add(int age, Vec3i pos, IBlockState state) {
+        this.structure.get(age).put(pos, state);
+    }
 
     public boolean canPlace(World world, BlockPos base, int age) {
         if (age < 0 || age > structure.size() - 1) {

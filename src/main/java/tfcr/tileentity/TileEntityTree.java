@@ -10,7 +10,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.feature.template.PlacementSettings;
+import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.blocks.BlockBranch;
@@ -52,12 +56,13 @@ public class TileEntityTree extends TileEntity implements ITickable {
     @Override
     public void remove() {
         super.remove();
-        System.out.println("Cleaning up responsible blocks");
-        if (hasWorld() && !world.isRemote) {
-            for (BlockPos pos : treeBlocks) {
-                world.removeBlock(pos);
-            }
-        }
+//        System.out.println("Cleaning up responsible blocks");
+//        if (hasWorld() && !world.isRemote) {
+//            for (BlockPos pos : treeBlocks) {
+//                world.removeBlock(pos);
+//            }
+//        }
+        // TODO check against structure and delete as needed
     }
 
     @Override
@@ -86,41 +91,87 @@ public class TileEntityTree extends TileEntity implements ITickable {
                     doneGrowing = true;
                 }
 
-                if (age == 1) {
-                    // now responsible for up blocks
-                    if (treeBlocks != null) {
-                        for (int i = 1; i < 5; i++) {
-                            treeBlocks.add(pos.up(i));
-                        }
-                    }
-                }
+//                if (age == 1) {
+//                    // now responsible for up blocks
+//                    if (treeBlocks != null) {
+//                        for (int i = 1; i < 5; i++) {
+//                            treeBlocks.add(pos.up(i));
+//                        }
+//                    }
+//                }
 
 //                IBlockState newState = this.world.getBlockState(pos).with(BlockSapling.AGE, age);
-                IBlockState newState;
-                if (age < 1) {
-                    newState = BlockSapling.get().getDefaultState().with(BlockSapling.AGE, age);
-                } else if (age < 7) {
-                    newState = BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState().with(BlockBranch.ROOT, true);
-                } else {
-                    // TODO replace with log block
-                    newState = BlockBranch.get(WoodType.ASH, 14, false).getDefaultState().with(BlockBranch.ROOT, true);
+//                IBlockState newState;
+//                if (age < 1) {
+//                    newState = BlockSapling.get().getDefaultState().with(BlockSapling.AGE, age);
+//                } else if (age < 7) {
+//                    newState = BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState().with(BlockBranch.ROOT, true);
+//                } else {
+//                    // TODO replace with log block
+//                    newState = BlockBranch.get(WoodType.ASH, 14, false).getDefaultState().with(BlockBranch.ROOT, true);
+//                }
+//
+//                if (variant == 0) {
+//                    for (int i = 1; i < 5; i++) {
+//                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState(), 3);
+//                    }
+//                } else {
+//                    for (int i = 1; i < 5; i++) {
+//                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, Math.max(2, 2 * (age - 1)), false).getDefaultState(), 3);
+//                    }
+//                }
+//
+//                world.setBlockState(pos, newState, 3);
+
+                if (age == 2) {
+                    spawnStructure("oak_age_2");
+                } else if (age == 3) {
+                    spawnStructure("oak_age_3");
                 }
-
-                if (variant == 0) {
-                    for (int i = 1; i < 5; i++) {
-                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState(), 3);
-                    }
-                } else {
-                    for (int i = 1; i < 5; i++) {
-                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, Math.max(2, 2 * (age - 1)), false).getDefaultState(), 3);
-                    }
-                }
-
-                world.setBlockState(pos, newState, 3);
-
                 markDirty();
             }
         }
+    }
+
+    private void spawnStructure(String name) {
+        System.out.println("Trying to spawn structure at pos: " + pos);
+        if (world.isRemote) {
+            System.out.println("Remote- failing");
+            return;
+        }
+        // TODO try to cleanup old structure before spawning new one
+
+        ResourceLocation location = new ResourceLocation(TFCR.MODID, name);
+        Template structure = ((WorldServer) world).getStructureTemplateManager().getTemplate(location);
+        if (structure == null) {
+            System.out.println("Failed to find structure: " + location);
+            return;
+        }
+
+        // Rotation center should be the trunk of the tree.
+        BlockPos size = structure.getSize();
+        BlockPos center = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
+
+        PlacementSettings settings = new PlacementSettings().setCenterOffset(center);
+        structure.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
+        System.out.println("Successfully added blocks.");
+
+        IBlockState newRoot = world.getBlockState(pos);
+        if (!(newRoot.getBlock() instanceof BlockBranch)) {
+            System.out.println("Trunk at pos: " + pos + " is type: " + newRoot.getBlock().toString());
+            return;
+        }
+        // Make sure this is a root
+        world.setBlockState(pos, newRoot.with(BlockBranch.ROOT, true));
+
+        TileEntityTree tileEntityTree = ((TileEntityTree) world.getTileEntity(pos));
+        if (tileEntityTree == null) {
+            System.out.println("No TE found at new root pos!");
+            return;
+        }
+
+        tileEntityTree.age = this.age;
+        System.out.println("Updated base of tree to have TileEntity.");
     }
 
     @Nonnull
