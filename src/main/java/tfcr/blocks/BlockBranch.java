@@ -215,8 +215,11 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
                 System.out.println("Still a branch");
                 if (newState.get(ROOT)) {
                     System.out.println("Still a root block. Keeping TE.");
-                    return;
+                } else {
+                    worldIn.setBlockState(pos, newState.with(ROOT, true));
+                    System.out.println("Base was not a root block. Setting to root and keeping TE.");
                 }
+                return;
             } else {
                 System.out.println("New state is block type: " + newState.getBlock());
             }

@@ -5,6 +5,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReaderBase;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -21,7 +23,31 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
 
     private static BlockLeaves[] allBlocks;
 
-    private WoodType woodType;
+    /**
+     * What type of wood are we mapped to?
+     */
+    public WoodType woodType;
+
+    /**
+     * How many trees are we a part of?
+     *
+     * This is used to deal with multiple trees growing in close proximity to
+     * one another. If two trees of the same type share a leaf canopy, then
+     * this property is increased to 2. When a tree grows, instead of
+     * destroying the leaf block, this property is decreased. When it hits 0,
+     * it can be actually fully removed when a tree grows.
+     *
+     * Destroying this block by means other than growing (via Player, fire, etc.)
+     * ignores this property.
+     *
+     * A value of 0 is not possibly naturally, and so indicates a player-placed
+     * leaf block. A leaf block with this value will not decay.
+     * TODO: evaluate if these leaf blocks need to decay. Player-placed leaf blocks
+     *  shouldn't decay, and if we have a timber-like tree destruction system, then
+     *  there won't ever be hanging leaf blocks. If so, we can remove the BlockLeaves
+     *  subclassing to minimize the number of IDs we take up.
+     */
+    public static final IntegerProperty NUM_TREES = IntegerProperty.create("num_trees", 0, 16);
 
     public BlockLeaves(WoodType woodType) {
         super(Block.Properties.from(Blocks.OAK_LEAVES));
@@ -49,5 +75,11 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
             init();
         }
         return allBlocks[type.ordinal()];
+    }
+
+    @Override
+    public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
+        builder.add(DISTANCE).add(PERSISTENT).add(NUM_TREES);
+        // TODO if we remove BlockLeaves subclass then remove distance/persistent
     }
 }

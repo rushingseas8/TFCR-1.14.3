@@ -3,6 +3,7 @@ package tfcr.tileentity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -12,12 +13,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.feature.template.ITemplateProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.blocks.BlockBranch;
+import tfcr.blocks.BlockLeaves;
 import tfcr.blocks.BlockLog;
 import tfcr.blocks.BlockSapling;
 import tfcr.blocks.BlockTallSapling;
@@ -25,7 +30,13 @@ import tfcr.data.WoodType;
 import tfcr.init.ModBlocks;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TileEntityTree extends TileEntity implements ITickable {
     public static TileEntityType<TileEntityTree> TREE;
@@ -40,6 +51,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
         System.out.println("TileEntityTree init");
     }
 
+    // TODO add wood type
+
     // Local count of ticks. We only take action once every N ticks.
     private int count = 0;
 
@@ -51,27 +64,137 @@ public class TileEntityTree extends TileEntity implements ITickable {
     // Currently makes this stop ticking forever; later should be rarely ticked.
     private boolean doneGrowing = false;
 
+    /**
+     * The variant determines which specific tree model we use at each growth stage.
+     * It is randomly chosen on the first tick of the sapling being placed down.
+     */
     private int variant = -1;
-
-    private ArrayList<BlockPos> treeBlocks;
 
     @Override
     public void remove() {
         super.remove();
-//        System.out.println("Cleaning up responsible blocks");
-//        if (hasWorld() && !world.isRemote) {
-//            for (BlockPos pos : treeBlocks) {
-//                world.removeBlock(pos);
-//            }
-//        }
         // TODO check against structure and delete as needed
+        // TODO this might delete other trees if too close. Need to be more careful about deletions.
+        //  Can't actually enumerate the blocks in a structure- how to fix? Reflection?
+
+        if (world.isRemote) {
+//            System.out.println("Skipping client TileEntity remove call");
+            return;
+        }
+
+        String name = "oak_age_" + age;
+        Template template = getTemplate(name);
+        if (template == null) {
+            System.out.println("Failed to remove additional blocks- template " + name + " could not be found.");
+            return;
+        }
+
+        // Get a map of BlockPos : IBlockState, so we can query the template.
+        List<Template.BlockInfo> templateBlockList = getBlocks(template);
+        Map<BlockPos, IBlockState> posToStateMap = templateBlockList == null ?
+                new HashMap<>() :
+                templateBlockList.stream().collect(Collectors.toMap(a -> a.pos, a -> a.blockState));
+
+        // Remove branches
+        BlockPos size = template.getSize();
+        Vec3i centerOffset = new Vec3i(-size.getX() / 2, 0, -size.getZ() / 2);
+        for (int x = 0; x < size.getX(); x++) {
+            for (int z = 0; z < size.getZ(); z++) {
+                for (int y = 0; y < size.getY(); y++) {
+                    Vec3i offset = new Vec3i(x, y, z);
+
+                    // Get the blockstate for this position in the template. If it is not a branch, then
+                    // we don't care about it for removal purposes. This prevents deleting too much.
+                    // If we couldn't access the Template's internals, then this block never gets hit.
+                    IBlockState templateState = posToStateMap.get(new BlockPos(offset));
+                    if (templateState != null && !((templateState.getBlock() instanceof BlockBranch) || (templateState.getBlock() instanceof BlockLog))) {
+                        continue;
+                    }
+
+                    BlockPos worldPos = pos.add(centerOffset).add(offset);
+
+                    IBlockState localState = world.getBlockState(worldPos);
+                    Block localBlock = localState.getBlock();
+
+                    if (localBlock instanceof BlockBranch || localBlock instanceof BlockLog) {
+                        // Just remove branches and logs
+                        world.removeBlock(worldPos);
+                    }
+                }
+            }
+        }
+
+        // Remove leaves, or notify them of the removal of a tree there
+        removeLeaves(template);
+    }
+
+    private void removeLeaves(Template template) {
+
+        BlockPos size = template.getSize();
+        Vec3i centerOffset = new Vec3i(-size.getX() / 2, 0, -size.getZ() / 2);
+        for (int x = 0; x < size.getX(); x++) {
+            for (int z = 0; z < size.getZ(); z++) {
+                for (int y = 0; y < size.getY(); y++) {
+                    Vec3i offset = new Vec3i(x, y, z);
+                    BlockPos localPos = pos.add(centerOffset).add(offset);
+
+                    IBlockState localState = world.getBlockState(localPos);
+                    Block localBlock = localState.getBlock();
+
+                    if (localBlock instanceof BlockLeaves) {
+                        WoodType woodType = ((BlockLeaves) localBlock).woodType;
+                        // TODO if (woodType != this.woodType) { continue; }
+                        // We don't want to modify other trees' leaves!
+
+                        int numTrees = localState.get(BlockLeaves.NUM_TREES);
+                        if (numTrees == 1) {
+                            // Leaves are only part of this tree, so remove
+                            world.removeBlock(localPos);
+                        } else if (numTrees > 1) {
+                            // Leaves are part of >1 tree, so decrement count
+                            world.setBlockState(pos, localState.with(BlockLeaves.NUM_TREES, numTrees - 1));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Exposes the internal list of BlockInfo objects in a Template via reflection.
+     * @param template
+     * @return
+     */
+    // hold your nose, this is stinky
+    @SuppressWarnings("unchecked")
+    private static List<Template.BlockInfo> getBlocks(Template template) {
+        try {
+            Field templateBlocks = Template.class.getDeclaredField("blocks");
+            templateBlocks.setAccessible(true);
+
+            List<List<Template.BlockInfo>> blocks = (List<List<Template.BlockInfo>>) templateBlocks.get(template);
+
+            ArrayList<Template.BlockInfo> blockInfos = new ArrayList<>();
+            for (List<Template.BlockInfo> blockList : blocks) {
+                blockInfos.addAll(blockList);
+            }
+
+            return blockInfos;
+        } catch (NoSuchFieldException n) {
+            n.printStackTrace();
+            System.out.println("Failed to get field \"blocks\" from Template. Did the API change?");
+        } catch (IllegalAccessException c) {
+            c.printStackTrace();
+            System.out.println("Failed to access field \"blocks\" from Template. Security issue?");
+        }
+
+        return null;
     }
 
     @Override
     public void tick() {
         if (variant == -1 && hasWorld() && !world.isRemote) {
             variant = world.getRandom().nextInt(2);
-            treeBlocks = new ArrayList<>();
             System.out.println("Initializing variant to: " + variant);
         }
 
@@ -82,82 +205,74 @@ public class TileEntityTree extends TileEntity implements ITickable {
         count++;
         if (count % 100 == 0) {
             if (!world.isRemote) {
-                age++;
 
                 System.out.println("Tile entity tree tick. Age = " + age);
 
-                // Logs not added in, TODO remove the -1 when logs added
-                if (age > BlockSapling.getMaxAge() - 1) {
+                // TODO Check if we can grow up first.
+
+                if (age > 0 && age <= 5) {
+                    Template template = getTemplate("oak_age_" + age);
+                    if (template != null) {
+                        removeLeaves(template);
+                    }
+                }
+
+                age++;
+                if (age >= 5) {
                     System.out.println("Done growing now");
-                    age = BlockSapling.getMaxAge() - 1;
+                    age = 5;
                     doneGrowing = true;
                 }
 
-//                if (age == 1) {
-//                    // now responsible for up blocks
-//                    if (treeBlocks != null) {
-//                        for (int i = 1; i < 5; i++) {
-//                            treeBlocks.add(pos.up(i));
-//                        }
-//                    }
-//                }
-
-//                IBlockState newState = this.world.getBlockState(pos).with(BlockSapling.AGE, age);
-//                IBlockState newState;
-//                if (age < 1) {
-//                    newState = BlockSapling.get().getDefaultState().with(BlockSapling.AGE, age);
-//                } else if (age < 7) {
-//                    newState = BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState().with(BlockBranch.ROOT, true);
-//                } else {
-//                    // TODO replace with log block
-//                    newState = BlockBranch.get(WoodType.ASH, 14, false).getDefaultState().with(BlockBranch.ROOT, true);
-//                }
-//
-//                if (variant == 0) {
-//                    for (int i = 1; i < 5; i++) {
-//                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, 2 * age, false).getDefaultState(), 3);
-//                    }
-//                } else {
-//                    for (int i = 1; i < 5; i++) {
-//                        world.setBlockState(pos.up(i), BlockBranch.get(WoodType.ASH, Math.max(2, 2 * (age - 1)), false).getDefaultState(), 3);
-//                    }
-//                }
-//
-//                world.setBlockState(pos, newState, 3);
-
-                if (age > 0 && age <= 3) {
-                    spawnStructure("oak_age_" + age);
+                if (age > 0 && age <= 5) {
+                    // TODO this is a relatively slow method call- maybe find a way to schedule it?
+                    spawnTemplate("oak_age_" + age);
                 }
+
+                // If we hit max age, cap the age and mark this tree as done growing.
+//                if (age >= BlockSapling.getMaxAge()) {
+//                    System.out.println("Done growing now");
+//                    age = BlockSapling.getMaxAge();
+//                    doneGrowing = true;
+//                }
+
+
                 markDirty();
             }
         }
     }
 
-    private void spawnStructure(String name) {
-        System.out.println("Trying to spawn structure at pos: " + pos);
-        // Only spawn structures on the server world
+    private Template getTemplate(String name) {
         if (world.isRemote) {
-            System.out.println("Remote- failing");
-            return;
+            System.out.println("getTemplate failed, since world is remote.");
+            return null;
         }
+        ResourceLocation location = new ResourceLocation(TFCR.MODID, name);
+        return ((WorldServer) world).getStructureTemplateManager().getTemplate(location);
+    }
+
+    private void spawnTemplate(String name) {
+        System.out.println("Trying to spawn structure at pos: " + pos);
         // TODO try to cleanup old structure before spawning new one
+        // TODO ensure that we can place the new structure down before adding it
 
         // Access the Template for the tree's structure
-        ResourceLocation location = new ResourceLocation(TFCR.MODID, name);
-        Template structure = ((WorldServer) world).getStructureTemplateManager().getTemplate(location);
-        if (structure == null) {
-            System.out.println("Failed to find structure: " + location);
+        Template template = getTemplate(name);
+        if (template == null) {
+            System.out.println("Failed to find structure: " + name);
             return;
         }
 
         // Rotation center should be the trunk of the tree.
-        BlockPos size = structure.getSize();
+        BlockPos size = template.getSize();
         BlockPos center = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
 
         // Add the structure to the world.
         // TODO maybe make variant determine a random rotation/mirroring.
+        // TODO instead of just adding structure, modify existing leaf blocks!!
         PlacementSettings settings = new PlacementSettings().setCenterOffset(center);
-        structure.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
+        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), new TemplateProcessorTrees(WoodType.OAK), settings, 2);
+//        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
         System.out.println("Successfully added blocks.");
 
         // Validate the tree after it is added into the world, by making sure
@@ -172,6 +287,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
             // Valid, for now do nothing else
         } else if (blockType instanceof BlockBranch) {
             // Ensure this is a root
+            System.out.println("Setting block type to BlockBranch. Ensuring it is root.");
             world.setBlockState(pos, newRoot.with(BlockBranch.ROOT, true));
         } else if (blockType instanceof BlockLog) {
             // Valid, for now do nothing else
@@ -193,6 +309,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
         // Update the TileEntity there, since it is recreated if the Block type changes.
         // TODO update all other values.
         tileEntityTree.age = this.age;
+        tileEntityTree.variant = this.variant;
+        tileEntityTree.count = 0;
         System.out.println("Updated base of tree to have TileEntity.");
     }
 
@@ -231,5 +349,43 @@ public class TileEntityTree extends TileEntity implements ITickable {
         read(packet.getNbtCompound());
     }
 
+    private class TemplateProcessorTrees implements ITemplateProcessor {
+
+        private WoodType woodType;
+
+        public TemplateProcessorTrees(WoodType woodType) {
+            this.woodType = woodType;
+        }
+
+        @Nullable
+        @Override
+        public Template.BlockInfo processBlock(IBlockReader worldIn, BlockPos pos, Template.BlockInfo blockInfoIn) {
+            // If the world pos is a leaf block AND so is the block we are going to place,
+            // then we need to do additional processing.
+            IBlockState currentBlockState = worldIn.getBlockState(pos);
+            IBlockState placingBlockState = blockInfoIn.blockState;
+//            if ((currentBlockState.getBlock() instanceof BlockLeaves) && (placingBlockState.getBlock() instanceof BlockLeaves)) {
+//                // If the woodtype is different, then we don't replace leaves
+////                WoodType theirWoodType = ((BlockLeaves) currentBlockState.getBlock()).woodType;
+////                if (this.woodType != theirWoodType) {
+////                    return null;
+////                }
+//
+//                // Else if the woodtype is the same, we increment the numTree count.
+//                int numTrees = currentBlockState.get(BlockLeaves.NUM_TREES);
+//                return new Template.BlockInfo(pos, currentBlockState.with(BlockLeaves.NUM_TREES, numTrees + 1), blockInfoIn.tileentityData);
+//            }
+
+            // Ensure that we always place leaves with numTrees at least 1.
+            if (placingBlockState.getBlock() instanceof BlockLeaves) {
+                if (placingBlockState.get(BlockLeaves.NUM_TREES) == 0) {
+                    return new Template.BlockInfo(pos, placingBlockState.with(BlockLeaves.NUM_TREES, 1), blockInfoIn.tileentityData);
+                }
+            }
+
+            // Default- place whatever we were going to place.
+            return blockInfoIn;
+        }
+    }
 
 }
