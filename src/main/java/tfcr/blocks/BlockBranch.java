@@ -56,6 +56,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
     private boolean leaflogged;
 
     // Used for leafy variants to determine if we should use fast or fancy graphics.
+    // TODO need to add to WorldRenderers?
     private boolean renderTranslucent;
 
     public BlockBranch(WoodType woodType, int diameter, boolean leaflogged) {

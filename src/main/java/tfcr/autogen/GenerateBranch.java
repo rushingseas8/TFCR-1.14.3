@@ -83,6 +83,7 @@ public class GenerateBranch {
             "    }]\n" +
             "}\n";
 
+    // TODO add generation for leafy variants of branches, or re-evaluate if they're a desired feature.
     private static final String leafyModelJSON = "{\n"+
                     "    \"parent\": \"minecraft:block/cube\",\n"+
                     "    \"textures\": {\n"+
