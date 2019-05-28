@@ -40,6 +40,7 @@ public class GenerateBase {
         GenerateBranch.generate();
         GenerateLog.generate();
         GenerateLeaves.generate();
+        GenerateSapling.generate();
         /*
 
   "block.tfcr.block_branch": "Branch",

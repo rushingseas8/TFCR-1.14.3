@@ -15,7 +15,7 @@ public class BlockLog extends net.minecraft.block.BlockLog implements ISelfRegis
 
     private static BlockLog[] allBlocks;
 
-    private WoodType woodType;
+    public WoodType woodType;
 
     public BlockLog(WoodType woodType) {
         super(MaterialColor.WOOD, Block.Properties.from(Blocks.OAK_WOOD));

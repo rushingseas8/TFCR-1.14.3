@@ -1,6 +1,7 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -18,6 +19,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
@@ -49,11 +52,18 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
     private static final BooleanProperty EXTEND_POSITIVE = BooleanProperty.create("extend_positive");
 
     private int diameter;
-    private WoodType woodType;
+    public WoodType woodType;
     private boolean leaflogged;
 
+    // Used for leafy variants to determine if we should use fast or fancy graphics.
+    private boolean renderTranslucent;
+
     public BlockBranch(WoodType woodType, int diameter, boolean leaflogged) {
-        super(Block.Properties.from(Blocks.OAK_WOOD));
+        // Hardness is based on diameter. Sound is based on leaflogged property.
+        super(Block.Properties.from(Blocks.OAK_WOOD)
+                .hardnessAndResistance(2.0F * (diameter / 16f))
+                .variableOpacity()
+                .sound(leaflogged ? SoundType.PLANT : SoundType.WOOD));
 
         this.diameter = diameter;
         this.woodType = woodType;
@@ -120,32 +130,35 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      */
     @Override
     public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+        // Return full block for leafy variants
+        if (((BlockBranch) state.getBlock()).leaflogged) {
+            return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
+        }
+
         int radius = diameter / 2;
 
         int min = 8 - radius;
         int max = 8 + radius;
 
-        // TODO fix bad code; caused by BlockSapling calling super() and not having an axis blockstate
-        try {
-            switch (state.get(AXIS)) {
-                case X:
-                    return Block.makeCuboidShape(0, min, min, 16, max, max);
-                case Y:
-                    return Block.makeCuboidShape(min, 0, min, max, 16, max);
-                case Z:
-                    return Block.makeCuboidShape(min, min, 0, max, max, 16);
-            }
-        } catch (IllegalArgumentException i) {
-            System.out.println("Failed to get shape for block: " + state.getBlock() + ". This is a bug!");
-            return Block.makeCuboidShape(min, 0, min, max, 16, max);
+        switch (state.get(AXIS)) {
+            case X:
+                return Block.makeCuboidShape(0, min, min, 16, max, max);
+            case Y:
+                return Block.makeCuboidShape(min, 0, min, max, 16, max);
+            case Z:
+                return Block.makeCuboidShape(min, min, 0, max, max, 16);
+            default:
+                System.out.println("Failed to get shape for block: " + state.getBlock() + ". This is a bug!");
+                return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
         }
-
-        return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
     }
 
-    @Override
+    /**
+     * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
+     * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
+     */
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return (leaflogged && renderTranslucent) ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -155,7 +168,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     @Override
     public boolean isFullCube(IBlockState blockState) {
-        return false;
+        return leaflogged;
     }
 
     @Override
@@ -193,7 +206,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
     @Nullable
     @Override
     public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
-        return new TileEntityTree();
+        return new TileEntityTree(this.woodType);
     }
 
     /**
@@ -249,7 +262,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * Handles the logic for choosing which model to use, based on neighboring branches.
      *
      * Specifically, checks the positive and negative direction along the axis of the block.
-     * If there is another BlockBranch there with a strictly larger diameter than us, and
+     * If there is another BlockBranch there with a greater than or equal diameter to us, and
      * their axis is not the same as ours, then this branch block will extend its model
      * into the other BlockBranch's bounding box.
      *
@@ -277,7 +290,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         // Check in the positive axis
         if (positiveState.getBlock() instanceof BlockBranch) {
             if (positiveState.get(AXIS) != stateIn.get(AXIS)) {
-                if (((BlockBranch) positiveState.getBlock()).diameter > diameter) {
+                if (((BlockBranch) positiveState.getBlock()).diameter >= diameter) {
                     shouldExtendPositive = true;
                 }
             }
@@ -286,7 +299,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         // Check in the negative axis
         if (negativeState.getBlock() instanceof BlockBranch) {
             if (negativeState.get(AXIS) != stateIn.get(AXIS)) {
-                if (((BlockBranch) negativeState.getBlock()).diameter > diameter) {
+                if (((BlockBranch) negativeState.getBlock()).diameter >= diameter) {
                     shouldExtendNegative = true;
                 }
             }

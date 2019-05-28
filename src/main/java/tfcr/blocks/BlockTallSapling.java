@@ -38,7 +38,7 @@ public class BlockTallSapling extends BlockDoublePlant implements ISelfRegisterB
     @Nullable
     @Override
     public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
-        return new TileEntityTree();
+        return new TileEntityTree(this.woodType);
     }
 
     @Override

@@ -30,6 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import tfcr.TFCR;
+import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 import tfcr.tileentity.TileEntityTree;
@@ -43,49 +44,38 @@ import java.util.UUID;
 
 public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelfRegisterItem {
 
-    // TODO carry wood type as field
+    public WoodType woodType;
 
-    private static BlockSapling sapling;
+    private static BlockSapling[] saplings;
 
     private static final int MAX_AGE = 8;
 
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, MAX_AGE);
-
-    public BlockSapling() {
+    public BlockSapling(WoodType woodType) {
         super(Block.Properties.from(Blocks.OAK_SAPLING));
-
-        this.setRegistryName(TFCR.MODID, "sapling");
+        this.woodType = woodType;
+        this.setRegistryName(TFCR.MODID, "sapling/" + woodType.getName());
     }
 
     public static void init() {
-        sapling = new BlockSapling();
+        saplings = new BlockSapling[WoodType.values().length];
+        for (int i = 0; i < WoodType.values().length; i++) {
+            saplings[i] = new BlockSapling(WoodType.values()[i]);
+        }
     }
 
     public static List<BlockSapling> getAllBlocks() {
-        if (sapling == null) {
+        if (saplings == null) {
             init();
         }
-        return Collections.singletonList(sapling);
+        return Arrays.asList(saplings);
     }
 
-    public static BlockSapling get() {
-        // TODO return different wood variants when added
-        return sapling;
+    public static BlockSapling get(WoodType woodType) {
+        return saplings[woodType.ordinal()];
     }
 
     public static int getMaxAge() {
         return MAX_AGE;
-    }
-
-    /**
-     * Fills out the possible states for this Block.
-     *
-     * Needed to setup blockstates for this block. Replaces metadata in <=1.12.
-     * @param builder
-     */
-    @Override
-    public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
-        builder.add(AGE);
     }
 
     /**
@@ -101,7 +91,7 @@ public class BlockSapling extends BlockBush implements ISelfRegisterBlock, ISelf
     @Nullable
     @Override
     public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
-        return new TileEntityTree();
+        return new TileEntityTree(this.woodType);
     }
 
     @Override

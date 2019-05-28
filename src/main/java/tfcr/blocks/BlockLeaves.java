@@ -51,6 +51,7 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
 
     public BlockLeaves(WoodType woodType) {
         super(Block.Properties.from(Blocks.OAK_LEAVES));
+        this.woodType = woodType;
         setRegistryName(TFCR.MODID, "leaves/" + woodType.getName());
     }
 

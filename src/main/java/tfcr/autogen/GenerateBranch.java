@@ -83,6 +83,40 @@ public class GenerateBranch {
             "    }]\n" +
             "}\n";
 
+    private static final String leafyModelJSON = "{\n"+
+                    "    \"parent\": \"minecraft:block/cube\",\n"+
+                    "    \"textures\": {\n"+
+                    "        \"side\": \"tfcr:blocks/wood/bark/WOOD\",\n"+
+                    "        \"end\": \"tfcr:blocks/wood/log/WOOD\",\n"+
+                    "        \"leaf\": \"tfcr:blocks/wood/leaves/LEAVES\"\n"+
+                    "    },\n"+
+                    "    \"elements\": [\n"+
+                    "        {\n"+
+                    "            \"from\": [ LOWX, LOWY, LOWZ ],\n" +
+                    "            \"to\": [ HIGHX, HIGHY, HIGHZ ],\n" +
+                    "            \"faces\": {\n" +
+                    "                \"down\":  { \"uv\": [ LOWX, LOWZ, HIGHX, HIGHZ ], \"texture\": \"#end\", \"cullface\": \"down\" },\n" +
+                    "                \"up\":    { \"uv\": [ LOWX, LOWZ, HIGHX, HIGHZ ], \"texture\": \"#end\", \"cullface\": \"up\"   },\n" +
+                    "                \"north\": { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" },\n" +
+                    "                \"south\": { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" },\n" +
+                    "                \"west\":  { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" },\n" +
+                    "                \"east\":  { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" }\n" +
+                    "        },\n" +
+                    "        {\n" +
+                    "            \"from\": [ -0.01, -0.01, -0.01 ],\n"+
+                    "            \"to\": [ 16.01, 16.01, 16.01 ],\n"+
+                    "            \"faces\": {\n"+
+                    "                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"down\" },\n"+
+                    "                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"up\" },\n"+
+                    "                \"north\": { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"north\" },\n"+
+                    "                \"south\": { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"south\" },\n"+
+                    "                \"west\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"west\" },\n"+
+                    "                \"east\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#leaf\", \"tintindex\": 0, \"cullface\": \"east\" }\n"+
+                    "            }\n"+
+                    "        }\n"+
+                    "    ]\n"+
+                    "}\n";
+
     private static final String itemJSON = "{\n" +
             "  \"parent\": \"tfcr:block/branch/WOOD/block_branch_NUM\"\n" +
             "}";
@@ -186,7 +220,7 @@ public class GenerateBranch {
                 GenerateBase.appendToLangFile("block.tfcr.branch." + woodType.getName() + ".block_branch_" + i, i + " wide " + woodType.name + " branch");
             }
         }
-        System.out.println("Done");
+        System.out.println("Done. Made " + (WoodType.values().length * 7 * 4) + " branch variant files.");
     }
 
 
