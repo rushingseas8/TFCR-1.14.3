@@ -2,24 +2,22 @@ package tfcr.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReaderBase;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.init.ModTabs;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISelfRegisterBlock, ISelfRegisterItem {
+public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
     private static BlockLeaves[] allBlocks;
 
@@ -76,6 +74,16 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
             init();
         }
         return allBlocks[type.ordinal()];
+    }
+
+    @Override
+    public void registerItem(IForgeRegistry<Item> itemRegistry) {
+        itemRegistry.register(new ItemBlock(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+    }
+
+    @Override
+    public WoodType getWoodType() {
+        return this.woodType;
     }
 
     @Override

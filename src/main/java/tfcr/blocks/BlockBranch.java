@@ -6,6 +6,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
@@ -19,17 +21,16 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.init.ModTabs;
 import tfcr.tileentity.TileEntityTree;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import java.util.List;
  *  have the outer rim be a bark texture instead of a log texture.)
  * TODO: UVs are slightly inconsistent between [unextended, pos, neg] and [both]. Bug?
  */
-public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegisterItem {
+public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
     private static BlockBranch[] allBlocks;
 
@@ -57,7 +58,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     // Used for leafy variants to determine if we should use fast or fancy graphics.
     // TODO need to add to WorldRenderers?
-    private boolean renderTranslucent;
+    private boolean renderTranslucent = true;
 
     public BlockBranch(WoodType woodType, int diameter, boolean leaflogged) {
         // Hardness is based on diameter. Sound is based on leaflogged property.
@@ -120,6 +121,16 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         return allBlocks[((leaflogged ? 0 : 1) * 7 * 2) + (woodType.ordinal() * 7) + (diameter / 2) - 1];
     }
 
+    @Override
+    public void registerItem(IForgeRegistry<Item> itemRegistry) {
+        itemRegistry.register(new ItemBlock(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+    }
+
+    @Override
+    public WoodType getWoodType() {
+        return this.woodType;
+    }
+
     /**
      * The shape this block takes up. Displayed as the outline around it.
      * TODO update for leafy variations
@@ -159,7 +170,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
      */
     public BlockRenderLayer getRenderLayer() {
-        return (leaflogged && renderTranslucent) ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
+        return leaflogged ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
     }
 
     @Override
@@ -169,7 +180,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     @Override
     public boolean isFullCube(IBlockState blockState) {
-        return leaflogged;
+        return false;
     }
 
     @Override

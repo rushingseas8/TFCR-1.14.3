@@ -29,7 +29,6 @@
                 "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#leaf", "tintindex": 0, "cullface": "west" },
                 "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#leaf", "tintindex": 0, "cullface": "east" }
             }
-
         }
     ]
 }

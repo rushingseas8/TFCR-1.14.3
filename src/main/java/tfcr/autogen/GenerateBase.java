@@ -56,6 +56,9 @@ public class GenerateBase {
         appendSpacerToLangFile();
         appendToLangFile("item.tfcr.ore.bismuthinite", "Bismuthinite");
 
+        appendSpacerToLangFile();
+        appendToLangFile("itemGroup.tfcrWood", "TFCR Wood");
+
         langFile.delete(langFile.length() - 2, langFile.length());
         langFile.append("\n}\n");
         writeToFile(RESOURCE_BASE + File.separator + "lang/en_us.json", langFile.toString());

@@ -1,36 +1,22 @@
 package tfcr.init;
 
-import com.sun.javafx.binding.Logging;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoublePlant;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.FoliageColors;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeColors;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.blocks.*;
+import tfcr.blocks.BlockBranch;
+import tfcr.blocks.BlockFlowerTFCR;
+import tfcr.blocks.BlockLeaves;
+import tfcr.blocks.BlockLog;
+import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BlockTallSapling;
 import tfcr.tileentity.TileEntityTree;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = TFCR.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(TFCR.MODID)

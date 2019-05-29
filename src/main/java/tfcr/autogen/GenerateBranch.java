@@ -1,9 +1,8 @@
 package tfcr.autogen;
 
-import tfcr.TFCR;
 import tfcr.data.WoodType;
 
-import java.io.*;
+import java.io.File;
 
 public class GenerateBranch {
     private static final String blockstateLocation = "blockstates/branch/";
@@ -63,6 +62,59 @@ public class GenerateBranch {
             "  }\n" +
             "}";
 
+    private static final String blockstateLeafyJSON = "{\n" +
+            "  \"variants\": {\n" +
+            "    \"axis=y,extend_positive=false,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy\"\n" +
+            "    },\n" +
+            "    \"axis=y,extend_positive=true,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_pos_extend\"\n" +
+            "    },\n" +
+            "    \"axis=y,extend_positive=false,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_neg_extend\"\n" +
+            "    },\n" +
+            "    \"axis=y,extend_positive=true,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_both_extend\"\n" +
+            "    },\n" +
+            "    \"axis=z,extend_positive=false,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy\",\n" +
+            "      \"x\": 90\n" +
+            "    },\n" +
+            "    \"axis=z,extend_positive=true,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_pos_extend\",\n" +
+            "      \"x\": 90\n" +
+            "    },\n" +
+            "    \"axis=z,extend_positive=false,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_neg_extend\",\n" +
+            "      \"x\": 90\n" +
+            "    },\n" +
+            "    \"axis=z,extend_positive=true,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_both_extend\",\n" +
+            "      \"x\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=false,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=true,extend_negative=false\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_pos_extend\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=false,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_neg_extend\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    },\n" +
+            "    \"axis=x,extend_positive=true,extend_negative=true\": {\n" +
+            "      \"model\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy_both_extend\",\n" +
+            "      \"x\": 90,\n" +
+            "      \"y\": 90\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+
     private static final String modelJSON = "{\n" +
             "    \"parent\": \"minecraft:block/cube\",\n" +
             "    \"textures\": {\n" +
@@ -102,6 +154,7 @@ public class GenerateBranch {
                     "                \"south\": { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" },\n" +
                     "                \"west\":  { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" },\n" +
                     "                \"east\":  { \"uv\": [ LOWXUV, LOWYUV, HIGHXUV, HIGHYUV ], \"texture\": \"#side\" }\n" +
+                    "            }\n" +
                     "        },\n" +
                     "        {\n" +
                     "            \"from\": [ -0.01, -0.01, -0.01 ],\n"+
@@ -120,6 +173,10 @@ public class GenerateBranch {
 
     private static final String itemJSON = "{\n" +
             "  \"parent\": \"tfcr:block/branch/WOOD/block_branch_NUM\"\n" +
+            "}";
+
+    private static final String itemLeafyJSON = "{\n" +
+            "  \"parent\": \"tfcr:block/branch/WOOD/block_branch_NUM_leafy\"\n" +
             "}";
 
     public static void generate() {
@@ -141,9 +198,25 @@ public class GenerateBranch {
 
                 GenerateBase.writeToFile(filePath, toWrite);
 
+                // Leafy Blockstate JSON
+                filePath = blockstateDir + woodType.getName() + "/block_branch_" + i + "_leafy.json";
+                toWrite = blockstateLeafyJSON
+                        .replace("WOOD", woodType.getName())
+                        .replace("NUM", "" + i);
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
                 // Item JSON
                 filePath = itemModelDir + woodType.getName() + "/block_branch_" + i + ".json";
                 toWrite = itemJSON
+                        .replace("WOOD", woodType.getName())
+                        .replace("NUM", "" + i);
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
+                // Leafy item JSON
+                filePath = itemModelDir + woodType.getName() + "/block_branch_" + i + "_leafy.json";
+                toWrite = itemLeafyJSON
                         .replace("WOOD", woodType.getName())
                         .replace("NUM", "" + i);
 
@@ -217,11 +290,84 @@ public class GenerateBranch {
 
                 GenerateBase.writeToFile(filePath, toWrite);
 
+                // Model JSON 5 (leafy, no extend)
+                filePath = modelDir + woodType.getName() + "/block_branch_" + i + "_leafy.json";
+                toWrite = leafyModelJSON
+                        .replace("LEAVES", "leaves_" + woodType.getName())
+                        .replace("WOOD", "wood_" + woodType.getName())
+                        .replace("LOWXUV", "" + (4 - (i / 4f)))
+                        .replace("HIGHXUV", "" + (4 + (i / 4f)))
+                        .replace("LOWYUV", "" + 0)
+                        .replace("HIGHYUV", "" + 8)
+                        .replace("LOWY", "" + 0)
+                        .replace("HIGHY", "" + 16)
+                        .replace("LOWX", "" + (8 - (i / 2)))
+                        .replace("LOWZ", "" + (8 - (i / 2)))
+                        .replace("HIGHX", "" + (8 + (i / 2)))
+                        .replace("HIGHZ", "" + (8 + (i / 2)));
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
+                // Model JSON 6 (leafy, extend negative only)
+                filePath = modelDir + woodType.getName() + "/block_branch_" + i + "_leafy_neg_extend.json";
+                toWrite = leafyModelJSON
+                        .replace("LEAVES", "leaves_" + woodType.getName())
+                        .replace("WOOD", "wood_" + woodType.getName())
+                        .replace("LOWXUV", "" + (4 - (i / 4f)))
+                        .replace("HIGHXUV", "" + (4 + (i / 4f)))
+                        .replace("LOWYUV", "" + 0)
+                        .replace("HIGHYUV", "" + 12)
+                        .replace("LOWY", "" + -8)
+                        .replace("HIGHY", "" + 16)
+                        .replace("LOWX", "" + (8 - (i / 2)))
+                        .replace("LOWZ", "" + (8 - (i / 2)))
+                        .replace("HIGHX", "" + (8 + (i / 2)))
+                        .replace("HIGHZ", "" + (8 + (i / 2)));
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
+                // Model JSON 7 (leafy, extend positive only)
+                filePath = modelDir + woodType.getName() + "/block_branch_" + i + "_leafy_pos_extend.json";
+                toWrite = leafyModelJSON
+                        .replace("LEAVES", "leaves_" + woodType.getName())
+                        .replace("WOOD", "wood_" + woodType.getName())
+                        .replace("LOWXUV", "" + (4 - (i / 4f)))
+                        .replace("HIGHXUV", "" + (4 + (i / 4f)))
+                        .replace("LOWYUV", "" + 4)
+                        .replace("HIGHYUV", "" + 16)
+                        .replace("LOWY", "" + 0)
+                        .replace("HIGHY", "" + 24)
+                        .replace("LOWX", "" + (8 - (i / 2)))
+                        .replace("LOWZ", "" + (8 - (i / 2)))
+                        .replace("HIGHX", "" + (8 + (i / 2)))
+                        .replace("HIGHZ", "" + (8 + (i / 2)));
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
+                // Model JSON 8 (leafy, extend both)
+                filePath = modelDir + woodType.getName() + "/block_branch_" + i + "_leafy_both_extend.json";
+                toWrite = leafyModelJSON
+                        .replace("LEAVES", "leaves_" + woodType.getName())
+                        .replace("WOOD", "wood_" + woodType.getName())
+                        .replace("LOWXUV", "" + (4 - (i / 4f)))
+                        .replace("HIGHXUV", "" + (4 + (i / 4f)))
+                        .replace("LOWYUV", "" + 0)
+                        .replace("HIGHYUV", "" + 16)
+                        .replace("LOWY", "" + -8)
+                        .replace("HIGHY", "" + 24)
+                        .replace("LOWX", "" + (8 - (i / 2)))
+                        .replace("LOWZ", "" + (8 - (i / 2)))
+                        .replace("HIGHX", "" + (8 + (i / 2)))
+                        .replace("HIGHZ", "" + (8 + (i / 2)));
+
+                GenerateBase.writeToFile(filePath, toWrite);
+
                 // Lang file entries
                 GenerateBase.appendToLangFile("block.tfcr.branch." + woodType.getName() + ".block_branch_" + i, i + " wide " + woodType.name + " branch");
+                GenerateBase.appendToLangFile("block.tfcr.branch." + woodType.getName() + ".block_branch_" + i + "_leafy", i + " wide " + woodType.name + " leafy branch");
             }
         }
-        System.out.println("Done. Made " + (WoodType.values().length * 7 * 4) + " branch variant files.");
+        System.out.println("Done. Made " + (WoodType.values().length * 7 * 4 * 2) + " branch variant files.");
     }
 
 

@@ -3,15 +3,19 @@ package tfcr.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.init.ModTabs;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockLog extends net.minecraft.block.BlockLog implements ISelfRegisterBlock, ISelfRegisterItem {
+public class BlockLog extends net.minecraft.block.BlockLog implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
     private static BlockLog[] allBlocks;
 
@@ -44,5 +48,15 @@ public class BlockLog extends net.minecraft.block.BlockLog implements ISelfRegis
             init();
         }
         return allBlocks[type.ordinal()];
+    }
+
+    @Override
+    public void registerItem(IForgeRegistry<Item> itemRegistry) {
+        itemRegistry.register(new ItemBlock(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+    }
+
+    @Override
+    public WoodType getWoodType() {
+        return this.woodType;
     }
 }
