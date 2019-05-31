@@ -131,7 +131,7 @@ Tanning/Leatherworking
 * Growth over time (from sapling -> adult + beyond)
 * Trees 
    * Sapling has a TileEntity that tracks growth progress, and ticks very slowly (~twice an in-game year)
-   * Sapling picks random variation on initial placement, which determines what the adult tree will look like (this is a blueprint, but can have additional random variation like height or leaf placement).
+   * Sapling picks random variation on initial placement, which determines what the adult tree will look like (this is a blueprint, but can have additional random variation like terrainType or leaf placement).
    * On growth request, TileEntity checks if it is possible to grow (if any blocks that should be branches or logs are solid; ensure leaves don't delete blocks; etc.)
       * If possible, then tree grows up
       * If not possible, then go into an idle state where next growth check takes longer. This is to prevent lag from checking growth 
@@ -249,7 +249,7 @@ World (generation)
          * Biome exclusive animals?
    * Some form of challenge on the order of the Nether, the End, or guardian temples, since we plan on removing them from the game. An exploration-based goal
 * Flower textures to give appearance of dense fields
-* Biomes will move away from vanilla predefined areas but will focus on height, ambient temperature, and ambient moisture
+* Biomes will move away from vanilla predefined areas but will focus on terrainType, ambient temperature, and ambient moisture
    * Flowers and trees will have ranges where they can safely grow and naturally spawn
    * Overall goal is to have each area be interesting enough to explore, but scarcity is an acceptable solution for some biomes
 * Add more ambiance 

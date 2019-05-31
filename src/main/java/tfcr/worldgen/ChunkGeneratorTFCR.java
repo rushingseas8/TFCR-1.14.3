@@ -1,24 +1,16 @@
 package tfcr.worldgen;
 
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.gen.AbstractChunkGenerator;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
-import net.minecraft.world.gen.IChunkGenSettings;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraft.world.gen.OverworldGenSettings;
-import net.minecraft.world.gen.WorldGenRegion;
-
-import java.util.List;
+import tfcr.data.TerrainType;
 
 public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
 
@@ -36,7 +28,6 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
     public ChunkGeneratorTFCR(IWorld worldIn, BiomeProvider biomeProviderIn, OverworldGenSettings settings) {
         super(worldIn, biomeProviderIn, settings);
         this.settings = settings;
-
 
         SharedSeedRandom sharedseedrandom = new SharedSeedRandom(this.seed);
         this.minLimitPerlinNoise = new NoiseGeneratorOctaves(sharedseedrandom, 16);
@@ -56,9 +47,9 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
 
     @Override
     public void setBlocksInChunk(int x, int z, IChunk primer) {
-
+        Biome[] biomes = this.biomeProvider.getBiomes(primer.getPos().x * 4 - 2, primer.getPos().z * 4 - 2, 10, 10);
         double[] heightMap = new double[825];
-        generateHeightMap(null, primer.getPos().x * 4, 0, primer.getPos().z * 4, heightMap);
+        generateHeightMap(biomes, primer.getPos().x * 4, 0, primer.getPos().z * 4, heightMap);
 
         // Very basic superflat generation
 //        for (int xPos = 0; xPos < 16; xPos++) {
@@ -133,7 +124,7 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
         // Then use a separate Perlin function for temperature/precip to determine what spawns in the biome.
     }
 
-    private void generateHeightMap(Height[] heights, int x, int y, int z, double[] p_202108_5_) {
+    private void generateHeightMap(Biome[] biomes, int x, int y, int z, double[] p_202108_5_) {
         double[] adouble = this.depthNoise.func_202646_a(x, z, 5, 5, this.settings.getDepthNoiseScaleX(), this.settings.getDepthNoiseScaleZ(), this.settings.getDepthNoiseScaleExponent());
         float f = this.settings.getCoordinateScale();
         float f1 = this.settings.getHeightScale();
@@ -149,18 +140,25 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
                 float f3 = 0.0F;
                 float f4 = 0.0F;
                 int i1 = 2;
-                //Biome biome = p_202108_1_[k + 2 + (l + 2) * 10];
-                Height height = Height.FLAT;
+                Biome biome = biomes[k + 2 + (l + 2) * 10];
+                if (!(biome instanceof PlaceholderBiome)) {
+                    System.out.println("Failed to generate height map. Found invalid biome: " + biome);
+                }
+                TerrainType terrainType = ((PlaceholderBiome) biome).terrainType;
+                //TerrainType terrainType = TerrainType.FLAT;
 
                 for(int j1 = -2; j1 <= 2; ++j1) {
                     for(int k1 = -2; k1 <= 2; ++k1) {
-                        //Biome biome1 = p_202108_1_[k + j1 + 2 + (l + k1 + 2) * 10];
-                        Height height1 = Height.BIG_HILLS;
-                        float f5 = this.settings.func_202203_v() + height1.depth * this.settings.func_202202_w();
-                        float f6 = this.settings.func_202204_x() + height1.scale * this.settings.func_202205_y();
+                        Biome biome1 = biomes[k + j1 + 2 + (l + k1 + 2) * 10];
+                        if (!(biome1 instanceof PlaceholderBiome)) {
+                            System.out.println("Failed to generate height map. Found invalid biome: " + biome1);
+                        }
+                        TerrainType terrainType1 = ((PlaceholderBiome) biome).terrainType;
+                        float f5 = this.settings.func_202203_v() + terrainType1.depth * this.settings.func_202202_w();
+                        float f6 = this.settings.func_202204_x() + terrainType1.scale * this.settings.func_202205_y();
 
                         float f7 = this.biomeWeights[j1 + 2 + (k1 + 2) * 5] / (f5 + 2.0F);
-                        if (height1.depth > height.depth) {
+                        if (terrainType1.depth > terrainType.depth) {
                             f7 /= 2.0F;
                         }
 
@@ -222,22 +220,6 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
                     ++i;
                 }
             }
-        }
-
-    }
-
-    private enum Height {
-        FLAT(0.125f, 0.05f), // Based on plains
-        SMALL_HILLS(0.1f, 0.2f), // Based on forest
-        BIG_HILLS(0.2f, 0.4f), // Based on dark forest hills biome
-        MOUNTAINS(1f, 0.5f); // Based on mountains biome
-
-        private float depth;
-        private float scale;
-
-        Height(float depth, float scale) {
-            this.depth = depth;
-            this.scale = scale;
         }
     }
 }
