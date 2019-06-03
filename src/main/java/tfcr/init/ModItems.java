@@ -11,6 +11,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.data.OreType;
+import tfcr.items.ItemFishingRodTFCR;
 import tfcr.items.ItemOre;
 
 @Mod.EventBusSubscriber(modid = TFCR.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -30,6 +31,7 @@ public class ModItems {
                 ((ISelfRegisterItem) b).registerItem(registry);
             }
         }
+        event.getRegistry().register(new ItemFishingRodTFCR());
 
         event.getRegistry().registerAll(
                 new ItemOre(OreType.BISMUTHINITE, new Item.Properties().group(ItemGroup.MATERIALS)).setRegistryName(TFCR.MODID, "ore/bismuthinite")

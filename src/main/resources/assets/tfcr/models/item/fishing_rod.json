@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "tfcr:blocks/flowers/chamomile_0"
+    "layer0": "tfcr:item/fishing_rod"
   }
 }
