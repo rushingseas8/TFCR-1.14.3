@@ -35,7 +35,7 @@ public class WorldTypeTFCR extends WorldType {
      */
     @Override
     public IChunkGenerator<?> createChunkGenerator(World world) {
-        //SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(ModBiomes.BIOME_TFCR_BASE);
+//        SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(ModBiomes.BIOME_TFCR_BASE);
         return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(world.getWorldInfo(), new OverworldGenSettings()), new OverworldGenSettings());
     }
 

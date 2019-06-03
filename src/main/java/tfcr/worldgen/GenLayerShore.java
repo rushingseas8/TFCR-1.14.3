@@ -14,7 +14,7 @@ public enum GenLayerShore implements ICastleTransformer {
         }
 
         // Center is not ocean, but we're surrounded by ocean. Return beach.
-        if (hasOcean(south, east, north, west) && !LayerUtilsTFCR.isOcean(center)) {
+        if (hasOcean(south, east, north, west) && !LayerUtilsTFCR.isOcean(center) && center != LayerUtilsTFCR.RIVER) {
             return LayerUtilsTFCR.BEACH;
         }
 

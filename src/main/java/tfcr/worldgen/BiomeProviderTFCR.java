@@ -38,13 +38,15 @@ public class BiomeProviderTFCR extends BiomeProvider {
     public static final Biome[] biomes = new Biome[] {
             new PlaceholderBiome(TerrainType.DEEP_OCEAN),
             new PlaceholderBiome(TerrainType.OCEAN),
-            new PlaceholderBiome(TerrainType.RIVER),
-            new PlaceholderBiome(TerrainType.BEACH),
+            new BeachBiome(),
+            new RiverBiome(),
             new PlaceholderBiome(TerrainType.FLAT),
             new PlaceholderBiome(TerrainType.SMALL_HILLS),
             new PlaceholderBiome(TerrainType.BIG_HILLS),
             new PlaceholderBiome(TerrainType.MOUNTAINS),
     };
+
+    private static final Biome DEFAULT = biomes[4];
 
     /**
      * Creates a new BiomeProvider for TFCR.
@@ -64,17 +66,17 @@ public class BiomeProviderTFCR extends BiomeProvider {
     @Nullable
     @Override
     public Biome getBiome(BlockPos pos, @Nullable Biome defaultBiome) {
-        return this.cache.getBiome(pos.getX(), pos.getZ(), biomes[3]);
+        return this.cache.getBiome(pos.getX(), pos.getZ(), DEFAULT);
     }
 
     @Override
     public Biome[] getBiomes(int startX, int startZ, int xSize, int zSize) {
-        return this.genBiomes.generateBiomes(startX, startZ, xSize, zSize, biomes[3]);
+        return this.genBiomes.generateBiomes(startX, startZ, xSize, zSize, DEFAULT);
     }
 
     @Override
     public Biome[] getBiomes(int x, int z, int width, int length, boolean cacheFlag) {
-        return cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0 ? this.cache.getCachedBiomes(x, z) : this.biomeFactoryLayer.generateBiomes(x, z, width, length, Biomes.DEFAULT);
+        return cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0 ? this.cache.getCachedBiomes(x, z) : this.biomeFactoryLayer.generateBiomes(x, z, width, length, DEFAULT);
     }
 
     @Override

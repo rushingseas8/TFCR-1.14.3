@@ -19,7 +19,7 @@ public enum GenLayerAddMountain implements IC1Transformer {
         } else {
             // Otherwise roll a six sided die
             int i = context.random(6);
-            if (i == 0) { // 1/6 chance to turn into small hills in vanilla. Big hills in TFCR.
+            if (i == 0) { // 1/6 chance to turn into forest in vanilla. Big hills in TFCR.
                 return BIG_HILLS;
             } else {
                 // 1/6 chance to turn into mountains

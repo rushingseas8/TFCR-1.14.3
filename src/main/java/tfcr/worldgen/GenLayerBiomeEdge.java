@@ -31,6 +31,50 @@ public enum GenLayerBiomeEdge implements ICastleTransformer {
 
     @Override
     public int apply(IContext context, int south, int east, int north, int west, int center) {
-        return center;
+        // Ocean pass-through
+        if (LayerUtilsTFCR.isOcean(center)) {
+            return center;
+        }
+
+        // Found river. This shouldn't happen, since we add rivers at some point after this code.
+        if (center == LayerUtilsTFCR.RIVER) {
+            return center;
+        }
+
+        // Else, we take an average of all the non-water tiles around us.
+        int average = 0;
+        int count = 0;
+        if (!LayerUtilsTFCR.isWater(south)) {
+            average += south;
+            count++;
+        }
+        if (!LayerUtilsTFCR.isWater(east)) {
+            average += east;
+            count++;
+        }
+        if (!LayerUtilsTFCR.isWater(north)) {
+            average += north;
+            count++;
+        }
+        if (!LayerUtilsTFCR.isWater(west)) {
+            average += west;
+            count++;
+        }
+
+        // Prevent divide by 0 errors. This could occur if this is a tiny island or ocean.
+        if (count == 0) {
+            return center;
+        }
+
+        // Take the floored average. This tends to flatten land.
+        average = average / count;
+
+        // Shouldn't happen.
+        if (LayerUtilsTFCR.isOcean(average)) {
+            System.out.println("BiomeEdge average produced water?");
+            return center;
+        }
+
+        return average;
     }
 }

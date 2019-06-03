@@ -12,6 +12,12 @@ public enum GenLayerRiver implements ICastleTransformer {
     @Override
     public int apply(IContext context, int south, int east, int north, int west, int center) {
         // TODO implement Vanilla GenLayerRiver, but first understand what that does
+
+        // Skip ocean
+//        if (LayerUtilsTFCR.isOcean(center)) {
+//            return -1;
+//        }
+
         int i = riverFilter(center);
         return i == riverFilter(north) && i == riverFilter(south) && i == riverFilter(east) && i == riverFilter(west) ? -1 : RIVER;
     }
@@ -22,5 +28,9 @@ public enum GenLayerRiver implements ICastleTransformer {
 
 
         return value >= 2 ? 2 + (value & 1) : value;
+//        if (LayerUtilsTFCR.isOcean(value)) {
+//            return 1000 + (value & 1);
+//        }
+//        return value;
     }
 }

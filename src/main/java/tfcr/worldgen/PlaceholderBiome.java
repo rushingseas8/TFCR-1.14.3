@@ -10,18 +10,21 @@ public class PlaceholderBiome extends Biome {
     public TerrainType terrainType;
 
     protected PlaceholderBiome(TerrainType type) {
-        super(new BiomeBuilder()
+        this(type, new BiomeBuilder()
                 .surfaceBuilder(new CompositeSurfaceBuilder<>(DEFAULT_SURFACE_BUILDER, GRASS_DIRT_GRAVEL_SURFACE))
-                .category(Category.DESERT)
+                .category(Category.PLAINS)
                 .depth(type.depth)
                 .scale(type.scale)
                 .downfall(0f)
                 .precipitation(RainType.RAIN)
-                .temperature(0f)
+                .temperature(0.5f)
                 .waterColor(4159204)
                 .waterFogColor(329011)
-                .parent("none")
-        );
+                .parent("none"));
+    }
+
+    protected PlaceholderBiome(TerrainType type, BiomeBuilder builder) {
+        super(builder);
 
         this.terrainType = type;
         this.setRegistryName(TFCR.MODID, "placeholder_" + type.name().toLowerCase());

@@ -43,6 +43,10 @@ public class LayerUtilsTFCR {
         return terrainType == OCEAN;
     }
 
+    public static boolean isWater(int terrainType) {
+        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH;
+    }
+
     /**
      * Repeats a given GenLayer a number of times.
      * @param seed The base seed for the RNG. We start at this value, and increment it by 1 each loop.
@@ -107,14 +111,14 @@ public class LayerUtilsTFCR {
         // River and biome size setup
         int biomeSize = 4;
         int riverSize = 4;
-        if (settings != null) {
-            biomeSize = settings.getBiomeSize();
-            riverSize = settings.getRiverSize();
-        }
+//        if (settings != null) {
+//            biomeSize = settings.getBiomeSize();
+//            riverSize = settings.getRiverSize();
+//        }
 
         // lvt_7_1_ --> riverAreaFactory
         IAreaFactory<T> riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
-        riverAreaFactory = GenLayerRiverInit.INSTANCE.apply((IContextExtended)contextFactory.apply(100L), riverAreaFactory);
+        riverAreaFactory = GenLayerRiverInit.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
 
         // Add Biomes using getBiomeLayer. The TFCR variation uses TerrainType-based logic.
         // lvt_8_1_ --> biomesAreaFactory
@@ -122,30 +126,29 @@ public class LayerUtilsTFCR {
 
         // lvt_9_1_ --> zoomedRiverInitAreaFactory
 //        IAreaFactory<T> zoomedRiverInitAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, 2, contextFactory);
-        // Hills skipped, since we're already adding hills
+        biomesAreaFactory = GenLayerHills.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Random chance to raise land (modified from orig)
         riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, 2, contextFactory);
         riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, riverSize, contextFactory);
-        riverAreaFactory = GenLayerRiver.INSTANCE.apply((IContextExtended)contextFactory.apply(1L), riverAreaFactory); // Add rivers
-        riverAreaFactory = GenLayerSmooth.INSTANCE.apply((IContextExtended)contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
+        //riverAreaFactory = GenLayerRiver.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
+        riverAreaFactory = repeat(1L, GenLayerRiver.INSTANCE, riverAreaFactory, 5, contextFactory); // Add a LOT of rivers
+        riverAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
 
         // Bunch more river, smoothing, island, and shore stuff on river factory here
 
         // Expand the biomes as needed; based on biomeSize parameter
         for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
-            biomesAreaFactory = GenLayerZoom.NORMAL.apply((IContextExtended)contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
+            biomesAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
             if (zoomIteration == 0) {
-                biomesAreaFactory = GenLayerAddIsland.INSTANCE.apply((IContextExtended)contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
+                biomesAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
             }
 
             if (zoomIteration == 1 || biomeSize == 1) {
-                biomesAreaFactory = GenLayerShore.INSTANCE.apply((IContextExtended)contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+                biomesAreaFactory = GenLayerShore.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
             }
         }
 
-        // TODO make rivers bigger
-        // TODO it seems like everything is flat biome?
-        biomesAreaFactory = GenLayerSmooth.INSTANCE.apply((IContextExtended)contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
-        biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply((IContextExtended)contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+        biomesAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
+        biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
         // No ocean temperature mixing at this time
         IAreaFactory<T> voronoiZoomed = GenLayerVoronoiZoom.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
 
