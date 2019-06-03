@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "tfcr:blocks/wood/log/wood_kapok",
+    "side": "tfcr:blocks/wood/bark/wood_kapok"
+  }
+}

@@ -1,0 +1,309 @@
+﻿Agriculture
+* Crop Mutation → Idea is to provide a skill-based way of producing more efficient crops vs. vanilla just exponentially growing the seed reserves
+   * Crops can be selectively bred
+   * Crops start as non domesticated variants
+   * Can evolve into more recognizable breeds
+   * Examples:
+      * Crabapples -> apples
+      * Pears (small, not sweet) -> pears (bigger, sweet)
+      * Pomelo/Citron/Mandarin -> all citrus fruits
+      * Teosinte -> corn
+      * Potatoes (poisonous?, fingerling size) -> potatoes today
+      * Wild tomatoes (yellow, cherry size) -> tomatoes today
+      * Cereal crops (wheat, rye, barley) -> modern species (Millet, Emmer, Spelt; should we support individual cultivars?)
+      * Sour cherries -> larger, more nutritious sweet cherries
+      * Cabbage -> Larger cabbage, broccoli, kale, brussels sprouts, cauliflower
+   * Balance idea: crops have a chance to mutate when within 3-15 blocks of other species (of the same or different plant, doesn't matter). Thus, preserving desirable seeds is hard without having a larger farm, which itself is harder to do early game. → (gives reason to have aqueduct over farming near river deltas)
+   * Bees can allow crops to mutate over larger distances, or faster/more likely when within the 3-15 block limit defined above. → (provides a more endgame farming strategy)
+* Crop Rotation → Idea is to prevent the meta of repeatedly growing vast fields of one crop and surviving on just e.g. wheat/potatoes like in vanilla.
+   * [Simple idea] Have a nutrition value 0-3. 0 = no grow; 1 = reduced yield, slower growth; 2 = normal yield and growth; 3 = boosted yield and growth.
+      * "High value crops" (which can provide food, like potatoes/carrots/corn/wheat; or resources, like hemp, cotton, etc) will decrement the nutrition value by 1 when fully grown
+      * "Fixing crops" (like clover, beans, etc) instead increase the nutrition value by 2 up to a limit of 2 when fully grown
+         * Some crops can be both high value or fixing crops; e.g., sugarbeets can have their tops trimmed, left to rot, and the soil re-tilled to act as a natural green fertilizer
+      * Leaving fields fallow increases nutrition by 1 per season/year left fallow, up to a limit of 2
+      * Fertilizer (manure, compost, bonemeal+potash, etc) increases nutrition value by 1, up to a limit of 3
+      * Mixing crops in certain patterns (possibly alternating a checkerboard of corn and beans, for example; or having 1 bean crop for every 3 corn on average; subject to balancing) will not decrement the nutrition value on any soil when fully grown
+      * Pouring salt on the earth with reduce nutrition to 0 (or potentially below 0 to emphasize how bad it is)
+   * [Complex idea] Have some level of full soil mechanics. In order of importance: Nitrogen, Potassium, and Phosphorus (NPK) as the basic 3 nutrients; Ca/Mg/Zn as secondary; sunlight, temperature, moisture, salinity, pH, etc. Mechanics work same as above, but each plant has unique effects on each of these parameters, and a desired range (which can be changed via selective breeding). Complexity can be tweaked with this idea to suit gameplay.
+* Industrial Crops → Idea is to provide additional gameplay features from farming instead of just using it as a means for food
+   * Building
+      * Bamboo - Structural Support (fast growing, comparable to wood)
+      * Hemp - Hempcrete (fuck it's hard finding a decent source that's not a stoner site), rope, 
+      * Jute - Rope
+      * Tree farming? (compare to bamboo, but slower)
+   * Clothing
+      * Cotton
+      * Hemp
+* Processing Wheat
+   * Reap (w/ scythe or knife) → straw + wheat 
+   * Threshing (grindstone, stones) → chaff + wheat berries
+   * Winnowing (bowl, sieve) → more chaff + wheat berries
+   * Milling (windmills? grindstone) → flour
+   * Dabbing.
+* Corn
+   * Can make it into a high fructose thing idk future shit
+Fishing
+* Rod fishing
+   * More complex minigame than Vanilla
+      * Right click when fish bites → start reeling in
+      * Hold right click to reel in. If the fish is swimming towards you, this reels in successfully; else, the line has a chance to break each tick. Buffer time based on the fish; more valuable fish need faster reaction times, and swim faster/fight harder
+   * Bone/metal hooks
+   * Lures? 
+      * Shiny objects
+      * Things that flutter when moving in the water (feathers, leaves
+   * Bait
+      * Increase chance of getting a bite
+      * Worms, bugs, chum from other fish
+         * Different bait attracts different fish.
+         * Worms/Bugs bait smaller fish
+         * Chum bait larger fish
+         * Small fish bait massive fish/ocean fish
+      * Can be attached to fishing rod? Consumed when rod is cast (like arrow) and updates fishing rod inventory icon?
+   * Lines
+      * Different materials for lines give different break chances, other effects (e.g., less drag = faster reeling?)
+      * String materials (string, jute fiber rope, small metal chain)
+   * Rods
+      * Stronger materials can be used to catch heavier fish; possibly multiple variables for determining what a good rod is to encourage a diversity of different rod types. E.g. material strength, flexibility
+   * Tackle box
+      * Backpack-like item; only holds fishing items. Helps reduce inventory clutter if rods and lines can break; hooks can get lost; bait is needed, etc.
+   * Possible realism addition: add a model for a hook to the end of the bobber; make fish models swim up to the hook for a bite, and swim underwater for more visual feedback
+* Harpoon fishing
+   * Can be thrown into the water to try to catch fish (could be simulated; as in you don't try to hit fish models) for a chance to obtain a fish when harpoon is picked up
+   * If you try to hit actual fish models, though:
+      * Update fish AI so that fish swim away from movement in the water. So swimming near fish, walking on the surface, dropping items, etc. will scare them (thus making it impossible to "fish" by killing fish models underwater)
+      * Harpoon doesn't slow down as much as e.g. arrows underwater
+      * Hitting a fish instakills them (or, depending on complexity, "skewers" the fish model onto the harpoon, and picking up the harpoon gives the fish + harpoon back)
+* Net fishing (trap fishing)
+   * Weaving a net out of string/rope and leaving it on the bank of a river with a frame made of sticks → passive fish when picked up, on the timescale of days later
+      * Expect nets to be fairly expensive, requiring decent quantities of rope
+   * If fish models, then AI could randomly swim by the net and have a chance to get trapped
+   * Traps can be baited to increase yield.
+* Fish caught should be affected by day/night cycle, moon phase, seasons, and location of water (biome, fresh vs. salt, river vs. lake vs. ocean vs. pond). 
+* Realism: fishing in vanilla is infinite. We could limit this by making fish models spawn initially in water and reproduce seasonally, and grow up over time. Additionally, caught fish could be labelled as "young" as a hint to throw them back. Thus encouraging people to fish sustainably 
+   * Result from discussion: Continue by keeping infinite fishing, but consider nerfing early game fishing to make it a harder to obtain renewable resource. Additionally look into fish catch rates per unit time, hunger restoration per fish, and limiting fishing to large natural bodies of water (no reservoirs; no small ponds).
+Mining 
+* Provide additional variety to mining
+   * Additional early game variety of means to acquire ore
+      * Nuggets on the ground (TFC)
+      * Rare big veins underground (TFC)
+      * Uncommon small veins underground (Vanilla)
+   * Caving changes
+      * Should be more of a midgame activity (vs. earlygame in vanilla)
+      * Vanilla has fairly interesting cave networks. TFC has a prospecting system with potential. Ideally we should find a way to use both. (Possibility: ores spawn like in vanilla, but at a reduced rate; large ore veins like in TFC are rare, and need to be sought out using prospecting mechanic)
+         * Possibly make it harder to mine stone to force players to build scaffolds/ladders to navigate (not too sold on the idea → limits the player more than anything. Can just provide navigation tools in addition)
+      * Mobs that spawn uniquely in caves
+         * Critters (small to large spiders; mice; rats; snakes; bugs like centipedes that run from light; bats)
+         * Underwater fish in underground water
+         * Horror elements (shadows like in the night that avoid light, but more aggressive the deeper you go?)
+      * Dangers
+         * Cave-ins (need to be preventable; TFC makes them unpredictable, which is bad game design. Mechanic needs to be nerfed if we want to keep it. Support beams should be more effective)
+         * Falling rocks
+         * Falling/sliding down
+         * Cave floods (IRL due to rainwater; in-game possibly having structures form that require swimming to explore fully?)
+         * Earthquakes (as above, bad due to being unpredictable) 
+         * Oxygen requirements (CO2 sinks while O2 rises, so you need to be careful about where you dig. Torches less effective the lower the O2 levels. Could possibly also consume nearby Oxygen?)
+         * Temperature (most of the cave = cold; deepest parts = hotter)
+Smithing
+* Aim to recreate TFC's blacksmithing and smelting mechanics, since consensus is that was the best part of the mod.
+* Make flux more accessible by increasing the number of materials that can be used, or just make flux more commonly found.
+   * A few notes on flux: It may not be necessary in all cases. Flux protects the surface of materials prior to being welded. If welding two pieces of metal together, flux is needed there, but not when forging out of large pieces. 
+   * Flux is also used as a finishing product and isn’t strictly necessary in that case either, although without flux, a lower quality or weaker piece might be constructed.
+   * Size of metal could limit what can be made out of the piece. Small pieces can be made into jewelry and trinkets, medium sized can produce knives, while large pieces produce weaponry, armor, tools, etc.
+   * Size can be controlled by splitting pieces or by using a forge and flux to bind pieces together.
+   * Examples of early flux include: silica sand, beeswax, rosin, soda ash, potash, charcoal, borax, lime, and lead sulfide
+      * Each type of flux has different purposes, but more research is needed on specifics.
+* Decorative smithing. Ceremonial swords, ability to customize designs, etc. that all require higher levels of skill to make. Not needed for progression but gives additional vanity goals.
+Tanning/Leatherworking
+* Animal skins have to be acquired in whichever means and the process for tanning is largely the same. However, there are different methods of tanning which produce different results.
+   * General process is: Salt -> Soak -> Scrape/Stretch -> Treatment
+      * Salt can be omitted based on type of skin
+         * Salting process can be done in large bundles of several sheets of leather lasting 30 IRL days (time needs to be adjusted to MC days)
+         * Salting can also be done in brine for around 16 IRL days (adjust to MC days). Can only be done with certain leathers.
+      * Soaking involves clean water only. Length depends on animal skin size.
+      * Scraping refers to removing all the hair and flesh from the hide. Skin is typically stretched during or after scraping.
+      * Treatment has a range of options from lime baths, to rawhide treatments, vegetable tanning, brain tanning, and fish oil tanning (chamois) 
+         * Lime baths -- Produces a 
+   * Different animals have historically different tanning methods
+      * Moose -- Soak for couple days, scrape off hair and flesh, stretch and dry for a few more days, soaked again to clean the hide, then moved to solution with moose brain (or soap and fat mixture) and massaged while in the mixture. Repeat if necessary. It’s usable at this point, but recommended to smoke over hot coals to preserve it. Yields a soft leather in comparison. Moose Hide Tanning
+      * Woodstuff
+* Variety of trees
+* Unique structures 
+* Growth over time (from sapling -> adult + beyond)
+* Trees 
+   * Sapling has a TileEntity that tracks growth progress, and ticks very slowly (~twice an in-game year)
+   * Sapling picks random variation on initial placement, which determines what the adult tree will look like (this is a blueprint, but can have additional random variation like terrainType or leaf placement).
+   * On growth request, TileEntity checks if it is possible to grow (if any blocks that should be branches or logs are solid; ensure leaves don't delete blocks; etc.)
+      * If possible, then tree grows up
+      * If not possible, then go into an idle state where next growth check takes longer. This is to prevent lag from checking growth 
+   * Saplings slightly slow player movement (freshly planted = 10% drop, slightly grown = 20%, 2 wide branch = 40%, subject to balancing)
+Beekeeping
+* Source of food - honey can be eaten or used to preserve other foods
+   * Honey can be used to make a poultice/bandage (with cloth) as a regeneration potion type of item
+* Source of beeswax
+   * Used as a waterproof repair material
+   * Used as flux
+   * Candles
+   * List to be continued
+* Production is benefited from surrounding flowers and plants
+* Bees also cross pollinate nearby crops, increasing chance of mutation
+Tool Maintenance?
+* Tools may degrade base on how they are treated and how often they are used
+* Tools may be reinforced by other materials
+* Tool durability might be affected by environment in which tools are stored?
+   * e.g. leaving metal tools on tool racks in the rain rusts them, lowering durability
+Building Maintenance
+* Damaged states for blocks:
+   * Wood blocks
+      * Termites
+      * Rot/Mold
+      * Water damage
+   * Fences
+      * Walls can fall over, allowing mobs to pass through
+      * Wooden fences can suffer from the same damage as wooden blocks
+   * Thatch
+      * Water damage
+      * Rot
+   * Stone (and variants: cobble, smooth, chiseled, mossy, etc.)
+      * Cracks
+      * Disintegrate
+   * Clay (and variants: terracotta, bricks)
+      * Cracks
+      * (Shingles) may fall off
+   * Sandstone (and variants: cut, smooth, chiseled)
+      * Water damage (holes)
+      * Cracks
+   * Iron bars/glass/glass panes
+      *    * General (other blocks not fitting above, but player placed; need to be considered)
+      * Should these have damage as well?
+      * Sand/gravel
+      * Dirt/grass
+      * Ice/snow blocks
+      * Ores
+      * Chests/furnaces/etc
+      * Obsidian
+      * Natural blocks: leaves, logs, stone, dirt, grass (e.g., making a base under treetops or in a cave)
+         * Leaves should always propagate "rain exposed" property below
+         * Natural stone should always be treated as "damp" for water damage purposes
+* Different factors affect a block’s maintenance level
+   * Location and nearby factors play a role
+      * Mold and termites spread to adjacent blocks
+      * Water damage can seep through ceilings onto floors
+      * Exposure to elements speeds up decay
+         * Water directly next to a block speeds up decay significantly
+         * Direct rain exposure (e.g., roof blocks) speeds up
+         * Snow sitting on roof can cause collapse (?)
+      * Internal blocks have base rate of decay
+         * (Need to better define "inside" vs. "outside") Internal blocks are defined as blocks that do not touch the outside world
+   * General biome the block is in
+      * Ambient moisture increases degradation rate
+      * Desert, on the other hand, slow down the decay rate tremendously
+* Damage can be mitigated in some cases, like wood can be finished
+   * Varnish protects the wood
+   * Stains act like a varnish but also color the wood
+   * Plaster on walls helps preserve the wood/stone
+   * Tar/pitch/placing down a tarp between roof and ceiling to prevent water damage from spreading below
+* More often than not repairs need to be done to preserve the block
+   * Wooden planks can be reboarded, but may need to be replaced if severely damaged enough
+   * Fences should be replaced where viable
+   * Water damage can be patched up with tar or resins
+   * Clay and thatch roofs can be repaired with their respective resources
+Forcing the player to Sleep
+* (Bad game design) Give debuffs for not sleeping - depends on how 
+* Give buffs for sleeping regularly
+* Add horror elements to the nighttime → Idea is to make the player think "I would rather sleep than deal with the night" rather than "the night being difficult hinders my gameplay"
+   * Ambient sound effects (voices, screaming, barking, industrial noises)
+   * Pitch black human or canine entities with AI that avoids the player and light sources (simulating shadows moving)
+      * Possibly with eyes that blink, possibly models that resemble ghosts
+      * Possibly grotesque models with many limbs, etc. to horrify player
+Forcing the player to Eat
+* Nutrition mechanics - encourage the player to want to eat a variety of foods
+   * Debuffs (sickness) from not getting proper nutrition
+* Shelve for now until we find a better solution.
+Forcing the player to build shelters
+* Forcing specific building designs (Not really necessary- not many good gameplay reasons for it, and most player-built shelters are already sufficient. Cellar isn't a bad idea; if temperature is added, enclosed structures might be more temperate)
+   * Building a foundation to support building taller buildings
+   * Needing support structures (consecutive same-direction logs) to build floors
+   * Sloped roofs to prevent snow from collapsing the roof in under its weight
+   * Cellars to provide cool environment for better food storage
+* Temporary shelters
+   * Either physically built out of readily accessible materials (caves, sticks, leaves) or crafted (3 branch blocks + 5 leaves on top = makeshift lean-to)
+   * Allow for small area safe from rain, wind, and to a lesser extent temperature
+   * Degrades over time (hours or days), possibly can be repaired with more resources
+World (generation)
+* Diversify the world by adding a lot of underbrush
+   * More variants of tall grass
+      * Wildflower variant of tall grass (act like grass in every way, don't give "wildflower" item when harvested like regular flowers do)
+      * Additional flowers of many different colors (chamomile, hydrangea, lavender, thistle, etc.) which can be replanted
+   * Trees spawn in different stages of growth instead of fully grown
+      * 1 block and 2 block tall saplings that slow walking but not block it, to add diversity
+      * Young trees that are small and blend with bigger trees
+* Forests that transition more smoothly
+   * Separate structural worldgen from decoration on top; have temperature/humidity hidden variable that is used to generate forests, instead of having "birch forest", "oak forest", etc. Have structure determine flat vs. hills vs. mountain
+* Provide more reasons to explore
+   * Villages (can keep vanilla for now. Later flesh these out to add inter-village trading and wars; complex citizen demands for player interaction; ability for villages to harvest resources and expand based on what they've acquired, so they chop down forests to build houses, etc)
+   * Interesting, unique landmarks (waterfalls, boulders, other structures similar to Vanilla shipwrecks and igloos)
+   * Diverse materials that need distance exploration should reward the player, but should not necessarily be required (think sand in Vanilla: you can get it in small quantities almost anywhere, but a desert is better. Cactus isn't necessary, but useful for green dye. Vs. salt in TFC, which is necessary to progress, and even harder to find than cactus is in Vanilla). 
+      * [Note: in general, the more necessary something is, the easier it should be to obtain to reduce player frustration]
+      * Additional biomes with their own challenges/resources?
+         * Temperature regulation through clothes based on biomes?
+         * Biome exclusive animals?
+   * Some form of challenge on the order of the Nether, the End, or guardian temples, since we plan on removing them from the game. An exploration-based goal
+* Flower textures to give appearance of dense fields
+* Biomes will move away from vanilla predefined areas but will focus on terrainType, ambient temperature, and ambient moisture
+   * Flowers and trees will have ranges where they can safely grow and naturally spawn
+   * Overall goal is to have each area be interesting enough to explore, but scarcity is an acceptable solution for some biomes
+* Add more ambiance 
+   * Birds that fly around (plenty of different textures)
+   * More fish models with better AI
+   * Fireflies at night
+   * Additional mobs (wolves, foxes, bears at nighttime; rabbits, deer in the day)
+   * Sound effects (crickets chirping, birds singing, leaves rustling, water flowing)
+   * Biome specific sounds? (forest wind vs. prairie wind)
+Water
+* Water source blocks cannot be moved.
+* However, naturally spawning water can be in one of two flavors:
+   * Infinite water:
+      * Oceans give salt water
+      * Rivers and lakes give freshwater
+      * A lake is any body of water inland and that is greater than 20 source blocks in one area
+   * Reservoirs:
+      * Any body of water 20 or less source blocks acts like a water storage tank
+      * Artificial reservoirs can be built (a la Agricraft reservoirs)
+      * Reservoirs are not infinite and can be drained but can also be filled with rainfall.
+* Saltwater can be desalinated. Acts like freshwater after the fact.
+   * Watering crops with saltwater → reduces nutrition to 0 or lower (and procs an advancement "So now you've salted your crops..")
+* Farmland can be watered with freshwater and proximity to water is irrelevant as long as the land is continuously watered.
+Advancements/Survival Guide
+* Use Minecraft’s advancement system to advance the player
+* Survival Guide is a book spawned in the player’s inventory.
+   * Updates with new information as the player advances through the advancement system.
+   * Information may include gameplay hints and general information on the process.
+New Block ideas (tentative)
+* Concrete (mid/lategame building material, expensive, but high durability)
+* Reinforced concrete: steel rebar + concrete
+* Asphalt: natural bitumen reserves in the desert/underground; used as a tar-like substance for waterproofing. Can be poured over concrete to make asphalt roads
+* Bundled leaves: leaf blocks drop 3-5 leaf items; combine with any string/rope and/or a stick to make a more sturdy leaf block. Blocks rain, unlike natural leaves, though slightly more expensive. Normal leaf blocks can be crafted from leaf bundles?
+* Clay shingle block: roofing material, shape of stairs but flat on top? Made from fired clay shingles
+* Reservoir block [name wip]. Placing tar/tarp on a surface makes it waterproof; fully enclosing a region makes it able to hold water (either via bucket, rainwater, or any other future water producing means).
+General
+* Break down gameplay into different jobs/professions, and focus on making each one as unique and interesting as blacksmithing.
+* Examples:
+   * Fishing
+   * Lumberjacking
+   * Mining
+   * Smithing
+   * Farming
+   * Leatherworking
+   * Pottery
+   * Cooking
+   * Animal husbandry/slaughter
+   * Adventurer/exploring
+   * Glassmaking? (creative?)
+* Creative professions? (Flavor or for fun. Perhaps villager professions may include these. Stretch?)
+   * Sculptor?
+   * Mason?
+   * Carpenter?
+   * Painter?
+   * Textile worker?
+   * Various Tradesmen? Vanity craftsmen (jewelers)?
+* Should maps be kept? Cartographer profession?

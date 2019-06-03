@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "tfcr:block/log/douglas_fir"
+    },
+    "axis=z": {
+      "model": "tfcr:block/log/douglas_fir",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "tfcr:block/log/douglas_fir",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

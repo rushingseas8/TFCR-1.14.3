@@ -1,0 +1,6 @@
+{
+  "parent": "tfcr:block/tinted_cross",
+  "textures": {
+    "cross": "tfcr:blocks/wood/sapling/aspen"
+  }
+}

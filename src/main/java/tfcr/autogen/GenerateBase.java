@@ -13,6 +13,11 @@ public class GenerateBase {
 
     public static void writeToFile(String path, String contents) {
         File file = new File(path);
+        if (!file.getParentFile().exists()) {
+            System.out.print("Trying to create directory: \"" + file.getParentFile() + "\"... ");
+            boolean success = file.getParentFile().mkdir();
+            System.out.println(success ? "Success." : "Failed!");
+        }
 
         try (
             BufferedWriter bos = new BufferedWriter(new FileWriter(file))
@@ -33,7 +38,9 @@ public class GenerateBase {
 
     public static void main(String[] args) {
         GenerateBranch.generate();
-
+        GenerateLog.generate();
+        GenerateLeaves.generate();
+        GenerateSapling.generate();
         /*
 
   "block.tfcr.block_branch": "Branch",
@@ -48,6 +55,9 @@ public class GenerateBase {
 
         appendSpacerToLangFile();
         appendToLangFile("item.tfcr.ore.bismuthinite", "Bismuthinite");
+
+        appendSpacerToLangFile();
+        appendToLangFile("itemGroup.tfcrWood", "TFCR Wood");
 
         langFile.delete(langFile.length() - 2, langFile.length());
         langFile.append("\n}\n");

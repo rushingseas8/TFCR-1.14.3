@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "tfcr:block/log/white_cedar"
+    },
+    "axis=z": {
+      "model": "tfcr:block/log/white_cedar",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "tfcr:block/log/white_cedar",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

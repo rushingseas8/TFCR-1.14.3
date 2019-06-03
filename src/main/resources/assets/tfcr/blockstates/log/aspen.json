@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "tfcr:block/log/aspen"
+    },
+    "axis=z": {
+      "model": "tfcr:block/log/aspen",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "tfcr:block/log/aspen",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

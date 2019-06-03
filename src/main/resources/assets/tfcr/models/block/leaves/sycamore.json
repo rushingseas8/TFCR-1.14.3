@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "tfcr:blocks/wood/leaves/leaves_sycamore"
+  }
+}

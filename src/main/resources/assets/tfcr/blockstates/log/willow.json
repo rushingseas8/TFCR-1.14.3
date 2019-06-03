@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "tfcr:block/log/willow"
+    },
+    "axis=z": {
+      "model": "tfcr:block/log/willow",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "tfcr:block/log/willow",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "axis=y,extend_positive=false,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy"
+    },
+    "axis=y,extend_positive=true,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_pos_extend"
+    },
+    "axis=y,extend_positive=false,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_neg_extend"
+    },
+    "axis=y,extend_positive=true,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_both_extend"
+    },
+    "axis=z,extend_positive=false,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy",
+      "x": 90
+    },
+    "axis=z,extend_positive=true,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_pos_extend",
+      "x": 90
+    },
+    "axis=z,extend_positive=false,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_neg_extend",
+      "x": 90
+    },
+    "axis=z,extend_positive=true,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_both_extend",
+      "x": 90
+    },
+    "axis=x,extend_positive=false,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=true,extend_negative=false": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_pos_extend",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=false,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_neg_extend",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,extend_positive=true,extend_negative=true": {
+      "model": "tfcr:block/branch/spruce/block_branch_8_leafy_both_extend",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
