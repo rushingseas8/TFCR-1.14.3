@@ -4,13 +4,10 @@ import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
 import tfcr.data.TerrainType;
 
+import static tfcr.worldgen.LayerUtilsTFCR.FLAT;
+
 public enum GenLayerRemoveTooMuchOcean implements ICastleTransformer {
     INSTANCE;
-
-    //int south, int east, int north, int west, int center
-
-    // Reference to the Flat placeholder biome index
-    private static final int FLAT = TerrainType.FLAT.ordinal();
 
     /**
      * If a region is completely regular Ocean (NSEW + C), then flip a coin.

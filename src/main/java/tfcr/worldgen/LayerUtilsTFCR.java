@@ -29,6 +29,7 @@ public class LayerUtilsTFCR {
     public static final int DEEP_OCEAN = TerrainType.DEEP_OCEAN.ordinal();
     public static final int OCEAN = TerrainType.OCEAN.ordinal();
     public static final int BEACH = TerrainType.BEACH.ordinal();
+    public static final int CLIFF = TerrainType.CLIFF.ordinal();
     public static final int RIVER = TerrainType.RIVER.ordinal();
     public static final int FLAT = TerrainType.FLAT.ordinal();
     public static final int SMALL_HILLS = TerrainType.SMALL_HILLS.ordinal();
@@ -45,6 +46,50 @@ public class LayerUtilsTFCR {
 
     public static boolean isWater(int terrainType) {
         return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH;
+    }
+
+    /**
+     * True if any of the surrounding tiles have any ocean terrain
+     * @param south
+     * @param east
+     * @param north
+     * @param west
+     * @return
+     */
+    public static boolean hasOcean(int south, int east, int north, int west) {
+        return LayerUtilsTFCR.isOcean(south) ||
+                LayerUtilsTFCR.isOcean(east) ||
+                LayerUtilsTFCR.isOcean(west) ||
+                LayerUtilsTFCR.isOcean(north);
+    }
+    /**
+     * True if any of the surrounding tiles have a MOUNTAINS terrain
+     * @param south
+     * @param east
+     * @param north
+     * @param west
+     * @return
+     */
+    public static boolean hasMountain(int south, int east, int north, int west) {
+        return south == LayerUtilsTFCR.MOUNTAINS ||
+                east == LayerUtilsTFCR.MOUNTAINS ||
+                north == LayerUtilsTFCR.MOUNTAINS ||
+                west == LayerUtilsTFCR.MOUNTAINS;
+    }
+
+    /**
+     * True if any of the surrounding tiles have a BIG_HILLS terrain
+     * @param south
+     * @param east
+     * @param north
+     * @param west
+     * @return
+     */
+    public static boolean hasBigHill(int south, int east, int north, int west) {
+        return south == LayerUtilsTFCR.BIG_HILLS ||
+                east == LayerUtilsTFCR.BIG_HILLS ||
+                north == LayerUtilsTFCR.BIG_HILLS ||
+                west == LayerUtilsTFCR.BIG_HILLS;
     }
 
     /**
@@ -106,6 +151,9 @@ public class LayerUtilsTFCR {
         baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // More small hill islands
         // Don't care about mushroom islands
         baseAreaFactory = GenLayerDeepOcean.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // Turn center ocean tiles into deep ocean
+
+        // Custom. Tries to normalize land. 2 passes to potentially fully normalize mountain boundaries.
+        baseAreaFactory = repeat(16L, GenLayerEqualize.INSTANCE, baseAreaFactory, 2, contextFactory);
         baseAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, baseAreaFactory, 0, contextFactory); // no-op?
 
         // River and biome size setup
@@ -129,11 +177,8 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = GenLayerHills.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Random chance to raise land (modified from orig)
         riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, 2, contextFactory);
         riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, riverSize, contextFactory);
-        //riverAreaFactory = GenLayerRiver.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
-        riverAreaFactory = repeat(1L, GenLayerRiver.INSTANCE, riverAreaFactory, 5, contextFactory); // Add a LOT of rivers
+        riverAreaFactory = GenLayerRiver.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
         riverAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
-
-        // Bunch more river, smoothing, island, and shore stuff on river factory here
 
         // Expand the biomes as needed; based on biomeSize parameter
         for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {

@@ -39,6 +39,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
             new PlaceholderBiome(TerrainType.DEEP_OCEAN),
             new PlaceholderBiome(TerrainType.OCEAN),
             new BeachBiome(),
+            new CliffBiome(),
             new RiverBiome(),
             new PlaceholderBiome(TerrainType.FLAT),
             new PlaceholderBiome(TerrainType.SMALL_HILLS),
@@ -46,7 +47,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
             new PlaceholderBiome(TerrainType.MOUNTAINS),
     };
 
-    private static final Biome DEFAULT = biomes[4];
+    private static final Biome DEFAULT = biomes[5]; // Default is Flat biome
 
     /**
      * Creates a new BiomeProvider for TFCR.

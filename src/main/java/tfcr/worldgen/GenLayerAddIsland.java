@@ -2,12 +2,11 @@ package tfcr.worldgen;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.IBishopTransformer;
-import tfcr.data.TerrainType;
+
+import static tfcr.worldgen.LayerUtilsTFCR.SMALL_HILLS;
 
 public enum GenLayerAddIsland implements IBishopTransformer {
     INSTANCE;
-
-    private static final int SMALL_HILLS = TerrainType.SMALL_HILLS.ordinal();
 
     /**
      * IBishopTransformer takes elements in this pattern:

@@ -1,5 +1,6 @@
 package tfcr.worldgen;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
 import tfcr.TFCR;
@@ -28,5 +29,12 @@ public class PlaceholderBiome extends Biome {
 
         this.terrainType = type;
         this.setRegistryName(TFCR.MODID, "placeholder_" + type.name().toLowerCase());
+    }
+
+    // TODO override getTemperature() to change whether we get rain/snow based on season
+    //  (this will probably involve getting a world reference somehow?)
+    @Override
+    public float getTemperature(BlockPos pos) {
+        return super.getTemperature(pos);
     }
 }

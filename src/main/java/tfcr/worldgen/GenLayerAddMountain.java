@@ -1,16 +1,14 @@
 package tfcr.worldgen;
 
 import net.minecraft.world.gen.IContext;
-import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraft.world.gen.layer.traits.IC1Transformer;
-import tfcr.data.TerrainType;
+
+import static tfcr.worldgen.LayerUtilsTFCR.BIG_HILLS;
+import static tfcr.worldgen.LayerUtilsTFCR.FLAT;
+import static tfcr.worldgen.LayerUtilsTFCR.MOUNTAINS;
 
 public enum GenLayerAddMountain implements IC1Transformer {
     INSTANCE;
-
-    private static final int FLAT = TerrainType.FLAT.ordinal();
-    private static final int BIG_HILLS = TerrainType.BIG_HILLS.ordinal();
-    private static final int MOUNTAINS = TerrainType.MOUNTAINS.ordinal();
 
     public int apply(IContext context, int value) {
         // Ocean is pass-through

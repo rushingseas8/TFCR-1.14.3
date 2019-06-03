@@ -10,7 +10,8 @@ public enum TerrainType {
     DEEP_OCEAN(-1.8f, 0.1f), // Based on deep cold ocean biome
     OCEAN(-1f, 0.1f), // Based on ocean biome
     // Shallow ocean?
-    BEACH(0f, 0.025f), // Based on beack biome
+    BEACH(0f, 0.025f), // Based on beach biome
+    CLIFF(0.1f, 0.8f), // Based on stone shore biome
     RIVER(-0.5f, 0.0f), // Based on river biome
     // Lake?
     FLAT(0.125f, 0.05f), // Based on plains
