@@ -1,10 +1,15 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
 import tfcr.data.TerrainType;
+import tfcr.worldgen.LayerUtilsTFCR;
 
+/**
+ * Turns ocean tiles that are completely surrounded by other ocean tiles into
+ * deep ocean tiles.
+ */
 public enum GenLayerDeepOcean implements ICastleTransformer {
     INSTANCE;
 

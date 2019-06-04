@@ -1,18 +1,15 @@
 package tfcr.worldgen;
 
-import net.minecraft.init.Biomes;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.provider.BiomeProviderType;
-import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
-import net.minecraft.world.biome.provider.SingleBiomeProviderSettings;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.IContextExtended;
 import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.area.IArea;
 import net.minecraft.world.gen.area.IAreaFactory;
 import net.minecraft.world.gen.layer.GenLayerZoom;
-import tfcr.init.ModBiomes;
+import tfcr.worldgen.genlayer.GenLayerBiome;
+import tfcr.worldgen.genlayer.GenLayerBiomeEdge;
 
 import java.util.function.LongFunction;
 

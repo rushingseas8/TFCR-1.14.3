@@ -1,10 +1,11 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.area.AreaDimension;
 import net.minecraft.world.gen.area.IArea;
 import net.minecraft.world.gen.layer.traits.IAreaTransformer2;
 import net.minecraft.world.gen.layer.traits.IDimOffset0Transformer;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 /**
  * Based on GenLayerRiverMix. If a river is present in the added river mask, then it will

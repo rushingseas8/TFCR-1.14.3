@@ -1,7 +1,8 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 import static tfcr.worldgen.LayerUtilsTFCR.hasMountain;
 import static tfcr.worldgen.LayerUtilsTFCR.hasOcean;

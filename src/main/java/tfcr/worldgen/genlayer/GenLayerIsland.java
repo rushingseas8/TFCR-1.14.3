@@ -1,4 +1,4 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.area.AreaDimension;
@@ -7,6 +7,12 @@ import tfcr.data.TerrainType;
 
 import javax.annotation.Nonnull;
 
+/**
+ * The first step in the worldgen algorithm.
+ *
+ * After some boundary conditions (where we return flatlands), there's a simple
+ * 1 in 10 chance of turning an ocean tile into flat land.
+ */
 public enum GenLayerIsland implements IAreaTransformer0 {
     INSTANCE;
 

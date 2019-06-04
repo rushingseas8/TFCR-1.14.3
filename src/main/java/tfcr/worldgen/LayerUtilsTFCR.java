@@ -13,6 +13,18 @@ import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
 import net.minecraft.world.gen.layer.GenLayerZoom;
 import net.minecraft.world.gen.layer.traits.IAreaTransformer1;
 import tfcr.data.TerrainType;
+import tfcr.worldgen.genlayer.GenLayer;
+import tfcr.worldgen.genlayer.GenLayerAddIsland;
+import tfcr.worldgen.genlayer.GenLayerAddMountain;
+import tfcr.worldgen.genlayer.GenLayerDeepOcean;
+import tfcr.worldgen.genlayer.GenLayerEqualize;
+import tfcr.worldgen.genlayer.GenLayerHills;
+import tfcr.worldgen.genlayer.GenLayerIsland;
+import tfcr.worldgen.genlayer.GenLayerRemoveTooMuchOcean;
+import tfcr.worldgen.genlayer.GenLayerRiver;
+import tfcr.worldgen.genlayer.GenLayerRiverInit;
+import tfcr.worldgen.genlayer.GenLayerRiverMask;
+import tfcr.worldgen.genlayer.GenLayerShore;
 
 import java.util.function.LongFunction;
 
@@ -25,7 +37,7 @@ public class LayerUtilsTFCR {
 
 
     // Constants related to the ordinal of each TerrainType.
-    // These act as indices for the placeholder biomes.
+    // These act as indices for the placeholder placeholderBiomes.
     public static final int DEEP_OCEAN = TerrainType.DEEP_OCEAN.ordinal();
     public static final int OCEAN = TerrainType.OCEAN.ordinal();
     public static final int BEACH = TerrainType.BEACH.ordinal();
@@ -115,12 +127,12 @@ public class LayerUtilsTFCR {
 
     // Directly inspired by LayerUtils
     /**
-     * A method that handles assigning biomes in the world.
+     * A method that handles assigning placeholderBiomes in the world.
      *
      * We have to recreate a few of the GenLayer* classes from Vanilla, since those
      * return hard-coded indices for an overworld Biome array. We instead return
      * integers corresponding to different TerrainTypes, which will later be
-     * resolved into actual biomes based off of a temperature/precipitation map.
+     * resolved into actual placeholderBiomes based off of a temperature/precipitation map.
      *
      * @param worldTypeIn
      * @param settings
@@ -145,7 +157,7 @@ public class LayerUtilsTFCR {
         baseAreaFactory = GenLayerAddMountain.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);
         baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(3L), baseAreaFactory); // More small hill islands
         // GenLayerEdge plays a role here. It looks like it messes with temperature (adding deserts/mountains),
-        // and then adds a rare chance of having special biomes. We don't care about that.
+        // and then adds a rare chance of having special placeholderBiomes. We don't care about that.
         baseAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(2002L), baseAreaFactory); // Zoom out 2x
         baseAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(2003L), baseAreaFactory); // And again, for a total of 4x
         baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // More small hill islands
@@ -180,7 +192,7 @@ public class LayerUtilsTFCR {
         riverAreaFactory = GenLayerRiver.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
         riverAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
 
-        // Expand the biomes as needed; based on biomeSize parameter
+        // Expand the placeholderBiomes as needed; based on biomeSize parameter
         for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
             biomesAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
             if (zoomIteration == 0) {
@@ -196,6 +208,9 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
         // No ocean temperature mixing at this time
         IAreaFactory<T> voronoiZoomed = GenLayerVoronoiZoom.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
+
+        // TODO Add a mask layer for applying temp/precip transforms. Similar to GenLayerRiverMask, but
+        //  using a Perlin noise based map that's been fuzzy zoomed out to the right scale.
 
         return ImmutableList.of(biomesAreaFactory, voronoiZoomed, biomesAreaFactory);
     }

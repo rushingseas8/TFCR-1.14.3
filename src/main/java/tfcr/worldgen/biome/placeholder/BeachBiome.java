@@ -1,8 +1,6 @@
-package tfcr.worldgen;
+package tfcr.worldgen.biome.placeholder;
 
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
-import tfcr.TFCR;
 import tfcr.data.TerrainType;
 
 public class BeachBiome extends PlaceholderBiome {

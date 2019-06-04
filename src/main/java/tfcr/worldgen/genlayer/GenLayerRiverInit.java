@@ -1,9 +1,15 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.IC0Transformer;
 import tfcr.data.TerrainType;
 
+/**
+ * Initializes the river mask layer. Copied from Vanilla.
+ *
+ * If the biome is ocean, then its value is kept. Otherwise, return an absurdly
+ * large random value (2 - 300001).
+ */
 public enum GenLayerRiverInit implements IC0Transformer {
     INSTANCE;
 

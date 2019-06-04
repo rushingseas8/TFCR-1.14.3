@@ -1,10 +1,15 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.IBishopTransformer;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 import static tfcr.worldgen.LayerUtilsTFCR.SMALL_HILLS;
 
+/**
+ * This method, in Vanilla, adds Forest biome islands to the ocean. Here,
+ * it adds the equivalent TerrainType, which is a small hill region.
+ */
 public enum GenLayerAddIsland implements IBishopTransformer {
     INSTANCE;
 

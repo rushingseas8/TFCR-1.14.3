@@ -1,22 +1,23 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 import static tfcr.worldgen.LayerUtilsTFCR.hasBigHill;
 import static tfcr.worldgen.LayerUtilsTFCR.hasMountain;
 import static tfcr.worldgen.LayerUtilsTFCR.hasOcean;
 
 /**
- * Normalizes the heightmap.
+ * Custom TFCR code. Normalizes the heightmap.
  *
  * Tall terrains, like mountains and big hills, will have their size reduced by one
  * if they're adjacent to oceans. This is to try to normalize cliffs. Short terrains,
  * like flat and small hills, will have their size increased by one if they're next
  * to mountains or big hills, or just mountains for small hills.
  *
- * Terrains both next to mountains and oceans will later be turned into cliffs.
- *
+ * Terrains both next to mountains and oceans will later be turned into cliffs by
+ * GenLayerShore.
  */
 public enum GenLayerEqualize implements ICastleTransformer {
     INSTANCE;

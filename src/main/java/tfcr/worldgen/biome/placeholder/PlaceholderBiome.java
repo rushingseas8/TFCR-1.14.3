@@ -1,4 +1,4 @@
-package tfcr.worldgen;
+package tfcr.worldgen.biome.placeholder;
 
 import com.google.common.collect.Lists;
 import net.minecraft.init.Blocks;
@@ -30,7 +30,7 @@ public class PlaceholderBiome extends Biome {
 
     public TerrainType terrainType;
 
-    protected PlaceholderBiome(TerrainType type) {
+    public PlaceholderBiome(TerrainType type) {
         this(type, new BiomeBuilder()
                 .surfaceBuilder(new CompositeSurfaceBuilder<>(DEFAULT_SURFACE_BUILDER, GRASS_DIRT_GRAVEL_SURFACE))
                 .category(Category.PLAINS)

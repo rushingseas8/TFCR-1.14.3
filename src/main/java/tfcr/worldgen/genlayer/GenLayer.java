@@ -1,17 +1,22 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.area.AreaDimension;
 import net.minecraft.world.gen.area.IAreaFactory;
 import net.minecraft.world.gen.area.LazyArea;
+import tfcr.worldgen.BiomeProviderTFCR;
 
 import javax.annotation.Nullable;
 
 /**
- * Custom implementation of GenLayer.
+ * Custom implementation of GenLayer. This class is used to lookup the int
+ * return values from all the GenLayer* classes, and resolve them into Biomes.
  *
- * The Vanilla version does a lookup of the Biome in registry- we actually want
- * to turn this into a special PlaceholderBiome representing a TerrainType instead.
+ * The Vanilla version does a lookup of the Biome using Biome.getBiome. Since
+ * this is hardcoded to use the registry, we provide a custom implementation
+ * that turns the ID into a special PlaceholderBiome instead. Each placeholder
+ * maps to a TerrainType, which represents a general height of terrain (or
+ * sometimes technical biomes, like River or Beach).
  */
 public class GenLayer {
     private final IAreaFactory<LazyArea> lazyAreaFactory;
@@ -25,14 +30,14 @@ public class GenLayer {
         LazyArea lazyarea = this.lazyAreaFactory.make(areadimension);
         Biome[] abiome = new Biome[xSize * zSize];
 
-        int maxSize = BiomeProviderTFCR.biomes.length;
+        int maxSize = BiomeProviderTFCR.placeholderBiomes.length;
 
         for(int i = 0; i < zSize; ++i) {
             for(int j = 0; j < xSize; ++j) {
 //                abiome[j + i * xSize] = Biome.getBiome(lazyarea.getValue(j, i), defaultBiome);
 
                 int value = lazyarea.getValue(j, i);
-                abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.biomes[value];
+                abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.placeholderBiomes[value];
             }
         }
 

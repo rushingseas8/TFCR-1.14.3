@@ -3,7 +3,7 @@ package tfcr.data;
 /**
  * An Enum that represents different types of terrain.
  *
- * These are essentially placeholder biomes used in worldgen, and need a corresponding
+ * These are essentially placeholder placeholderBiomes used in worldgen, and need a corresponding
  * temperature/precipitation value to determine the final biome type.
  */
 public enum TerrainType {

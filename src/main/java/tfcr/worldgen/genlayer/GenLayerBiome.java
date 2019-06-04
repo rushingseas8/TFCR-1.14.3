@@ -1,4 +1,4 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.OverworldGenSettings;
@@ -9,9 +9,13 @@ import tfcr.data.TerrainType;
  * Based on GenLayerBiome in Vanilla.
  * See net.minecraft.world.gen.layer.GenLayerBiome.
  *
- * Determines the specific Biomes that we place in the world based on adjacency
- * rules. Vanilla uses a temperature system to determine compatibility; we use
- * a TerrainType based system instead.
+ * In Vanilla, this method randomly chooses a Biome based on built-in temperature
+ * rules (ocean, cold, warm, or hot). It also handles some random variation that
+ * makes sense (e.g. badlands plateau vs. wooded badlands).
+ *
+ * In TFCR, since our worldgen only uses height-based logic for determining
+ * placeholder biomes, this method is essentially a no-op. Temperature based
+ * variations will be applied later when temperature/precipitation is known.
  */
 public class GenLayerBiome implements IC0Transformer {
 

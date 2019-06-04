@@ -1,11 +1,11 @@
-package tfcr.worldgen;
+package tfcr.worldgen.biome.placeholder;
 
 import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
 import tfcr.data.TerrainType;
 
 public class CliffBiome extends PlaceholderBiome {
 
-    protected CliffBiome() {
+    public CliffBiome() {
         super(TerrainType.CLIFF, new BiomeBuilder()
                 .surfaceBuilder(new CompositeSurfaceBuilder<>(DEFAULT_SURFACE_BUILDER, STONE_STONE_GRAVEL_SURFACE))
                 .category(Category.BEACH)

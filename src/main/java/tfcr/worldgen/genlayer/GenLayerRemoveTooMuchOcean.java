@@ -1,11 +1,15 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
-import tfcr.data.TerrainType;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 import static tfcr.worldgen.LayerUtilsTFCR.FLAT;
 
+/**
+ * If a given tile is ocean, and completely surrounded by ocean, then there is
+ * a 1/2 chance to turn it into flat terrain. Otherwise, it remains ocean.
+ */
 public enum GenLayerRemoveTooMuchOcean implements ICastleTransformer {
     INSTANCE;
 

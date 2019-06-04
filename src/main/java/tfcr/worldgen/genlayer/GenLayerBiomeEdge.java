@@ -1,7 +1,8 @@
-package tfcr.worldgen;
+package tfcr.worldgen.genlayer;
 
 import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 /**
  * Based on Vanilla GenLayerBiomeEdge.
@@ -21,10 +22,8 @@ import net.minecraft.world.gen.layer.traits.ICastleTransformer;
  * SnowyTundra, then it'll return Plains.
  *
  * Since we only care about TerrainTypes, we will try our best to provide intermediate
- * TerrainTypes between extreme values.
- *
- * TODO for now we just pass-through center. Later we'll do better logic.
- * TODO explain details of algorithm
+ * TerrainTypes between extreme values. Specifically, we return the average of all
+ * non-water adjacent tiles. This tends to smooth e.g. mountains adjacent to flatlands.
  */
 public enum GenLayerBiomeEdge implements ICastleTransformer {
     INSTANCE;
