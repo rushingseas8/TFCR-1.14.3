@@ -273,9 +273,12 @@ public class BiomeProviderTFCR extends BiomeProvider {
      */
     private Biome applyTempPrecip(BlockPos pos, int placeholderBiome) {
         // Temperature seems to range [0, 2]. Precip ranges from [-2, 2]??
-        double tempRaw = temperature.func_205563_a(pos.getX() / noiseScaleX, pos.getZ() / noiseScaleZ, 0);
-        double precipRaw = precipitation.func_205563_a(pos.getX() / noiseScaleX, pos.getZ() / noiseScaleZ, 0);
+        // TODO double check these ranges and ensure they're properly normalized.
+        // TODO later, add a bias to the values so that temperate is more common.
+        double tempRaw = temperature.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
+        double precipRaw = precipitation.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
 
+        System.out.println("Temperature: " + tempRaw);
         System.out.println("Precipitation: " + precipRaw);
 
         // Roughly normalize
@@ -349,9 +352,9 @@ public class BiomeProviderTFCR extends BiomeProvider {
 
         // Iterate over all the placeholder Biomes and replace with concrete ones
         // based on the world coordinates
-        for (int x = 0; x < xSize; x++) {
-            for (int z = 0; z < zSize; z++) {
-                int index = (x * zSize) + z;
+        for (int z = 0; z < zSize; z++) {
+            for (int x = 0; x < xSize; x++) {
+                int index = x + z * xSize;
                 concrete[index] = applyTempPrecip(new BlockPos(startX + x, 0, startZ + z), placeholderBiomes[index]);
             }
         }
