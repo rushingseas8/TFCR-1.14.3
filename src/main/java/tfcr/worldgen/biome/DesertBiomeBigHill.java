@@ -11,13 +11,13 @@ import tfcr.data.TerrainType;
  * Concrete biome implementation.
  * Temperature: [60-100], Precipitation: [0-10]
  *
- * Spawns using the mesa bryce generation, except with sand as its surface block.
+ * Spawns using the mesa surface generation, except with sand as its top block.
  */
-public class DesertBiomeMountain extends BaseTFCRBiome {
-    public DesertBiomeMountain() {
+public class DesertBiomeBigHill extends BaseTFCRBiome {
+    public DesertBiomeBigHill() {
         super(60, 100, 0, 10, TerrainType.BIG_HILLS,
                 (new Biome.BiomeBuilder())
-                        .surfaceBuilder(new CompositeSurfaceBuilder<>(MESA_BRYCE_SURACE_BUILDER,
+                        .surfaceBuilder(new CompositeSurfaceBuilder<>(MESA_SURFACE_BUILDER,
                                 new SurfaceBuilderConfig(
                                         Blocks.SAND.getDefaultState(),
                                         Blocks.WHITE_TERRACOTTA.getDefaultState(),
@@ -26,6 +26,6 @@ public class DesertBiomeMountain extends BaseTFCRBiome {
                         .waterColor(4159204)
                         .waterFogColor(329011)
         );
-        this.setRegistryName(TFCR.MODID, "desert_mountain");
+        this.setRegistryName(TFCR.MODID, "desert_bighill");
     }
 }

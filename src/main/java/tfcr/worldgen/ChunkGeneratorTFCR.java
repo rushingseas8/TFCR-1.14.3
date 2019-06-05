@@ -348,25 +348,17 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
                 float f4 = 0.0F;
                 int i1 = 2;
                 Biome biome = p_202108_1_[k + 2 + (l + 2) * 10];
-                if (!(biome instanceof PlaceholderBiome)) {
-                    System.out.println("Failed to generate height map. Found invalid biome: " + biome);
-                }
-                TerrainType terrainType = ((PlaceholderBiome) biome).terrainType;
 
                 for(int j1 = -2; j1 <= 2; ++j1) {
                     for(int k1 = -2; k1 <= 2; ++k1) {
                         Biome biome1 = p_202108_1_[k + j1 + 2 + (l + k1 + 2) * 10];
-                        if (!(biome1 instanceof PlaceholderBiome)) {
-                            System.out.println("Failed to generate height map. Found invalid biome: " + biome1);
-                        }
-                        TerrainType terrainType1 = ((PlaceholderBiome) biome1).terrainType;
 
 //                        float f5 = this.settings.func_202203_v() + biome1.getDepth() * this.settings.func_202202_w();
 //                        float f6 = this.settings.func_202204_x() + biome1.getScale() * this.settings.func_202205_y();
-                        float f5 = this.settings.func_202203_v() + terrainType1.depth * this.settings.func_202202_w();
-                        float f6 = this.settings.func_202204_x() + terrainType1.scale * this.settings.func_202205_y();
+                        float f5 = this.settings.func_202203_v() + biome1.getDepth() * this.settings.func_202202_w();
+                        float f6 = this.settings.func_202204_x() + biome1.getScale() * this.settings.func_202205_y();
                         float f7 = this.biomeWeights[j1 + 2 + (k1 + 2) * 5] / (f5 + 2.0F);
-                        if (terrainType1.depth > terrainType.depth) {
+                        if (biome1.getDepth() > biome.getDepth()) {
                             f7 /= 2.0F;
                         }
 
