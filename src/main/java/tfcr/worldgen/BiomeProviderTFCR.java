@@ -247,8 +247,9 @@ public class BiomeProviderTFCR extends BiomeProvider {
         temperature = new NoiseGeneratorOctaves(sharedSeed, 2);
         precipitation = new NoiseGeneratorOctaves(sharedSeed, 2);
 
-        noiseScaleX = 1 / 100f;
-        noiseScaleZ = 1 / 100f;
+        // Bigger numbers = bigger temperature "biomes"
+        noiseScaleX = 1000f;
+        noiseScaleZ = 1000f;
 
         // Placeholder biome reverse lookup map
         placeholderBiomeToIndexLookup = new HashMap<>();
@@ -278,19 +279,15 @@ public class BiomeProviderTFCR extends BiomeProvider {
         double tempRaw = temperature.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
         double precipRaw = precipitation.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
 
-        System.out.println("Temperature: " + tempRaw);
-        System.out.println("Precipitation: " + precipRaw);
+        int temp = (int)((tempRaw / 2.0) * 100.0); // Temperature ranges from -100 to 100
+        int precip = (int)(((precipRaw / 4.0) + 0.5) * 100.0); // Precipitation ranges from 0 to 100
 
-        // Roughly normalize
-        tempRaw /= 2;
-        precipRaw /= 2;
-
-        int temp = (int)((tempRaw * 200.0) - 100.0); // Temperature ranges from -100 to 100
-        int precip = (int)(precipRaw * 100.0); // Precipitation ranges from 0 to 100
+//        System.out.println("Temperature: " + temp);
+//        System.out.println("Precipitation: " + precip);
 
         // Ensure it's within range
-        temp = MathHelper.clamp(temp, -100, 100);
-        precip = MathHelper.clamp(precip, 0, 100);
+        temp = MathHelper.clamp(temp, -100, 99);
+        precip = MathHelper.clamp(precip, 0, 99);
 
         // Deep ocean, ocean, river, beach, cliff all map to their placeholders
         if (LayerUtilsTFCR.isWater(placeholderBiome) ||
