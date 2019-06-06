@@ -15,84 +15,35 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.storage.WorldInfo;
 import tfcr.data.TerrainType;
 import tfcr.worldgen.biome.BaseTFCRBiome;
-import tfcr.worldgen.biome.ChaparralBiomeBigHill;
-import tfcr.worldgen.biome.ChaparralBiomeFlat;
-import tfcr.worldgen.biome.ChaparralBiomeMountain;
-import tfcr.worldgen.biome.ChaparralBiomeSmallHill;
-import tfcr.worldgen.biome.DeciduousForestBiomeBigHill;
-import tfcr.worldgen.biome.DeciduousForestBiomeFlat;
-import tfcr.worldgen.biome.DeciduousForestBiomeMountain;
-import tfcr.worldgen.biome.DeciduousForestBiomeSmallHill;
+import tfcr.worldgen.biome.ChaparralBiome;
+import tfcr.worldgen.biome.DeciduousForestBiome;
 import tfcr.worldgen.biome.DeepOceanBiome;
-import tfcr.worldgen.biome.DesertBiomeBigHill;
-import tfcr.worldgen.biome.DesertBiomeFlat;
-import tfcr.worldgen.biome.DesertBiomeSmallHill;
-import tfcr.worldgen.biome.DesertBiomeMountain;
-import tfcr.worldgen.biome.DryTundraBiomeBigHill;
-import tfcr.worldgen.biome.DryTundraBiomeFlat;
-import tfcr.worldgen.biome.DryTundraBiomeMountain;
-import tfcr.worldgen.biome.DryTundraBiomeSmallHill;
-import tfcr.worldgen.biome.HighGrasslandBiomeBigHill;
-import tfcr.worldgen.biome.HighGrasslandBiomeFlat;
-import tfcr.worldgen.biome.HighGrasslandBiomeMountain;
-import tfcr.worldgen.biome.HighGrasslandBiomeSmallHill;
-import tfcr.worldgen.biome.LowGrasslandBiomeBigHill;
-import tfcr.worldgen.biome.LowGrasslandBiomeFlat;
-import tfcr.worldgen.biome.LowGrasslandBiomeMountain;
-import tfcr.worldgen.biome.LowGrasslandBiomeSmallHill;
+import tfcr.worldgen.biome.DesertBiome;
+import tfcr.worldgen.biome.DryTundraBiome;
+import tfcr.worldgen.biome.HighGrasslandBiome;
+import tfcr.worldgen.biome.LowGrasslandBiome;
 import tfcr.worldgen.biome.OceanBiome;
-import tfcr.worldgen.biome.PolarBiomeBigHill;
-import tfcr.worldgen.biome.PolarBiomeFlat;
-import tfcr.worldgen.biome.PolarBiomeMountain;
-import tfcr.worldgen.biome.PolarBiomeSmallHills;
-import tfcr.worldgen.biome.SavannaBiomeBigHill;
-import tfcr.worldgen.biome.SavannaBiomeFlat;
-import tfcr.worldgen.biome.SavannaBiomeMountain;
-import tfcr.worldgen.biome.SavannaBiomeSmallHill;
-import tfcr.worldgen.biome.ShrublandBiomeBigHill;
-import tfcr.worldgen.biome.ShrublandBiomeFlat;
-import tfcr.worldgen.biome.ShrublandBiomeMountain;
-import tfcr.worldgen.biome.ShrublandBiomeSmallHill;
-import tfcr.worldgen.biome.TaigaBiomeBigHill;
-import tfcr.worldgen.biome.TaigaBiomeFlat;
-import tfcr.worldgen.biome.TaigaBiomeMountain;
-import tfcr.worldgen.biome.TaigaBiomeSmallHill;
-import tfcr.worldgen.biome.TemperateConiferousBiomeBigHill;
-import tfcr.worldgen.biome.TemperateConiferousBiomeFlat;
-import tfcr.worldgen.biome.TemperateConiferousBiomeMountain;
-import tfcr.worldgen.biome.TemperateConiferousBiomeSmallHill;
-import tfcr.worldgen.biome.TemperateDesertBigHill;
-import tfcr.worldgen.biome.TemperateDesertFlat;
-import tfcr.worldgen.biome.TemperateDesertMountain;
-import tfcr.worldgen.biome.TemperateDesertSmallHill;
-import tfcr.worldgen.biome.TemperateRainforestBigHill;
-import tfcr.worldgen.biome.TemperateRainforestFlat;
-import tfcr.worldgen.biome.TemperateRainforestMountain;
-import tfcr.worldgen.biome.TemperateRainforestSmallHill;
-import tfcr.worldgen.biome.TreeShrublandBiomeBigHill;
-import tfcr.worldgen.biome.TreeShrublandBiomeFlat;
-import tfcr.worldgen.biome.TreeShrublandBiomeMountain;
-import tfcr.worldgen.biome.TreeShrublandBiomeSmallHill;
-import tfcr.worldgen.biome.TropicalRainforestBiomeBigHill;
-import tfcr.worldgen.biome.TropicalRainforestBiomeFlat;
 import tfcr.worldgen.biome.BeachBiome;
 import tfcr.worldgen.biome.CliffBiome;
-import tfcr.worldgen.biome.TropicalRainforestBiomeMountain;
-import tfcr.worldgen.biome.TropicalRainforestBiomeSmallHill;
-import tfcr.worldgen.biome.TundraBiomeBigHill;
-import tfcr.worldgen.biome.TundraBiomeFlat;
-import tfcr.worldgen.biome.TundraBiomeMountain;
-import tfcr.worldgen.biome.TundraBiomeSmallHill;
-import tfcr.worldgen.biome.WetlandBiomeBigHill;
-import tfcr.worldgen.biome.WetlandBiomeFlat;
-import tfcr.worldgen.biome.WetlandBiomeMountain;
-import tfcr.worldgen.biome.WetlandBiomeSmallHill;
+import tfcr.worldgen.biome.PolarBiome;
+import tfcr.worldgen.biome.SavannaBiome;
+import tfcr.worldgen.biome.ShrublandBiome;
+import tfcr.worldgen.biome.TaigaBiome;
+import tfcr.worldgen.biome.TemperateConiferousBiome;
+import tfcr.worldgen.biome.TemperateDesertBiome;
+import tfcr.worldgen.biome.TemperateRainforestBiome;
+import tfcr.worldgen.biome.TreeShrublandBiome;
+import tfcr.worldgen.biome.TropicalRainforestBiome;
+import tfcr.worldgen.biome.TundraBiome;
+import tfcr.worldgen.biome.WetlandBiome;
 import tfcr.worldgen.biome.placeholder.PlaceholderBiome;
 import tfcr.worldgen.biome.RiverBiome;
 import tfcr.worldgen.genlayer.GenLayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -136,6 +87,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
             new PlaceholderBiome(TerrainType.MOUNTAINS),
     };
 
+    /*
     public static final BaseTFCRBiome[] biomes = new BaseTFCRBiome[] {
             new DesertBiomeFlat(),
             new DesertBiomeSmallHill(),
@@ -222,6 +174,32 @@ public class BiomeProviderTFCR extends BiomeProvider {
             new PolarBiomeBigHill(),
             new PolarBiomeMountain()
     };
+    */
+    public static BaseTFCRBiome[] biomes;
+    static {
+        // Initialize biomes
+        ArrayList<BaseTFCRBiome> biomesList = new ArrayList<>();
+
+        biomesList.addAll(Arrays.asList(ChaparralBiome.generate()));
+        biomesList.addAll(Arrays.asList(DeciduousForestBiome.generate()));
+        biomesList.addAll(Arrays.asList(DesertBiome.generate()));
+        biomesList.addAll(Arrays.asList(DryTundraBiome.generate()));
+        biomesList.addAll(Arrays.asList(HighGrasslandBiome.generate()));
+        biomesList.addAll(Arrays.asList(LowGrasslandBiome.generate()));
+        biomesList.addAll(Arrays.asList(PolarBiome.generate()));
+        biomesList.addAll(Arrays.asList(SavannaBiome.generate()));
+        biomesList.addAll(Arrays.asList(ShrublandBiome.generate()));
+        biomesList.addAll(Arrays.asList(TaigaBiome.generate()));
+        biomesList.addAll(Arrays.asList(TemperateConiferousBiome.generate()));
+        biomesList.addAll(Arrays.asList(TemperateDesertBiome.generate()));
+        biomesList.addAll(Arrays.asList(TemperateRainforestBiome.generate()));
+        biomesList.addAll(Arrays.asList(TreeShrublandBiome.generate()));
+        biomesList.addAll(Arrays.asList(TropicalRainforestBiome.generate()));
+        biomesList.addAll(Arrays.asList(TundraBiome.generate()));
+        biomesList.addAll(Arrays.asList(WetlandBiome.generate()));
+
+        biomes = biomesList.toArray(new BaseTFCRBiome[0]);
+    }
 
     private static HashMap<Biome, Integer> placeholderBiomeToIndexLookup;
     public static HashMap<Class, Integer> biomeClassToIndexLookup;
@@ -300,13 +278,14 @@ public class BiomeProviderTFCR extends BiomeProvider {
         // There should only be one that matches, so we'll return that.
         for (BaseTFCRBiome biome : biomes) {
             if (biome.matchesRange(temp, precip, TerrainType.values()[placeholderBiome])) {
-                Biome toReturn = biome.provideClosest(temp, precip, TerrainType.values()[placeholderBiome]);
-                if (toReturn == null) {
-                    System.out.println("Biome \"" + biome.getRegistryName() + "\" failed to provide closest.");
-                    return DEFAULT;
-                } else {
-                    return toReturn;
-                }
+                return biome;
+//                Biome toReturn = biome.provideClosest(temp, precip, TerrainType.values()[placeholderBiome]);
+//                if (toReturn == null) {
+//                    System.out.println("Biome \"" + biome.getRegistryName() + "\" failed to provide closest.");
+//                    return DEFAULT;
+//                } else {
+//                    return toReturn;
+//                }
             }
         }
         System.out.println("Failed to resolve biome with temperature=" + temp +

@@ -17,11 +17,6 @@ public class BaseTFCRBiome extends Biome {
 
     protected BaseTFCRBiome instance;
 
-    private BaseTFCRBiome() {
-        super((new Biome.BiomeBuilder()).surfaceBuilder(new CompositeSurfaceBuilder<>(DEFAULT_SURFACE_BUILDER, GRASS_DIRT_GRAVEL_SURFACE)).precipitation(Biome.RainType.RAIN).category(Biome.Category.PLAINS).depth(0.125F).scale(0.05F).temperature(0.8F).downfall(0.4F).waterColor(4159204).waterFogColor(329011).parent((String)null));
-        this.setRegistryName(TFCR.MODID, "tfcr_base");
-    }
-
     /**
      * Default constructor for TFCR Biomes to use internally.
      *
@@ -56,6 +51,18 @@ public class BaseTFCRBiome extends Biome {
         this.minPrecip = minPrecip;
         this.maxPrecip = maxPrecip;
         this.terrainType = terrainType;
+
+        // Try to generate a default name that looks like, e.g., "wetland_flat".
+        // Skip over the water biomes, since they handle their own logic.
+        if (LayerUtilsTFCR.isWater(terrainType.ordinal())) {
+            return;
+        }
+
+        String defaultName = this.getClass().getSimpleName().toLowerCase();
+        defaultName = defaultName.replace("biome", "");
+        defaultName += "_" + terrainType.name().toLowerCase();
+
+        setRegistryName(TFCR.MODID, defaultName);
     }
 
     /**
@@ -81,21 +88,22 @@ public class BaseTFCRBiome extends Biome {
      *
      * If matchesRange(temp, precip) == false, then this method returns null.
      *
-     * @param temp
-     * @param precip
      * @param type
      * @return
      */
-    public BaseTFCRBiome provideClosest(int temp, int precip, TerrainType type) {
-        if (matchesRange(temp, precip, type)) {
-            return resolve(this.getClass());
-        }
-
-        return null;
+    public BaseTFCRBiome getActualBiome(TerrainType type) {
+        return this;
     }
-
-    protected BaseTFCRBiome resolve(Class biomeClass) {
-        int index = BiomeProviderTFCR.biomeClassToIndexLookup.get(biomeClass);
-        return BiomeProviderTFCR.biomes[index];
-    }
+//    public BaseTFCRBiome provideClosest(int temp, int precip, TerrainType type) {
+//        if (matchesRange(temp, precip, type)) {
+//            return resolve(this.getClass());
+//        }
+//
+//        return null;
+//    }
+//
+//    protected BaseTFCRBiome resolve(Class biomeClass) {
+//        int index = BiomeProviderTFCR.biomeClassToIndexLookup.get(biomeClass);
+//        return BiomeProviderTFCR.biomes[index];
+//    }
 }

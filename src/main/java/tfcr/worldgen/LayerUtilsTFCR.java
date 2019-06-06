@@ -57,7 +57,7 @@ public class LayerUtilsTFCR {
     }
 
     public static boolean isWater(int terrainType) {
-        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH;
+        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH || terrainType == CLIFF;
     }
 
     /**
