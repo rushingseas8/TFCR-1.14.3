@@ -1,6 +1,7 @@
 package tfcr.worldgen;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.gen.IContextExtended;
 import net.minecraft.world.gen.LazyAreaLayerContext;
@@ -25,7 +26,10 @@ import tfcr.worldgen.genlayer.GenLayerRiver;
 import tfcr.worldgen.genlayer.GenLayerRiverInit;
 import tfcr.worldgen.genlayer.GenLayerRiverMask;
 import tfcr.worldgen.genlayer.GenLayerShore;
+import tfcr.worldgen.genlayer.GenLayerTempPrecip;
+import tfcr.worldgen.genlayer.GenLayerTempPrecipMask;
 
+import java.util.Random;
 import java.util.function.LongFunction;
 
 /**
@@ -141,7 +145,7 @@ public class LayerUtilsTFCR {
      * @param <C>
      * @return
      */
-    private static <T extends IArea, C extends IContextExtended<T>> ImmutableList<IAreaFactory<T>> buildOverworldProcedure(WorldType worldTypeIn, OverworldGenSettings settings, LongFunction<C> contextFactory) {
+    private static <T extends IArea, C extends IContextExtended<T>> ImmutableList<IAreaFactory<T>> buildOverworldProcedure(long seed, WorldType worldTypeIn, OverworldGenSettings settings, LongFunction<C> contextFactory) {
         // Basic worldgen. In Vanilla this section handles plains/forest islands and oceans
         // iareafactory --> baseAreaFactory
         IAreaFactory<T> baseAreaFactory = GenLayerIsland.INSTANCE.apply(contextFactory.apply(1L));
@@ -176,6 +180,14 @@ public class LayerUtilsTFCR {
 //            riverSize = settings.getRiverSize();
 //        }
 
+        // Temp/precip layer.
+        IAreaFactory<T> tempPrecipLayer = new GenLayerTempPrecip(new Random(seed)).apply(contextFactory.apply(17L));
+        // Zoom out the temp/precip layer to be roughly the size we need. Without scaling the noise,
+        // the isotherms would change roughly every block. So if we zoom 10 times total, we get a scale
+        // of 2^10 = 1024 blocks between isotherm changes. This gives us roughly the desired biome size.
+        // We divide by ~500 in the noisegen, and apply fuzzy zooming on top to get to this value.
+        tempPrecipLayer = GenLayerZoom.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
+
         // lvt_7_1_ --> riverAreaFactory
         IAreaFactory<T> riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
         riverAreaFactory = GenLayerRiverInit.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
@@ -206,6 +218,10 @@ public class LayerUtilsTFCR {
 
         biomesAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
         biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+
+        // Apply the temp/precip map on top. TODO: this is unfinished; most code runs on placeholder biomes
+        biomesAreaFactory = GenLayerTempPrecipMask.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
+
         // No ocean temperature mixing at this time
         IAreaFactory<T> voronoiZoomed = GenLayerVoronoiZoom.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
 
@@ -219,7 +235,7 @@ public class LayerUtilsTFCR {
     public static GenLayer[] buildOverworldProcedure(long seed, WorldType typeIn, OverworldGenSettings settings) {
         int i = 1;
         int[] aint = new int[1];
-        ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildOverworldProcedure(typeIn, settings, (p_202825_3_) -> {
+        ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildOverworldProcedure(seed, typeIn, settings, (p_202825_3_) -> {
             ++aint[0];
             return new LazyAreaLayerContext(1, aint[0], seed, p_202825_3_);
         });

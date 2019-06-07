@@ -204,7 +204,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
     private static HashMap<Biome, Integer> placeholderBiomeToIndexLookup;
     public static HashMap<Class, Integer> biomeClassToIndexLookup;
 
-    private static final Biome DEFAULT = placeholderBiomes[5]; // Default is Flat biome
+    public static final Biome DEFAULT = placeholderBiomes[5]; // Default is Flat biome
 
     /**
      * Creates a new BiomeProvider for TFCR.
