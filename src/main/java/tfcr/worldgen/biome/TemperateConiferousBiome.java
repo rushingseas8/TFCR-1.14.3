@@ -1,7 +1,13 @@
 package tfcr.worldgen.biome;
 
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.CompositeFeature;
+import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
 import tfcr.data.TerrainType;
+import tfcr.data.WoodType;
+import tfcr.worldgen.TreeFeatureConfig;
+import tfcr.worldgen.TreeFeatureTFCR;
 
 /**
  * Concrete biome implementation.
@@ -22,6 +28,14 @@ public class TemperateConiferousBiome extends BaseTFCRBiome {
 
     private TemperateConiferousBiome(TerrainType type, BiomeBuilder builder) {
         super(-30, 60, 30, 40, type, builder);
+
+        // Tree spawning feature.
+        // TODO create specific Feature that encapsulates all tree types, with frequency based on temp/precip,
+        //  age (so most trees are middle-age, with rare old trees and medium rarity young trees), and height (mountains = no trees).
+        // TODO This method freezes the game on load.
+        // TODO Needs to spawn a TileEntityTree as well- what about level 0 structures containing only saplings?
+        addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, new CompositeFeature<>(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 4), SURFACE_PLUS_32, new FrequencyConfig(2)));
+//        addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, new CompositeFeature<>(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 5), TWICE_SURFACE, new FrequencyConfig(2)));
     }
 
     public static BaseTFCRBiome[] generate() {

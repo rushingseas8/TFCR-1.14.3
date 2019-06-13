@@ -2,6 +2,7 @@ package tfcr.worldgen;
 
 import com.google.common.collect.Sets;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Biomes;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -67,119 +68,26 @@ public class BiomeProviderTFCR extends BiomeProvider {
     /** A GenLayer containing a factory to generate biome arrays for {@llink #getBiomes(int, int, int, int, boolean)} */
     private final GenLayer biomeFactoryLayer;
 
-    private static NoiseGeneratorOctaves temperature;
-    private static NoiseGeneratorOctaves precipitation;
-
-    private static float noiseScaleX;
-    private static float noiseScaleZ;
-
-
-    // TODO add placeholder height placeholderBiomes?
-    public static final Biome[] placeholderBiomes = new Biome[] {
-            new DeepOceanBiome(),
-            new OceanBiome(),
-            new BeachBiome(),
-            new CliffBiome(),
-            new RiverBiome(),
-            new PlaceholderBiome(TerrainType.FLAT),
-            new PlaceholderBiome(TerrainType.SMALL_HILLS),
-            new PlaceholderBiome(TerrainType.BIG_HILLS),
-            new PlaceholderBiome(TerrainType.MOUNTAINS),
-    };
-
-    /*
-    public static final BaseTFCRBiome[] biomes = new BaseTFCRBiome[] {
-            new DesertBiomeFlat(),
-            new DesertBiomeSmallHill(),
-            new DesertBiomeBigHill(),
-            new DesertBiomeMountain(),
-
-            new SavannaBiomeFlat(),
-            new SavannaBiomeSmallHill(),
-            new SavannaBiomeBigHill(),
-            new SavannaBiomeMountain(),
-
-            new ShrublandBiomeFlat(),
-            new ShrublandBiomeSmallHill(),
-            new ShrublandBiomeBigHill(),
-            new ShrublandBiomeMountain(),
-
-            new TreeShrublandBiomeFlat(),
-            new TreeShrublandBiomeSmallHill(),
-            new TreeShrublandBiomeBigHill(),
-            new TreeShrublandBiomeMountain(),
-
-            new TropicalRainforestBiomeFlat(),
-            new TropicalRainforestBiomeSmallHill(),
-            new TropicalRainforestBiomeBigHill(),
-            new TropicalRainforestBiomeMountain(),
-
-            new ChaparralBiomeFlat(),
-            new ChaparralBiomeSmallHill(),
-            new ChaparralBiomeBigHill(),
-            new ChaparralBiomeMountain(),
-
-            new LowGrasslandBiomeFlat(),
-            new LowGrasslandBiomeSmallHill(),
-            new LowGrasslandBiomeBigHill(),
-            new LowGrasslandBiomeMountain(),
-
-            new HighGrasslandBiomeFlat(),
-            new HighGrasslandBiomeSmallHill(),
-            new HighGrasslandBiomeBigHill(),
-            new HighGrasslandBiomeMountain(),
-
-            new TemperateConiferousBiomeFlat(),
-            new TemperateConiferousBiomeSmallHill(),
-            new TemperateConiferousBiomeBigHill(),
-            new TemperateConiferousBiomeMountain(),
-
-            new DeciduousForestBiomeFlat(),
-            new DeciduousForestBiomeSmallHill(),
-            new DeciduousForestBiomeBigHill(),
-            new DeciduousForestBiomeMountain(),
-
-            new TemperateRainforestFlat(),
-            new TemperateRainforestSmallHill(),
-            new TemperateRainforestBigHill(),
-            new TemperateRainforestMountain(),
-
-            new TemperateDesertFlat(),
-            new TemperateDesertSmallHill(),
-            new TemperateDesertBigHill(),
-            new TemperateDesertMountain(),
-
-            new WetlandBiomeFlat(),
-            new WetlandBiomeSmallHill(),
-            new WetlandBiomeBigHill(),
-            new WetlandBiomeMountain(),
-
-            new DryTundraBiomeFlat(),
-            new DryTundraBiomeSmallHill(),
-            new DryTundraBiomeBigHill(),
-            new DryTundraBiomeMountain()
-            ,
-            new TundraBiomeFlat(),
-            new TundraBiomeSmallHill(),
-            new TundraBiomeBigHill(),
-            new TundraBiomeMountain(),
-
-            new TaigaBiomeFlat(),
-            new TaigaBiomeSmallHill(),
-            new TaigaBiomeBigHill(),
-            new TaigaBiomeMountain(),
-
-            new PolarBiomeFlat(),
-            new PolarBiomeSmallHills(),
-            new PolarBiomeBigHill(),
-            new PolarBiomeMountain()
-    };
-    */
     public static BaseTFCRBiome[] biomes;
+
+    // TODO this map only has one entry per terrain type for each biome. Should have them all
+    public static HashMap<Class, Integer> biomeClassToIndexLookup;
     static {
         // Initialize biomes
         ArrayList<BaseTFCRBiome> biomesList = new ArrayList<>();
 
+        // Water and technical biomes.
+        biomesList.addAll(
+            Arrays.asList(
+                new DeepOceanBiome(),
+                new OceanBiome(),
+                new BeachBiome(),
+                new CliffBiome(),
+                new RiverBiome()
+            )
+        );
+
+        // Temp/precip based biomes.
         biomesList.addAll(Arrays.asList(ChaparralBiome.generate()));
         biomesList.addAll(Arrays.asList(DeciduousForestBiome.generate()));
         biomesList.addAll(Arrays.asList(DesertBiome.generate()));
@@ -199,12 +107,16 @@ public class BiomeProviderTFCR extends BiomeProvider {
         biomesList.addAll(Arrays.asList(WetlandBiome.generate()));
 
         biomes = biomesList.toArray(new BaseTFCRBiome[0]);
+
+        // Biome reverse lookup map (by class)
+        // Keep earlist; this will tend to be the flat versions.
+        biomeClassToIndexLookup = new HashMap<>();
+        for (int i = 0; i < biomes.length; i++) {
+            biomeClassToIndexLookup.putIfAbsent(biomes[i].getClass(), i);
+        }
     }
 
-    private static HashMap<Biome, Integer> placeholderBiomeToIndexLookup;
-    public static HashMap<Class, Integer> biomeClassToIndexLookup;
-
-    public static final Biome DEFAULT = placeholderBiomes[5]; // Default is Flat biome
+    public static final Biome DEFAULT = Biomes.PLAINS; // Default is plains biome
 
     /**
      * Creates a new BiomeProvider for TFCR.
@@ -220,121 +132,6 @@ public class BiomeProviderTFCR extends BiomeProvider {
         this.genBiomes = genLayers[0];
         this.biomeFactoryLayer = genLayers[1]; // Voronoi zoomed out version of genBiomes
 
-        // Shared seed random for the noise generators
-        SharedSeedRandom sharedSeed = new SharedSeedRandom(seed);
-        temperature = new NoiseGeneratorOctaves(sharedSeed, 2);
-        precipitation = new NoiseGeneratorOctaves(sharedSeed, 2);
-
-        // Bigger numbers = bigger temperature "biomes"
-        noiseScaleX = 1000f;
-        noiseScaleZ = 1000f;
-
-        // Placeholder biome reverse lookup map
-        placeholderBiomeToIndexLookup = new HashMap<>();
-        for (int i = 0; i < placeholderBiomes.length; i++) {
-            placeholderBiomeToIndexLookup.put(placeholderBiomes[i], i);
-        }
-
-        // Biome reverse lookup map (by class)
-        biomeClassToIndexLookup = new HashMap<>();
-        for (int i = 0; i < biomes.length; i++) {
-            biomeClassToIndexLookup.put(biomes[i].getClass(), i);
-        }
-    }
-
-    /**
-     * Transforms a placeholder Biome (i.e., an int that maps to a TerrainType)
-     * into a concrete Biome based on the temperature and precipitation at that
-     * location.
-     *
-     * @param placeholderBiome An int ID corresponding to a placeholder biome
-     * @return A concrete biome with terrain matching the placeholder
-     */
-    private Biome applyTempPrecip(BlockPos pos, int placeholderBiome) {
-        // Temperature seems to range [0, 2]. Precip ranges from [-2, 2]??
-        // TODO double check these ranges and ensure they're properly normalized.
-        // TODO later, add a bias to the values so that temperate is more common.
-        double tempRaw = temperature.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
-        double precipRaw = precipitation.func_205563_a(pos.getX() / noiseScaleX, 0, pos.getZ() / noiseScaleZ);
-
-        int temp = (int)((tempRaw / 2.0) * 100.0); // Temperature ranges from -100 to 100
-        int precip = (int)(((precipRaw / 4.0) + 0.5) * 100.0); // Precipitation ranges from 0 to 100
-
-//        System.out.println("Temperature: " + temp);
-//        System.out.println("Precipitation: " + precip);
-
-        // Ensure it's within range
-        temp = MathHelper.clamp(temp, -100, 99);
-        precip = MathHelper.clamp(precip, 0, 99);
-
-        // Deep ocean, ocean, river, beach, cliff all map to their placeholders
-        if (LayerUtilsTFCR.isWater(placeholderBiome) ||
-                placeholderBiome == LayerUtilsTFCR.CLIFF) {
-            return placeholderBiomes[placeholderBiome];
-        }
-
-        // Else we have flat, small hills, big hills, or mountains.
-        // Go through all the biomes and see if any match the given parameters.
-        // There should only be one that matches, so we'll return that.
-        for (BaseTFCRBiome biome : biomes) {
-            if (biome.matchesRange(temp, precip, TerrainType.values()[placeholderBiome])) {
-                return biome;
-//                Biome toReturn = biome.provideClosest(temp, precip, TerrainType.values()[placeholderBiome]);
-//                if (toReturn == null) {
-//                    System.out.println("Biome \"" + biome.getRegistryName() + "\" failed to provide closest.");
-//                    return DEFAULT;
-//                } else {
-//                    return toReturn;
-//                }
-            }
-        }
-        System.out.println("Failed to resolve biome with temperature=" + temp +
-                ", precipitation=" + precip +
-                " and TerrainType=" + TerrainType.values()[placeholderBiome]);
-        //return null;
-        return DEFAULT;
-    }
-
-    /**
-     * Transforms a placeholder Biome into a concrete implementation.
-     * @param pos
-     * @param placeholderBiome
-     * @return
-     */
-    private Biome applyTempPrecip(@Nonnull BlockPos pos, @Nonnull Biome placeholderBiome) {
-        if (placeholderBiomeToIndexLookup == null) {
-            System.out.println("Lookup index was null?");
-            return DEFAULT;
-        }
-        Integer index = placeholderBiomeToIndexLookup.get(placeholderBiome);
-        if (index == null) {
-            System.out.println("Failed to lookup biome: " + placeholderBiome.getRegistryName());
-            return DEFAULT;
-        }
-        return applyTempPrecip(pos, index);
-    }
-
-    /**
-     * Transforms an array of placeholder Biomes into concrete ones.
-     * @param startX
-     * @param startZ
-     * @param xSize
-     * @param zSize
-     * @param placeholderBiomes
-     * @return
-     */
-    private Biome[] applyTempPrecip(int startX, int startZ, int xSize, int zSize, Biome[] placeholderBiomes) {
-        Biome[] concrete = new Biome[placeholderBiomes.length];
-
-        // Iterate over all the placeholder Biomes and replace with concrete ones
-        // based on the world coordinates
-        for (int z = 0; z < zSize; z++) {
-            for (int x = 0; x < xSize; x++) {
-                int index = x + z * xSize;
-                concrete[index] = applyTempPrecip(new BlockPos(startX + x, 0, startZ + z), placeholderBiomes[index]);
-            }
-        }
-        return concrete;
     }
 
     @Nullable
@@ -353,10 +150,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
     @Nonnull
     @Override
     public Biome[] getBiomes(int startX, int startZ, int xSize, int zSize) {
-//        System.out.println("getBiomes called with bounds: " + startX + ", " + startZ + ", " + xSize + ", " + zSize);
-//        return this.genBiomes.generateBiomes(startX, startZ, xSize, zSize, DEFAULT);
-        Biome[] placeholders = this.genBiomes.generateBiomes(startX, startZ, xSize, zSize, DEFAULT);
-        return applyTempPrecip(startX, startZ, xSize, zSize, placeholders);
+        return this.genBiomes.generateBiomes(startX, startZ, xSize, zSize, DEFAULT);
     }
 
     @Nonnull
@@ -365,13 +159,13 @@ public class BiomeProviderTFCR extends BiomeProvider {
     // Gets the biomes from the cache. If the temp/precip is already applied, we don't apply it again.
     public Biome[] getBiomes(int x, int z, int width, int length, boolean cacheFlag) {
 //        System.out.println("getBiomes called with bounds: " + x + ", " + z + ", " + width + ", " + length);
-//        return cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0 ? this.cache.getCachedBiomes(x, z) : this.biomeFactoryLayer.generateBiomes(x, z, width, length, DEFAULT);
+        return cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0 ? this.cache.getCachedBiomes(x, z) : this.biomeFactoryLayer.generateBiomes(x, z, width, length, DEFAULT);
 
-        if (cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0) {
-            return this.cache.getCachedBiomes(x, z);
-        } else {
-            return applyTempPrecip(x, z, width, length, this.biomeFactoryLayer.generateBiomes(x, z, width, length, DEFAULT));
-        }
+//        if (cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (z & 15) == 0) {
+//            return this.cache.getCachedBiomes(x, z);
+//        } else {
+//            return applyTempPrecip(x, z, width, length, this.biomeFactoryLayer.generateBiomes(x, z, width, length, DEFAULT));
+//        }
     }
 
     @Nonnull
@@ -387,11 +181,9 @@ public class BiomeProviderTFCR extends BiomeProvider {
         int j1 = l - j + 1;
 
         Biome[] placeholders = this.genBiomes.generateBiomes(i, j, i1, j1, (Biome)null);
-        Biome[] concrete = applyTempPrecip(i, j, i1, j1, placeholders);
 
         Set<Biome> set = Sets.newHashSet();
-        Collections.addAll(set, concrete);
-//        Collections.addAll(set, placeholders);
+        Collections.addAll(set, placeholders);
 
         return set;
     }
@@ -406,15 +198,13 @@ public class BiomeProviderTFCR extends BiomeProvider {
         int i1 = k - i + 1;
         int j1 = l - j + 1;
         Biome[] abiome = this.genBiomes.generateBiomes(i, j, i1, j1, (Biome)null);
-        Biome[] concrete = applyTempPrecip(i, j, i1, j1, abiome);
         BlockPos blockpos = null;
         int k1 = 0;
 
         for(int l1 = 0; l1 < i1 * j1; ++l1) {
             int i2 = i + l1 % i1 << 2;
             int j2 = j + l1 / i1 << 2;
-            if (biomes.contains(concrete[l1])) {
-//            if (biomes.contains(abiome[l1])) {
+            if (biomes.contains(abiome[l1])) {
                 if (blockpos == null || random.nextInt(k1 + 1) == 0) {
                     blockpos = new BlockPos(i2, 0, j2);
                 }
@@ -429,7 +219,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
     @Override
     public boolean hasStructure(@Nonnull Structure<?> structureIn) {
         return this.hasStructureCache.computeIfAbsent(structureIn, (p_205006_1_) -> {
-            for(Biome biome : this.placeholderBiomes) {
+            for(Biome biome : this.biomes) {
                 if (biome.hasStructure(p_205006_1_)) {
                     return true;
                 }
@@ -443,7 +233,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
     @Override
     public Set<IBlockState> getSurfaceBlocks() {
         if (this.topBlocksCache.isEmpty()) {
-            for(Biome biome : this.placeholderBiomes) {
+            for(Biome biome : this.biomes) {
                 this.topBlocksCache.add(biome.getSurfaceBuilderConfig().getTop());
             }
         }

@@ -35,9 +35,6 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
     private NoiseGeneratorOctaves mainPerlinNoise;
     private NoiseGeneratorOctaves depthNoise;
 
-    private NoiseGeneratorOctaves temperatureNoise;
-    private NoiseGeneratorOctaves precipitationNoise;
-
     public ChunkGeneratorTFCR(IWorld worldIn, BiomeProvider biomeProviderIn, OverworldGenSettings settings) {
         super(worldIn, biomeProviderIn, settings);
         this.settings = settings;
@@ -47,9 +44,6 @@ public class ChunkGeneratorTFCR extends ChunkGeneratorOverworld {
         this.maxLimitPerlinNoise = new NoiseGeneratorOctaves(sharedseedrandom, 16);
         this.mainPerlinNoise = new NoiseGeneratorOctaves(sharedseedrandom, 8);
         this.depthNoise = new NoiseGeneratorOctaves(sharedseedrandom, 16);
-
-//        this.temperatureNoise = new NoiseGeneratorOctaves(sharedseedrandom, 16);
-//        this.precipitationNoise = new NoiseGeneratorOctaves(sharedseedrandom, 16);
 
         this.biomeWeights = new float[25];
 

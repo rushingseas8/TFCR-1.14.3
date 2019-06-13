@@ -25,8 +25,12 @@ public enum GenLayerTempPrecipMask implements IAreaTransformer2, IDimOffset1Tran
         int rawTempPrecip = tempPrecipArea.getValue(x, z);
 
         // Water pass-through
-        if (LayerUtilsTFCR.isWater(placeholderBiome) ||
-                placeholderBiome == LayerUtilsTFCR.CLIFF) {
+        if (LayerUtilsTFCR.isWater(placeholderBiome)) {
+            return placeholderBiome;
+        }
+
+        if (placeholderBiome > TerrainType.values().length) {
+            System.out.println("Got invalid input into temp/precip mask: " + placeholderBiome);
             return placeholderBiome;
         }
 

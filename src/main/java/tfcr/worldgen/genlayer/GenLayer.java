@@ -30,14 +30,16 @@ public class GenLayer {
         LazyArea lazyarea = this.lazyAreaFactory.make(areadimension);
         Biome[] abiome = new Biome[xSize * zSize];
 
-        int maxSize = BiomeProviderTFCR.placeholderBiomes.length;
+//        int maxSize = BiomeProviderTFCR.placeholderBiomes.length;
+        int maxSize = BiomeProviderTFCR.biomes.length;
 
         for(int i = 0; i < zSize; ++i) {
             for(int j = 0; j < xSize; ++j) {
 //                abiome[j + i * xSize] = Biome.getBiome(lazyarea.getValue(j, i), defaultBiome);
 
                 int value = lazyarea.getValue(j, i);
-                abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.placeholderBiomes[value];
+//                abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.placeholderBiomes[value];
+                abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.biomes[value];
             }
         }
 

@@ -20,9 +20,9 @@ public class ModBiomes {
         System.out.println("Biome registation called");
 //        event.getRegistry().register(BIOME_TFCR_BASE);
 
-        for (Biome biome : BiomeProviderTFCR.placeholderBiomes) {
-            event.getRegistry().register(biome);
-        }
+//        for (Biome biome : BiomeProviderTFCR.placeholderBiomes) {
+//            event.getRegistry().register(biome);
+//        }
 
         for (Biome biome : BiomeProviderTFCR.biomes) {
             event.getRegistry().register(biome);
