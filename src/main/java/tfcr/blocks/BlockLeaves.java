@@ -5,13 +5,18 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.init.ModItems;
 import tfcr.init.ModTabs;
 
 import java.util.Arrays;
@@ -90,5 +95,14 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
     public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
         builder.add(DISTANCE).add(PERSISTENT).add(NUM_TREES);
         // TODO if we remove BlockLeaves subclass then remove distance/persistent
+    }
+
+    @Override
+    public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World worldIn, BlockPos pos, int fortune) {
+        // Between 0 and 4 leaves, centered around 2
+        int leafCount = worldIn.rand.nextInt(3) + worldIn.rand.nextInt(3);
+        drops.clear();
+        drops.add(new ItemStack(ModItems.leaves, leafCount));
+        //super.getDrops(state, drops, worldIn, pos, fortune);
     }
 }

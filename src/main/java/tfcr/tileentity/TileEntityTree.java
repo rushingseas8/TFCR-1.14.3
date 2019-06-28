@@ -326,7 +326,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
         read(packet.getNbtCompound());
     }
 
-    private class TemplateProcessorTrees implements ITemplateProcessor {
+    public static class TemplateProcessorTrees implements ITemplateProcessor {
 
         private WoodType woodType;
 

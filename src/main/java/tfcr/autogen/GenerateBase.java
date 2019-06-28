@@ -37,10 +37,22 @@ public class GenerateBase {
     }
 
     public static void main(String[] args) {
+        System.out.println("---");
+        System.out.println("Generating block assets.");
+        System.out.println("---");
+
         GenerateBranch.generate();
         GenerateLog.generate();
         GenerateLeaves.generate();
         GenerateSapling.generate();
+
+        System.out.println("---");
+        System.out.println("Generating item assets.");
+        System.out.println("---");
+
+        GenerateItemLog.generate();
+        GenerateMisc.generate();
+
         /*
 
   "block.tfcr.block_branch": "Branch",
@@ -48,6 +60,11 @@ public class GenerateBase {
 
   "item.tfcr.ore.bismuthinite": "Bismuthinite"
          */
+
+
+        System.out.println("---");
+        System.out.println("Finalizing lang file.");
+        System.out.println("---");
 
         appendSpacerToLangFile();
         appendToLangFile("block.tfcr.block_branch", "Branch");
@@ -62,5 +79,9 @@ public class GenerateBase {
         langFile.delete(langFile.length() - 2, langFile.length());
         langFile.append("\n}\n");
         writeToFile(RESOURCE_BASE + File.separator + "lang/en_us.json", langFile.toString());
+
+        System.out.println("---");
+        System.out.println("Done generating.");
+        System.out.println("---");
     }
 }
