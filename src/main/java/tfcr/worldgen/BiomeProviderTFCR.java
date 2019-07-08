@@ -128,7 +128,10 @@ public class BiomeProviderTFCR extends BiomeProvider {
         long seed = worldInfo.getSeed();
         WorldType worldType = worldInfo.getTerrainType();
 
-        GenLayer[] genLayers = LayerUtilsTFCR.buildOverworldProcedure(seed, worldType, settings);
+        // Regular temp/precip biome map
+//        GenLayer[] genLayers = LayerUtilsTFCR.buildOverworldProcedure(seed, worldType, settings);
+        // Simplified biomes (only TemperateConiferousBiome + river, ocean, etc.)
+        GenLayer[] genLayers = LayerUtilsTFCR.buildSimpleProcedure(seed, worldType, settings);
         this.genBiomes = genLayers[0];
         this.biomeFactoryLayer = genLayers[1]; // Voronoi zoomed out version of genBiomes
 

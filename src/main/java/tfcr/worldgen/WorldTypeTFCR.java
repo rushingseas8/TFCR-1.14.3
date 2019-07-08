@@ -40,13 +40,13 @@ public class WorldTypeTFCR extends WorldType {
     @Override
     public IChunkGenerator<?> createChunkGenerator(World world) {
         // Single biome type (not superflat though)
-        Biome defaultBiome = BiomeProviderTFCR.biomes[BiomeProviderTFCR.biomeClassToIndexLookup.get(TemperateConiferousBiome.class)];
-        SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(defaultBiome);
-
-        return new ChunkGeneratorTFCR(world, BiomeProviderType.FIXED.create(settings), new OverworldGenSettings());
+//        Biome defaultBiome = BiomeProviderTFCR.biomes[BiomeProviderTFCR.biomeClassToIndexLookup.get(TemperateConiferousBiome.class)];
+//        SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(defaultBiome);
+//
+//        return new ChunkGeneratorTFCR(world, BiomeProviderType.FIXED.create(settings), new OverworldGenSettings());
 
         // Full biomes
-//        return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(world.getWorldInfo(), new OverworldGenSettings()), new OverworldGenSettings());
+        return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(world.getWorldInfo(), new OverworldGenSettings()), new OverworldGenSettings());
     }
 
     /**
