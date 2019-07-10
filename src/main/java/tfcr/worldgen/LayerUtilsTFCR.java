@@ -3,15 +3,18 @@ package tfcr.worldgen;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.gen.IContext;
 import net.minecraft.world.gen.IContextExtended;
 import net.minecraft.world.gen.LazyAreaLayerContext;
 import net.minecraft.world.gen.OverworldGenSettings;
+import net.minecraft.world.gen.area.AreaDimension;
 import net.minecraft.world.gen.area.IArea;
 import net.minecraft.world.gen.area.IAreaFactory;
 import net.minecraft.world.gen.area.LazyArea;
 import net.minecraft.world.gen.layer.GenLayerSmooth;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
 import net.minecraft.world.gen.layer.GenLayerZoom;
+import net.minecraft.world.gen.layer.traits.IAreaTransformer0;
 import net.minecraft.world.gen.layer.traits.IAreaTransformer1;
 import tfcr.data.TerrainType;
 import tfcr.worldgen.genlayer.GenLayer;
@@ -219,14 +222,104 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
         biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
 
-        // Apply the temp/precip map on top. TODO: this is unfinished; most code runs on placeholder biomes
+        // Apply the temp/precip map on top.
         biomesAreaFactory = GenLayerTempPrecipMask.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
 
         // No ocean temperature mixing at this time
+
+        // Voronoi zoom out
         IAreaFactory<T> voronoiZoomed = GenLayerVoronoiZoom.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
 
         // TODO Add a mask layer for applying temp/precip transforms. Similar to GenLayerRiverMask, but
         //  using a Perlin noise based map that's been fuzzy zoomed out to the right scale.
+
+        return ImmutableList.of(biomesAreaFactory, voronoiZoomed, biomesAreaFactory);
+    }
+
+    /**
+     * TODO placeholder
+     * A very basic placeholder worldgen. Primary biome is forest (specifically, TemperateConiferousBiome)
+     * but with the addition of oceans, rivers, beaches, and cliff biomes (as appropriate).
+     *
+     * This is to allow for developing the core gameplay of TFCR without worrying too much
+     * about worldgen. Other biomes will slowly be mixed in as content is added.
+     */
+    private static <T extends IArea, C extends IContextExtended<T>> ImmutableList<IAreaFactory<T>> buildSimpleProcedure(long seed, WorldType worldTypeIn, OverworldGenSettings settings, LongFunction<C> contextFactory) {
+        // Basic worldgen. In Vanilla this section handles plains/forest islands and oceans
+        // iareafactory --> baseAreaFactory
+        IAreaFactory<T> baseAreaFactory = GenLayerIsland.INSTANCE.apply(contextFactory.apply(1L));
+        baseAreaFactory = GenLayerZoom.FUZZY.apply(contextFactory.apply(2000L), baseAreaFactory); // Zoom out 2x, fuzz
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(1L), baseAreaFactory); // Add small hill islands
+        baseAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(2001L), baseAreaFactory); // Zoom out 2x, normal
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);  // Add 3 layers of small hill islands
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(50L), baseAreaFactory);
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(70L), baseAreaFactory);
+        baseAreaFactory = GenLayerRemoveTooMuchOcean.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory); // If a region is all ocean, there's a 50% chance to flip it to flat.
+        // Skip the ocean-related code, since we don't care about ocean temp yet
+        // GenLayerAddSnow actually adds hilly + mountainous regions. So renamed to GenLayerAddMountain.
+        baseAreaFactory = GenLayerAddMountain.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(3L), baseAreaFactory); // More small hill islands
+        // GenLayerEdge plays a role here. It looks like it messes with temperature (adding deserts/mountains),
+        // and then adds a rare chance of having special placeholderBiomes. We don't care about that.
+        baseAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(2002L), baseAreaFactory); // Zoom out 2x
+        baseAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(2003L), baseAreaFactory); // And again, for a total of 4x
+        baseAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // More small hill islands
+        // Don't care about mushroom islands
+        baseAreaFactory = GenLayerDeepOcean.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // Turn center ocean tiles into deep ocean
+
+        // Custom. Tries to normalize land. 2 passes to potentially fully normalize mountain boundaries.
+        baseAreaFactory = repeat(16L, GenLayerEqualize.INSTANCE, baseAreaFactory, 2, contextFactory);
+        baseAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, baseAreaFactory, 0, contextFactory); // no-op?
+
+        // River and biome size setup
+        int biomeSize = 4;
+        int riverSize = 4;
+//        if (settings != null) {
+//            biomeSize = settings.getBiomeSize();
+//            riverSize = settings.getRiverSize();
+//        }
+
+        // lvt_7_1_ --> riverAreaFactory
+        IAreaFactory<T> riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        riverAreaFactory = GenLayerRiverInit.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
+
+        // Add Biomes using getBiomeLayer. The TFCR variation uses TerrainType-based logic.
+        // lvt_8_1_ --> biomesAreaFactory
+        IAreaFactory<T> biomesAreaFactory = worldTypeIn.getBiomeLayer(baseAreaFactory, settings, contextFactory);
+
+        // lvt_9_1_ --> zoomedRiverInitAreaFactory
+//        IAreaFactory<T> zoomedRiverInitAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, 2, contextFactory);
+        biomesAreaFactory = GenLayerHills.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Random chance to raise land (modified from orig)
+        riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, 2, contextFactory);
+        riverAreaFactory = repeat(1000L, GenLayerZoom.NORMAL, riverAreaFactory, riverSize, contextFactory);
+        riverAreaFactory = GenLayerRiver.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
+        riverAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
+
+        // Expand the placeholderBiomes as needed; based on biomeSize parameter
+        for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
+            biomesAreaFactory = GenLayerZoom.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
+            if (zoomIteration == 0) {
+                biomesAreaFactory = GenLayerAddIsland.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
+            }
+
+            if (zoomIteration == 1 || biomeSize == 1) {
+                biomesAreaFactory = GenLayerShore.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+            }
+        }
+
+        biomesAreaFactory = GenLayerSmooth.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
+        biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+
+        // This lambda replaces GenLayerTempPrecip, which would normally fill the world with random temp/precip values.
+        // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
+        // with TemperateConiferousBiome biomes (and all its height variations).
+        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, areaDimensionIn, x, z) -> (0 << 8) | 35).apply(contextFactory.apply(17L));
+
+        // Apply the temp/precip map on top.
+        biomesAreaFactory = GenLayerTempPrecipMask.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
+
+        // No ocean temperature mixing at this time
+        IAreaFactory<T> voronoiZoomed = GenLayerVoronoiZoom.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
 
         return ImmutableList.of(biomesAreaFactory, voronoiZoomed, biomesAreaFactory);
     }
@@ -236,6 +329,20 @@ public class LayerUtilsTFCR {
         int i = 1;
         int[] aint = new int[1];
         ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildOverworldProcedure(seed, typeIn, settings, (p_202825_3_) -> {
+            ++aint[0];
+            return new LazyAreaLayerContext(1, aint[0], seed, p_202825_3_);
+        });
+        GenLayer genlayer = new GenLayer(immutablelist.get(0));
+        GenLayer genlayer1 = new GenLayer(immutablelist.get(1));
+        GenLayer genlayer2 = new GenLayer(immutablelist.get(2));
+        return new GenLayer[]{genlayer, genlayer1, genlayer2};
+    }
+
+    // Similar to buildOverworldProcedure, but calls buildSimpleProcedure instead.
+    public static GenLayer[] buildSimpleProcedure(long seed, WorldType typeIn, OverworldGenSettings settings) {
+        int i = 1;
+        int[] aint = new int[1];
+        ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildSimpleProcedure(seed, typeIn, settings, (p_202825_3_) -> {
             ++aint[0];
             return new LazyAreaLayerContext(1, aint[0], seed, p_202825_3_);
         });
