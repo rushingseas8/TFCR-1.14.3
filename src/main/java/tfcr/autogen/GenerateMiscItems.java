@@ -4,7 +4,7 @@ import tfcr.data.WoodType;
 
 import java.io.File;
 
-public class GenerateMisc {
+public class GenerateMiscItems {
     private static final String defaultItemModelLocation = "models/item/NAME";
 
     private static final String defaultItemJSON = "{\n" +
@@ -45,7 +45,8 @@ public class GenerateMisc {
 
         String[] names = new String[]{
                 "leaves",
-                "mud_ball"
+                "mud_ball",
+                "stick_mesh"
         };
 
         for (String name : names) {

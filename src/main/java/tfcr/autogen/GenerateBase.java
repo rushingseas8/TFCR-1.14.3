@@ -45,13 +45,14 @@ public class GenerateBase {
         GenerateLog.generate();
         GenerateLeaves.generate();
         GenerateSapling.generate();
+        GenerateMiscBlocks.generate();
 
         System.out.println("---");
         System.out.println("Generating item assets.");
         System.out.println("---");
 
         GenerateItemLog.generate();
-        GenerateMisc.generate();
+        GenerateMiscItems.generate();
 
         /*
 

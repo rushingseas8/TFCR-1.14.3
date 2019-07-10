@@ -47,7 +47,7 @@ public class ModBlocks {
         // Add other one-off blocks
         allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
         allBlocks.add(new BlockTallSapling());
-        allBlocks.add(new BlockMud());
+        allBlocks.add(BlockMud.get());
 
         System.out.println("Done initializing.");
     }

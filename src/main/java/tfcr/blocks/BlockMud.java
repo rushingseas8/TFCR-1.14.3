@@ -14,7 +14,10 @@ import tfcr.init.ModItems;
 
 import java.util.Random;
 
+// TODO make it so dirt will turn into mud if near water (water/dirt onplace?)
 public class BlockMud extends Block implements ISelfRegisterBlock, ISelfRegisterItem {
+
+    private static BlockMud INSTANCE;
 
     public BlockMud() {
         super(Block.Properties.from(Blocks.CLAY).sound(SoundType.WET_GRASS));
@@ -29,5 +32,16 @@ public class BlockMud extends Block implements ISelfRegisterBlock, ISelfRegister
     @Override
     public int quantityDropped(IBlockState state, Random random) {
         return 4;
+    }
+
+    private static void init() {
+        INSTANCE = new BlockMud();
+    }
+
+    public static BlockMud get() {
+        if (INSTANCE == null) {
+            init();
+        }
+        return INSTANCE;
     }
 }

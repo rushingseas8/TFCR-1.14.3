@@ -14,6 +14,7 @@ import net.minecraft.world.gen.area.IAreaFactory;
 import net.minecraft.world.gen.layer.GenLayerZoom;
 import tfcr.init.ModBiomes;
 import tfcr.worldgen.biome.BaseTFCRBiome;
+import tfcr.worldgen.biome.RiverBiome;
 import tfcr.worldgen.biome.TemperateConiferousBiome;
 import tfcr.worldgen.genlayer.GenLayerBiome;
 import tfcr.worldgen.genlayer.GenLayerBiomeEdge;
@@ -40,7 +41,8 @@ public class WorldTypeTFCR extends WorldType {
     @Override
     public IChunkGenerator<?> createChunkGenerator(World world) {
         // Single biome type (not superflat though)
-        Biome defaultBiome = BiomeProviderTFCR.biomes[BiomeProviderTFCR.biomeClassToIndexLookup.get(TemperateConiferousBiome.class)];
+//        Biome defaultBiome = BiomeProviderTFCR.biomes[BiomeProviderTFCR.biomeClassToIndexLookup.get(TemperateConiferousBiome.class)];
+        Biome defaultBiome = BiomeProviderTFCR.biomes[BiomeProviderTFCR.biomeClassToIndexLookup.get(RiverBiome.class)];
         SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(defaultBiome);
 
         return new ChunkGeneratorTFCR(world, BiomeProviderType.FIXED.create(settings), new OverworldGenSettings());

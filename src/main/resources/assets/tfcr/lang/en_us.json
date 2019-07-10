@@ -343,6 +343,8 @@
 	"block.tfcr.sapling.white_elm": "White Elm Sapling",
 	"block.tfcr.sapling.willow": "Willow Sapling",
 
+	"block.tfcr.mud": "Mud",
+
 	"item.tfcr.itemlog.acacia": "Acacia Log",
 	"item.tfcr.itemlog.ash": "Ash Log",
 	"item.tfcr.itemlog.aspen": "Aspen Log",
@@ -366,6 +368,7 @@
 
 	"item.tfcr.leaves": "Leaves",
 	"item.tfcr.mud_ball": "Mud Ball",
+	"item.tfcr.stick_mesh": "Stick Mesh",
 
 	"block.tfcr.block_branch": "Branch",
 	"block.tfcr.marsh_marigold": "Marsh Marigold",

@@ -23,6 +23,7 @@ public class ModItems {
     public static final ItemOre bismuthinite = null;
     public static final ItemTFCR leaves = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "leaves");
     public static final ItemTFCR mud_ball = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
+    public static final ItemTFCR stick_mesh = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "stick_mesh");
 
     public static ArrayList<Item> allItems = new ArrayList<>();
 
@@ -32,6 +33,7 @@ public class ModItems {
         allItems.add(bismuthinite);
         allItems.add(leaves);
         allItems.add(mud_ball);
+        allItems.add(stick_mesh);
     }
 
     @SubscribeEvent
