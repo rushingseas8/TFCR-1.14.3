@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.data.OreType;
 import tfcr.items.ItemLog;
 import tfcr.items.ItemOre;
 import tfcr.items.ItemTFCR;
@@ -23,7 +22,7 @@ public class ModItems {
     public static final ItemOre bismuthinite = null;
     public static final ItemTFCR leaves = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "leaves");
     public static final ItemTFCR mud_ball = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
-    public static final ItemTFCR stick_mesh = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "stick_mesh");
+    public static final ItemTFCR wicker = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "wicker");
 
     public static ArrayList<Item> allItems = new ArrayList<>();
 
@@ -33,7 +32,7 @@ public class ModItems {
         allItems.add(bismuthinite);
         allItems.add(leaves);
         allItems.add(mud_ball);
-        allItems.add(stick_mesh);
+        allItems.add(wicker);
     }
 
     @SubscribeEvent
