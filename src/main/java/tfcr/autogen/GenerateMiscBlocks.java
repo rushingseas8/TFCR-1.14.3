@@ -29,12 +29,12 @@ public class GenerateMiscBlocks {
     public static void generate() {
         System.out.print("Generating random extra block assets... ");
 
-        String[] names = new String[] {
+        String[] cubeBlocks = new String[] {
                 "mud",
                 "leaf_roof"
         };
 
-        for (String name : names) {
+        for (String name : cubeBlocks) {
             String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + defaultBlockstateLocation.replace("NAME", name);
             String modelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultModelLocation.replace("NAME", name);
             String itemModelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultItemModelLocation.replace("NAME", name);
