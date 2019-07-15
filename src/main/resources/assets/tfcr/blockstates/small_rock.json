@@ -1,0 +1,36 @@
+{
+    "variants": {
+        "": [
+            {
+                "model": "tfcr:block/small_rock_0"
+            },
+            {
+                "model": "tfcr:block/small_rock_0",
+                "y": 90
+            },
+            {
+                "model": "tfcr:block/small_rock_0",
+                "y": 180
+            },
+            {
+                "model": "tfcr:block/small_rock_0",
+                "y": 270
+            },
+            {
+                "model": "tfcr:block/small_rock_1"
+            },
+            {
+                "model": "tfcr:block/small_rock_1",
+                "y": 90
+            },
+            {
+                "model": "tfcr:block/small_rock_1",
+                "y": 180
+            },
+            {
+                "model": "tfcr:block/small_rock_1",
+                "y": 270
+            }
+        ]
+    }
+}
