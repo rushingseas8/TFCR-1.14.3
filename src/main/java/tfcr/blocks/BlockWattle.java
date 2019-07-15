@@ -14,6 +14,7 @@ import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.Half;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +39,8 @@ public class BlockWattle extends BlockFourWay implements ISelfRegisterItem, ISel
     // X/Z alignment for single wattle post
     public static final EnumProperty<EnumFacing.Axis> HORIZONTAL_AXIS = BlockStateProperties.HORIZONTAL_AXIS;
 
+    public static final EnumProperty<Half> HALF = BlockStateProperties.HALF;
+
     protected BlockWattle(Block.Properties builder) {
         /*
          * 1: 8 +/- x
@@ -55,6 +58,7 @@ public class BlockWattle extends BlockFourWay implements ISelfRegisterItem, ISel
                         .with(WEST, false)
                         .with(WATERLOGGED, false)
                         .with(HORIZONTAL_AXIS, EnumFacing.Axis.X)
+                        .with(HALF, Half.TOP)
         );
         setRegistryName(TFCR.MODID, "wattle");
         this.voxelShapes = this.func_196408_a(1.0F, 1.0F, 16.0F, 2.0F, 15.0F);
@@ -73,7 +77,7 @@ public class BlockWattle extends BlockFourWay implements ISelfRegisterItem, ISel
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
-        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED, HORIZONTAL_AXIS);
+        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED, HORIZONTAL_AXIS, HALF);
     }
 
 
@@ -132,13 +136,17 @@ public class BlockWattle extends BlockFourWay implements ISelfRegisterItem, ISel
             EnumFacing playerFacing = context.getPlacementHorizontalFacing();
             EnumFacing.Axis axis = playerFacing.rotateAround(EnumFacing.Axis.Y).getAxis();
 
+            // We're the bottom half of a block if we're below another wattle block
+            boolean isBottom = iblockreader.getBlockState(blockpos.up()).getBlock() instanceof BlockWattle;
+
             return superState
                     .with(NORTH, canFenceConnectTo(iblockreader, blockpos, EnumFacing.NORTH))
                     .with(EAST, canFenceConnectTo(iblockreader, blockpos, EnumFacing.EAST))
                     .with(SOUTH, canFenceConnectTo(iblockreader, blockpos, EnumFacing.SOUTH))
                     .with(WEST, canFenceConnectTo(iblockreader, blockpos, EnumFacing.WEST))
                     .with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER)
-                    .with(HORIZONTAL_AXIS, axis);
+                    .with(HORIZONTAL_AXIS, axis)
+                    .with(HALF, isBottom ? Half.BOTTOM : Half.TOP);
         }
     }
 
@@ -156,7 +164,13 @@ public class BlockWattle extends BlockFourWay implements ISelfRegisterItem, ISel
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
 
-        return facing.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), this.canFenceConnectTo(worldIn, currentPos, facing)) : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        IBlockState state = facing.getAxis().getPlane() == EnumFacing.Plane.HORIZONTAL ? stateIn.with(FACING_TO_PROPERTY_MAP.get(facing), this.canFenceConnectTo(worldIn, currentPos, facing)) : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+
+        // todo double check if this should be down or up. Exactly one should be right
+        if (worldIn.getBlockState(currentPos.up()).getBlock() instanceof BlockWattle) {
+            return state.with(HALF, Half.BOTTOM);
+        }
+        return state.with(HALF, Half.TOP);
     }
 
     // Copied from BlockFence
