@@ -1,0 +1,231 @@
+{
+    "multipart": [
+        {
+            "when": {
+                "OR": [
+                    {
+                        "north": "true",
+                        "half": "top"
+                    },
+                    {
+                        "axis": "z",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "top"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_ne"
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "north": "true",
+                        "half": "bottom"
+                    },
+                    {
+                        "axis": "z",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "bottom"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_ne_full"
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "east": "true",
+                        "half": "top"
+                    },
+                    {
+                        "axis": "x",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "top"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_ne",
+                "y": 90
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "east": "true",
+                        "half": "bottom"
+                    },
+                    {
+                        "axis": "x",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "bottom"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_ne_full",
+                "y": 90
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "south": "true",
+                        "half": "top"
+                    },
+                    {
+                        "axis": "z",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "top"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_sw",
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "south": "true",
+                        "half": "bottom"
+                    },
+                    {
+                        "axis": "z",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "bottom"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_sw_full",
+                "y": 180
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "west": "true",
+                        "half": "top"
+                    },
+                    {
+                        "axis": "x",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "top"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_sw",
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "west": "true",
+                        "half": "bottom"
+                    },
+                    {
+                        "axis": "x",
+                        "north": "false",
+                        "south": "false",
+                        "east": "false",
+                        "west": "false",
+                        "half": "bottom"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_side_sw_full",
+                "y": 270
+            }
+        },
+        {
+            "when": {
+                "OR": [
+                    {
+                        "north": "true",
+                        "south": "false"
+                    },
+                    {
+                        "north": "false",
+                        "south": "true"
+                    },
+                    {
+                        "west": "true",
+                        "east": "false"
+                    },
+                    {
+                        "west": "false",
+                        "east": "true"
+                    }
+                ]
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_pole_middle",
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "axis": "x",
+                "north": "false",
+                "south": "false",
+                "east": "false",
+                "west": "false"
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_pole_side",
+                "uvlock": true
+            }
+        },
+        {
+            "when": {
+                "axis": "z",
+                "north": "false",
+                "south": "false",
+                "east": "false",
+                "west": "false"
+            },
+            "apply": {
+                "model": "tfcr:block/wattle_pole_side",
+                "uvlock": true,
+                "y": 90
+            }
+        }
+    ]
+}

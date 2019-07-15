@@ -1,0 +1,30 @@
+{
+    "textures": {
+        "texture": "minecraft:block/stone"
+    },
+    "elements": [
+        {
+            "from": [ 6, 0, 5 ],
+            "to": [ 10, 2, 11 ],
+            "faces": {
+                "north": { "texture": "#texture" },
+                "south": { "texture": "#texture" },
+                "east": { "texture": "#texture" },
+                "west": { "texture": "#texture" },
+                "up": { "texture": "#texture" },
+                "down": { "texture": "#texture", "cullface": "up" }
+            }
+        },
+        {
+            "from": [ 7, 2, 8 ],
+            "to": [ 10, 3, 11 ],
+            "faces": {
+                "north": { "texture": "#texture" },
+                "south": { "texture": "#texture" },
+                "east": { "texture": "#texture" },
+                "west": { "texture": "#texture" },
+                "up": { "texture": "#texture" }
+            }
+        }
+    ]
+}
