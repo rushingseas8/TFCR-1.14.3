@@ -1,15 +1,15 @@
 package tfcr.data;
 
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockLeaves;
-import net.minecraft.block.BlockLog;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import tfcr.blocks.BlockBranch;
-import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BranchBlock;
+import tfcr.blocks.SaplingBlock;
+import tfcr.blocks.LeavesBlock;
+import tfcr.blocks.LogBlock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,16 +17,16 @@ import java.util.Map;
 
 public class TreeStructure {
     // Each entry in the arraylist contains the shape of a tree for a given age.
-    private ArrayList<HashMap<Vec3i, IBlockState>> structure;
+    private ArrayList<HashMap<Vec3i, BlockState>> structure;
 
     public TreeStructure() {
-        this.structure = new ArrayList<>(BlockSapling.getMaxAge());
-        for (int i = 0; i < BlockSapling.getMaxAge(); i++) {
+        this.structure = new ArrayList<>(SaplingBlock.getMaxAge());
+        for (int i = 0; i < SaplingBlock.getMaxAge(); i++) {
             this.structure.add(new HashMap<>());
         }
     }
 
-    public void add(int age, Vec3i pos, IBlockState state) {
+    public void add(int age, Vec3i pos, BlockState state) {
         this.structure.get(age).put(pos, state);
     }
 
@@ -36,13 +36,13 @@ public class TreeStructure {
             return false;
         }
 
-        HashMap<Vec3i, IBlockState> currentStructure = structure.get(age);
+        HashMap<Vec3i, BlockState> currentStructure = structure.get(age);
 
-        for (Map.Entry<Vec3i, IBlockState> entry : currentStructure.entrySet()) {
+        for (Map.Entry<Vec3i, BlockState> entry : currentStructure.entrySet()) {
             BlockPos testPos = base.add(entry.getKey());
-            IBlockState state = world.getBlockState(testPos);
+            BlockState state = world.getBlockState(testPos);
 
-            if (!(state instanceof BlockBranch || state instanceof BlockLeaves)) {
+            if (!(state.getBlock() instanceof BranchBlock || state.getBlock() instanceof LeavesBlock)) {
                 return false;
             }
         }
@@ -64,17 +64,17 @@ public class TreeStructure {
      * @param toPlace
      * @return
      */
-    public boolean shouldPlace(World world, BlockPos pos, IBlockState toPlace) {
+    public boolean shouldPlace(World world, BlockPos pos, BlockState toPlace) {
         Block existing = world.getBlockState(pos).getBlock();
         Block replacing = toPlace.getBlock();
 
         // Can grow into air always
-        if (existing instanceof BlockAir) {
+        if (existing instanceof AirBlock) {
             return true;
         }
 
         // Branches can grow through leaves of any kind
-        if (existing instanceof BlockLeaves && (replacing instanceof BlockBranch || replacing instanceof BlockLog)) {
+        if (existing instanceof LeavesBlock && (replacing instanceof BranchBlock || replacing instanceof LogBlock)) {
             return true;
         }
 

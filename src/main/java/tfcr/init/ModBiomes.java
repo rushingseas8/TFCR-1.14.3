@@ -1,7 +1,6 @@
 package tfcr.init;
 
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -16,10 +16,10 @@ import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
-import tfcr.blocks.BlockBranch;
-import tfcr.blocks.BlockLeaves;
-import tfcr.blocks.BlockLog;
-import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BranchBlock;
+import tfcr.blocks.LeavesBlock;
+import tfcr.blocks.LogBlock;
+import tfcr.blocks.SaplingBlock;
 import tfcr.blocks.BlockTallSapling;
 import tfcr.data.WoodType;
 import tfcr.utils.TemplateHelper;
@@ -128,7 +128,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
                 // TODO Check if we can grow up first.
 
                 // Remove old template
-                if (age > 0 && age <= BlockSapling.getMaxAge()) {
+                if (age > 0 && age <= SaplingBlock.getMaxAge()) {
                     Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
                     if (template != null) {
                         cleanupTree(template);
@@ -136,9 +136,9 @@ public class TileEntityTree extends TileEntity implements ITickable {
                 }
 
                 age++;
-                if (age >= BlockSapling.getMaxAge()) {
+                if (age >= SaplingBlock.getMaxAge()) {
                     System.out.println("Done growing now");
-                    age = BlockSapling.getMaxAge();
+                    age = SaplingBlock.getMaxAge();
                     doneGrowing = true;
                 }
 
@@ -186,15 +186,15 @@ public class TileEntityTree extends TileEntity implements ITickable {
         Block blockType = newRoot.getBlock();
         TileEntityTree tileEntityTree = ((TileEntityTree) world.getTileEntity(pos));
 
-        if (blockType instanceof BlockSapling) {
+        if (blockType instanceof SaplingBlock) {
             // Valid, for now do nothing else
         } else if (blockType instanceof BlockTallSapling) {
             // Valid, for now do nothing else
-        } else if (blockType instanceof BlockBranch) {
+        } else if (blockType instanceof BranchBlock) {
             // Ensure this is a root
-            System.out.println("Setting block type to BlockBranch. Ensuring it is root.");
-            world.setBlockState(pos, newRoot.with(BlockBranch.ROOT, true));
-        } else if (blockType instanceof BlockLog) {
+            System.out.println("Setting block type to BranchBlock. Ensuring it is root.");
+            world.setBlockState(pos, newRoot.with(BranchBlock.ROOT, true));
+        } else if (blockType instanceof LogBlock) {
             // Valid, for now do nothing else
         } else {
             // Some other block was generated which can't support a TileEntityTree.
@@ -241,9 +241,9 @@ public class TileEntityTree extends TileEntity implements ITickable {
                     if (posToStateMap != null) {
                         IBlockState templateState = posToStateMap.get(new BlockPos(offset));
                         if (templateState == null || !(
-                                (templateState.getBlock() instanceof BlockBranch) ||
-                                        (templateState.getBlock() instanceof BlockLog) ||
-                                        (templateState.getBlock() instanceof BlockLeaves))) {
+                                (templateState.getBlock() instanceof BranchBlock) ||
+                                        (templateState.getBlock() instanceof LogBlock) ||
+                                        (templateState.getBlock() instanceof LeavesBlock))) {
                             continue;
                         }
                     }
@@ -253,11 +253,11 @@ public class TileEntityTree extends TileEntity implements ITickable {
                     IBlockState localState = world.getBlockState(worldPos);
                     Block localBlock = localState.getBlock();
 
-                    if (localBlock instanceof BlockBranch || localBlock instanceof BlockLog) {
+                    if (localBlock instanceof BranchBlock || localBlock instanceof LogBlock) {
                         // TODO check wood type matches structure
-                        WoodType woodType = localBlock instanceof BlockBranch ?
-                                ((BlockBranch) localBlock).woodType :
-                                ((BlockLog) localBlock).woodType;
+                        WoodType woodType = localBlock instanceof BranchBlock ?
+                                ((BranchBlock) localBlock).woodType :
+                                ((LogBlock) localBlock).woodType;
                         // We don't want to modify other trees' branches!
                         if (woodType != this.woodType) {
                             continue;
@@ -270,20 +270,20 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
                         // Otherwise, just remove branches and logs
                         world.removeBlock(worldPos);
-                    } else if (localBlock instanceof BlockLeaves) {
-                        WoodType woodType = ((BlockLeaves) localBlock).woodType;
+                    } else if (localBlock instanceof LeavesBlock) {
+                        WoodType woodType = ((LeavesBlock) localBlock).woodType;
                         // We don't want to modify other trees' leaves!
                         if (woodType != this.woodType) {
                             continue;
                         }
 
-                        int numTrees = localState.get(BlockLeaves.NUM_TREES);
+                        int numTrees = localState.get(LeavesBlock.NUM_TREES);
                         if (numTrees == 1) {
                             // Leaves are only part of this tree, so remove
                             world.removeBlock(worldPos);
                         } else if (numTrees > 1) {
                             // Leaves are part of >1 tree, so decrement count
-                            world.setBlockState(worldPos, localState.with(BlockLeaves.NUM_TREES, numTrees - 1));
+                            world.setBlockState(worldPos, localState.with(LeavesBlock.NUM_TREES, numTrees - 1));
                         }
                     }
                 }
@@ -345,22 +345,22 @@ public class TileEntityTree extends TileEntity implements ITickable {
             // then we need to do additional processing.
             IBlockState currentBlockState = worldIn.getBlockState(pos);
             IBlockState placingBlockState = blockInfoIn.blockState;
-            if ((currentBlockState.getBlock() instanceof BlockLeaves) && (placingBlockState.getBlock() instanceof BlockLeaves)) {
+            if ((currentBlockState.getBlock() instanceof LeavesBlock) && (placingBlockState.getBlock() instanceof LeavesBlock)) {
                 // If the woodtype is different, then we don't replace leaves
-                WoodType theirWoodType = ((BlockLeaves) currentBlockState.getBlock()).woodType;
+                WoodType theirWoodType = ((LeavesBlock) currentBlockState.getBlock()).woodType;
                 if (this.woodType != theirWoodType) {
                     return null;
                 }
 
                 // Else if the woodtype is the same, we increment the numTree count.
-                int numTrees = currentBlockState.get(BlockLeaves.NUM_TREES);
-                return new Template.BlockInfo(pos, currentBlockState.with(BlockLeaves.NUM_TREES, numTrees + 1), blockInfoIn.tileentityData);
+                int numTrees = currentBlockState.get(LeavesBlock.NUM_TREES);
+                return new Template.BlockInfo(pos, currentBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.tileentityData);
             }
 
             // Ensure that we always place leaves with numTrees at least 1.
-            if (placingBlockState.getBlock() instanceof BlockLeaves) {
-                if (placingBlockState.get(BlockLeaves.NUM_TREES) == 0) {
-                    return new Template.BlockInfo(pos, placingBlockState.with(BlockLeaves.NUM_TREES, 1), blockInfoIn.tileentityData);
+            if (placingBlockState.getBlock() instanceof LeavesBlock) {
+                if (placingBlockState.get(LeavesBlock.NUM_TREES) == 0) {
+                    return new Template.BlockInfo(pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.tileentityData);
                 }
             }
 

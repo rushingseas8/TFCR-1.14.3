@@ -1,10 +1,10 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -17,9 +17,9 @@ import tfcr.init.ModTabs;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
+public class LeavesBlock extends net.minecraft.block.LeavesBlock implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
-    private static BlockLeaves[] allBlocks;
+    private static LeavesBlock[] allBlocks;
 
     /**
      * What type of wood are we mapped to?
@@ -42,34 +42,34 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
      * leaf block. A leaf block with this value will not decay.
      * TODO: evaluate if these leaf blocks need to decay. Player-placed leaf blocks
      *  shouldn't decay, and if we have a timber-like tree destruction system, then
-     *  there won't ever be hanging leaf blocks. If so, we can remove the BlockLeaves
+     *  there won't ever be hanging leaf blocks. If so, we can remove the LeavesBlock
      *  subclassing to minimize the number of IDs we take up.
      */
     public static final IntegerProperty NUM_TREES = IntegerProperty.create("num_trees", 0, 16);
 
-    public BlockLeaves(WoodType woodType) {
+    public LeavesBlock(WoodType woodType) {
         super(Block.Properties.from(Blocks.OAK_LEAVES));
         this.woodType = woodType;
         setRegistryName(TFCR.MODID, "leaves/" + woodType.getName());
     }
 
     private static void init() {
-        allBlocks = new BlockLeaves[WoodType.values().length];
+        allBlocks = new LeavesBlock[WoodType.values().length];
         WoodType[] values = WoodType.values();
         for (int i = 0; i < values.length; i++) {
             WoodType type = values[i];
-            allBlocks[i] = new BlockLeaves(type);
+            allBlocks[i] = new LeavesBlock(type);
         }
     }
 
-    public static List<BlockLeaves> getAllBlocks() {
+    public static List<LeavesBlock> getAllBlocks() {
         if (allBlocks == null) {
             init();
         }
         return Arrays.asList(allBlocks);
     }
 
-    public static BlockLeaves get(WoodType type) {
+    public static LeavesBlock get(WoodType type) {
         if (allBlocks == null) {
             init();
         }
@@ -78,7 +78,7 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
 
     @Override
     public void registerItem(IForgeRegistry<Item> itemRegistry) {
-        itemRegistry.register(new ItemBlock(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+        itemRegistry.register(new BlockItem(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
     }
 
     @Override
@@ -87,8 +87,8 @@ public class BlockLeaves extends net.minecraft.block.BlockLeaves implements ISel
     }
 
     @Override
-    public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
+    public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(DISTANCE).add(PERSISTENT).add(NUM_TREES);
-        // TODO if we remove BlockLeaves subclass then remove distance/persistent
+        // TODO if we remove LeavesBlock subclass then remove distance/persistent
     }
 }

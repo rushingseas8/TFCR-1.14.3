@@ -8,11 +8,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.blocks.BlockBranch;
-import tfcr.blocks.BlockFlowerTFCR;
-import tfcr.blocks.BlockLeaves;
-import tfcr.blocks.BlockLog;
-import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BranchBlock;
+import tfcr.blocks.TFCRFlowerBlock;
+import tfcr.blocks.LeavesBlock;
+import tfcr.blocks.LogBlock;
+import tfcr.blocks.SaplingBlock;
 import tfcr.blocks.BlockTallSapling;
 import tfcr.tileentity.TileEntityTree;
 
@@ -32,19 +32,19 @@ public class ModBlocks {
         System.out.println("Initializing block references.");
 
         // Full block wooden log variations.
-        allBlocks.addAll(BlockLog.getAllBlocks());
+        allBlocks.addAll(LogBlock.getAllBlocks());
 
         // Tree leaves
-        allBlocks.addAll(BlockLeaves.getAllBlocks());
+        allBlocks.addAll(LeavesBlock.getAllBlocks());
 
         // Add all branch variations
-        allBlocks.addAll(BlockBranch.getAllBlocks());
+        allBlocks.addAll(BranchBlock.getAllBlocks());
 
         // Sapling variants
-        allBlocks.addAll(BlockSapling.getAllBlocks());
+        allBlocks.addAll(SaplingBlock.getAllBlocks());
 
         // Add other one-off blocks
-        allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
+        allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
         allBlocks.add(new BlockTallSapling());
 
         System.out.println("Done initializing.");

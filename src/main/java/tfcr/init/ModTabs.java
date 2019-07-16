@@ -5,7 +5,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import tfcr.blocks.BlockLog;
+import tfcr.blocks.LogBlock;
 import tfcr.blocks.IBlockWood;
 import tfcr.data.WoodType;
 
@@ -15,7 +15,7 @@ public class ModTabs {
     public static final ItemGroup TFCR_WOOD = new ItemGroup("tfcrWood") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(BlockLog.get(WoodType.OAK));
+            return new ItemStack(LogBlock.get(WoodType.OAK));
         }
 
         @Override

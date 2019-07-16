@@ -13,7 +13,7 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
-import tfcr.blocks.BlockMud;
+import tfcr.blocks.MudBlock;
 
 import java.util.Random;
 import java.util.function.Function;
@@ -53,7 +53,7 @@ public class MudFeature extends Feature<NoFeatureConfig> {
                             // If any adjacent block has water (flowing, source, or waterlogged), then
                             // replace this position with a mud block. Stop checking adjacent blocks.
                             if (world.getBlockState(adjacent).getFluidState().getFluid() instanceof WaterFluid) {
-                                world.setBlockState(mutableBlockPos, BlockMud.get().getDefaultState(), 3);
+                                world.setBlockState(mutableBlockPos, MudBlock.get().getDefaultState(), 3);
                                 break;
                             }
                         }
