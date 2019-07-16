@@ -34,14 +34,14 @@ public class MudFeature extends Feature<NoFeatureConfig> {
                 int worldZ = blockPos.getZ() + z;
                 int worldY = world.getHeight(Heightmap.Type.MOTION_BLOCKING, worldX, worldZ);
 
-                // Look up to 3 blocks under the surface
-                for (int y = 0; y < 3; y++) {
+                // Look up to 8 blocks under the surface
+                for (int y = 0; y < 8; y++) {
                     mutableBlockPos.setPos(worldX, worldY - y - 1, worldZ);
 
                     // If this block is dirt, convert to mud.
-                    // Grass/snow/mycelium/etc has a 1/3 chance to convert to mud.
+                    // Grass/snow/mycelium/etc has a 3/8 chance to convert to mud.
                     Block block = world.getBlockState(mutableBlockPos).getBlock();
-                    if (block == Blocks.DIRT || (block instanceof BlockDirtSnowy && random.nextInt(3) == 0)) {
+                    if (block == Blocks.DIRT || (block instanceof BlockDirtSnowy && random.nextInt(8) < 3)) {
                         for (EnumFacing facing : EnumFacing.values()) {
                             BlockPos adjacent = mutableBlockPos.add(facing.getDirectionVec());
                             // If any adjacent block has water (flowing, source, or waterlogged), then

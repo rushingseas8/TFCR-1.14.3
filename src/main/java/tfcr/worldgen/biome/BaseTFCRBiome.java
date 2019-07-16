@@ -1,11 +1,17 @@
 package tfcr.worldgen.biome;
 
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.CompositeFeature;
 import net.minecraft.world.gen.surfacebuilders.CompositeSurfaceBuilder;
 import tfcr.TFCR;
 import tfcr.data.TerrainType;
 import tfcr.worldgen.BiomeProviderTFCR;
 import tfcr.worldgen.LayerUtilsTFCR;
+import tfcr.worldgen.MudFeature;
+
+import static net.minecraft.world.gen.feature.IFeatureConfig.NO_FEATURE_CONFIG;
+import static net.minecraft.world.gen.placement.IPlacementConfig.NO_PLACEMENT_CONFIG;
 
 public class BaseTFCRBiome extends Biome {
 
@@ -63,6 +69,10 @@ public class BaseTFCRBiome extends Biome {
         defaultName += "_" + terrainType.name().toLowerCase();
 
         setRegistryName(TFCR.MODID, defaultName);
+
+        // Shared worldgen placed here.
+        // Converts dirt near water into mud
+        this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new CompositeFeature<>(MudFeature.INSTANCE, NO_FEATURE_CONFIG, PASSTHROUGH, NO_PLACEMENT_CONFIG));
     }
 
     /**

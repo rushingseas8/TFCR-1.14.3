@@ -38,6 +38,5 @@ public class RiverBiome extends BaseTFCRBiome {
 
         // TODO make it so that mud only spawns when directly adjacent to water, rather than
         //  everywhere in rivers below the surface.
-        this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new CompositeFeature<>(MudFeature.INSTANCE, NO_FEATURE_CONFIG, PASSTHROUGH, NO_PLACEMENT_CONFIG));
     }
 }

@@ -311,9 +311,9 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = GenLayerRiverMask.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
 
         // This lambda replaces GenLayerTempPrecip, which would normally fill the world with random temp/precip values.
-        // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
-        // with TemperateConiferousBiome biomes (and all its height variations).
-        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, areaDimensionIn, x, z) -> (0 << 8) | 35).apply(contextFactory.apply(17L));
+        // "(0 << 8) | 35" maps to a temperature of 0 (+100 to move to positive byte range), precip of 35. This means
+        // that we get a world that is filled with TemperateConiferousBiome biomes (and all its height variations).
+        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, areaDimensionIn, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
 
         // Apply the temp/precip map on top.
         biomesAreaFactory = GenLayerTempPrecipMask.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
