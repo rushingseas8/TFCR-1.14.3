@@ -1,13 +1,13 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
@@ -15,8 +15,9 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -47,7 +48,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     private static BlockBranch[] allBlocks;
 
-    private static final EnumProperty<EnumFacing.Axis> AXIS = BlockStateProperties.AXIS;
+    private static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
     public static final BooleanProperty ROOT = BooleanProperty.create("root");
     private static final BooleanProperty EXTEND_NEGATIVE = BooleanProperty.create("extend_negative");
     private static final BooleanProperty EXTEND_POSITIVE = BooleanProperty.create("extend_positive");
@@ -75,7 +76,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
                 woodType.getName() + "/block_branch_" + diameter + (leaflogged ? "_leafy" : ""));
 
         this.setDefaultState(this.stateContainer.getBaseState()
-            .with(AXIS, EnumFacing.Axis.Y)
+            .with(AXIS, Direction.Axis.Y)
             .with(ROOT, false)
             .with(EXTEND_NEGATIVE, false)
             .with(EXTEND_POSITIVE, false)
@@ -123,7 +124,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     @Override
     public void registerItem(IForgeRegistry<Item> itemRegistry) {
-        itemRegistry.register(new ItemBlock(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+        itemRegistry.register(new BlockItem(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
     }
 
     @Override
@@ -138,10 +139,11 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @param state The IBlockState for this block. Used to get Axis info.
      * @param worldIn Unused.
      * @param pos Unused.
+     * @param context Sneak state. Unused.
      * @return The Voxel bounding box of this shape.
      */
     @Override
-    public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos) {
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         // Return full block for leafy variants
         if (((BlockBranch) state.getBlock()).leaflogged) {
             return Block.makeCuboidShape(0, 0, 0, 16, 16, 16);
@@ -173,18 +175,18 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         return leaflogged ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
     }
 
-    @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
-    }
+//    @Override
+//    public boolean isBlockNormalCube(IBlockState state) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isFullCube(IBlockState blockState) {
+//        return false;
+//    }
 
     @Override
-    public boolean isFullCube(IBlockState blockState) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState blockState) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
 
@@ -195,7 +197,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @param builder
      */
     @Override
-    public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder) {
+    public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(AXIS).add(ROOT).add(EXTEND_NEGATIVE).add(EXTEND_POSITIVE);
     }
 
@@ -206,18 +208,18 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @return
      */
     @Override
-    public IBlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         return getDefaultState().with(AXIS, context.getFace().getAxis());
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {
+    public boolean hasTileEntity(BlockState state) {
         return state.get(ROOT);
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(IBlockState state, IBlockReader world) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new TileEntityTree(this.woodType);
     }
 
@@ -233,7 +235,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @param isMoving TODO Not sure what this param does.
      */
     @Override
-    public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.get(ROOT)) {
             System.out.println("Branch on replaced with TE");
             if (newState.getBlock() instanceof BlockBranch) {
@@ -254,18 +256,18 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
     }
 
     @Override
-    public boolean needsPostProcessing(IBlockState p_201783_1_, IBlockReader worldIn, BlockPos pos) {
+    public boolean needsPostProcessing(BlockState p_201783_1_, IBlockReader worldIn, BlockPos pos) {
         return true;
     }
 
     @Nonnull
     @Override
-    public IBlockState updatePostPlacement(@Nonnull IBlockState stateIn, EnumFacing facing, IBlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        return getExtendedState(worldIn.getWorld(), stateIn, currentPos);
+    public BlockState updatePostPlacement(@Nonnull BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        return this.getExtendedState(worldIn.getWorld(), stateIn, currentPos);
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, @Nullable EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         // Update the block state based on extended model rules
         worldIn.setBlockState(pos, getExtendedState(worldIn, state, pos));
     }
@@ -285,7 +287,7 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
      * @param currentPos
      * @return
      */
-    private IBlockState getExtendedState(World worldIn, IBlockState stateIn, BlockPos currentPos) {
+    private BlockState getExtendedState(World worldIn, BlockState stateIn, BlockPos currentPos) {
         BlockPos positive, negative;
         switch(stateIn.get(AXIS)) {
             case X: positive = currentPos.east(); negative = currentPos.west(); break;
@@ -294,8 +296,8 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
             default: throw new IllegalArgumentException("Block " + stateIn.getBlock() + " did not have property Axis.");
         }
 
-        IBlockState positiveState = worldIn.getBlockState(positive);
-        IBlockState negativeState = worldIn.getBlockState(negative);
+        BlockState positiveState = worldIn.getBlockState(positive);
+        BlockState negativeState = worldIn.getBlockState(negative);
 
         boolean shouldExtendPositive = false, shouldExtendNegative = false;
 
