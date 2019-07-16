@@ -8,7 +8,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 
-public class SmallRockBlock extends BlockTFCR {
+public class SmallRockBlock extends TFCRBlock {
 
     public SmallRockBlock(Properties properties, String name) {
         super(properties, name);

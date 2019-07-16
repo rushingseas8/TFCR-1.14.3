@@ -90,7 +90,7 @@ public class SaplingBlock extends BushBlock implements ISelfRegisterBlock, ISelf
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         System.out.println("Sapling onReplaced called.");
-        if (newState.getBlock() instanceof BlockTallSapling) {
+        if (newState.getBlock() instanceof TallSaplingBlock) {
             System.out.println("Sapling replaced by tall sapling.");
             if (newState.get(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
                 System.out.println("Keeping TileEntity.");

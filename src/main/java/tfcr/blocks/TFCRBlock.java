@@ -9,8 +9,8 @@ import tfcr.init.ISelfRegisterItem;
  * Generic TFCR block template. Has no special properties, sets its registry name,
  * and self-registers a Block and ItemBlock.
  */
-public class BlockTFCR extends Block implements ISelfRegisterItem, ISelfRegisterBlock {
-    public BlockTFCR(Properties properties, String name) {
+public class TFCRBlock extends Block implements ISelfRegisterItem, ISelfRegisterBlock {
+    public TFCRBlock(Properties properties, String name) {
         super(properties);
         setRegistryName(TFCR.MODID, name);
     }

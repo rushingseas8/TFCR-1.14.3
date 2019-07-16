@@ -1,7 +1,7 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -28,11 +28,11 @@ public class ModTabs {
             super.fill(items);
 
             items.sort((a, b) -> {
-                Block blockA = ((ItemBlock)a.getItem()).getBlock();
+                Block blockA = ((BlockItem)a.getItem()).getBlock();
                 if (!(blockA instanceof IBlockWood)) {
                     throw new IllegalArgumentException("Found non-wood item in list: " + a.toString());
                 }
-                Block blockB = ((ItemBlock)b.getItem()).getBlock();
+                Block blockB = ((BlockItem)b.getItem()).getBlock();
                 if (!(blockB instanceof IBlockWood)) {
                     throw new IllegalArgumentException("Found non-wood item in list: " + b.toString());
                 }

@@ -13,7 +13,7 @@ import tfcr.blocks.TFCRFlowerBlock;
 import tfcr.blocks.LeavesBlock;
 import tfcr.blocks.LogBlock;
 import tfcr.blocks.SaplingBlock;
-import tfcr.blocks.BlockTallSapling;
+import tfcr.blocks.TallSaplingBlock;
 import tfcr.tileentity.TileEntityTree;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class ModBlocks {
 
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
-        allBlocks.add(new BlockTallSapling());
+        allBlocks.add(new TallSaplingBlock());
 
         System.out.println("Done initializing.");
     }

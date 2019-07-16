@@ -1,10 +1,10 @@
 package tfcr.utils;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.feature.template.Template;
 import tfcr.TFCR;
 
@@ -22,7 +22,7 @@ public class TemplateHelper {
             return null;
         }
         ResourceLocation location = new ResourceLocation(TFCR.MODID, name);
-        Template template = ((WorldServer) world).getStructureTemplateManager().getTemplate(location);
+        Template template = ((ServerWorld) world).getStructureTemplateManager().getTemplate(location);
         if (template == null) {
             System.out.println("Failed to get template at location: \"" + location + "\".");
         }
@@ -71,10 +71,10 @@ public class TemplateHelper {
      * @param template The Template to get the blocks from.
      * @return A map of all the non-empty IBlockStates and their positions
      */
-    public static Map<BlockPos, IBlockState> getBlockMap(Template template) {
+    public static Map<BlockPos, BlockState> getBlockMap(Template template) {
         List<Template.BlockInfo> templateBlockList = getBlocks(template);
         return templateBlockList == null ?
                 null :
-                templateBlockList.stream().collect(Collectors.toMap(a -> a.pos, a -> a.blockState));
+                templateBlockList.stream().collect(Collectors.toMap(a -> a.pos, a -> a.state));
     }
 }

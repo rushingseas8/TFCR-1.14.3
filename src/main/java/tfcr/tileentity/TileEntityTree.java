@@ -1,18 +1,21 @@
 package tfcr.tileentity;
 
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.DynamicOps;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.gen.feature.template.ITemplateProcessor;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
+import net.minecraft.world.gen.feature.template.StructureProcessor;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
@@ -20,7 +23,7 @@ import tfcr.blocks.BranchBlock;
 import tfcr.blocks.LeavesBlock;
 import tfcr.blocks.LogBlock;
 import tfcr.blocks.SaplingBlock;
-import tfcr.blocks.BlockTallSapling;
+import tfcr.blocks.TallSaplingBlock;
 import tfcr.data.WoodType;
 import tfcr.utils.TemplateHelper;
 
@@ -28,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class TileEntityTree extends TileEntity implements ITickable {
+public class TileEntityTree extends TileEntity implements ITickableTileEntity {
 
     /**
      * The type of wood this TileEntityTree corresponds to.
@@ -67,7 +70,11 @@ public class TileEntityTree extends TileEntity implements ITickable {
      * @param tileEntityRegistry A reference to the TileEntity registry.
      */
     public static void registerTileEntity(IForgeRegistry<TileEntityType<?>> tileEntityRegistry) {
-        TREE = TileEntityType.register(TFCR.MODID + ":tile_entity.tree", TileEntityType.Builder.create(TileEntityTree::new));
+        // TODO build with null? is that right?
+        TREE = TileEntityType.Builder.create(TileEntityTree::new).build(null);
+        TREE.setRegistryName(TFCR.MODID, "tile_entity_tree");
+        tileEntityRegistry.register(TREE);
+
     }
 
     // Used internally to register the TileEntity. Should not be called externally.
@@ -176,19 +183,20 @@ public class TileEntityTree extends TileEntity implements ITickable {
         // TODO maybe make variant determine a random rotation/mirroring.
         // TODO instead of just adding structure, modify existing leaf blocks!!
         PlacementSettings settings = new PlacementSettings().setCenterOffset(center);
-        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), new TemplateProcessorTrees(this.woodType), settings, 2);
+        settings.addProcessor(new TemplateProcessorTrees(this.woodType));
+        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
 //        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
         System.out.println("Successfully added blocks.");
 
         // Validate the tree after it is added into the world, by making sure
         // there is a TileEntityTree after the structure blocks are placed down.
-        IBlockState newRoot = world.getBlockState(pos);
+        BlockState newRoot = world.getBlockState(pos);
         Block blockType = newRoot.getBlock();
         TileEntityTree tileEntityTree = ((TileEntityTree) world.getTileEntity(pos));
 
         if (blockType instanceof SaplingBlock) {
             // Valid, for now do nothing else
-        } else if (blockType instanceof BlockTallSapling) {
+        } else if (blockType instanceof TallSaplingBlock) {
             // Valid, for now do nothing else
         } else if (blockType instanceof BranchBlock) {
             // Ensure this is a root
@@ -226,7 +234,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
         }
 
         // Get a map of BlockPos : IBlockState, so we can query the template.
-        Map<BlockPos, IBlockState> posToStateMap = TemplateHelper.getBlockMap(template);
+        // TODO I think Templates have exposed a similar method. Look at func_215387_a and others
+        Map<BlockPos, BlockState> posToStateMap = TemplateHelper.getBlockMap(template);
 
         BlockPos size = template.getSize();
         Vec3i centerOffset = new Vec3i(-size.getX() / 2, 0, -size.getZ() / 2);
@@ -239,7 +248,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
                     // then we don't care about it for removal purposes. This prevents deleting neighbors.
                     // If we couldn't access the Template's internals, then this block never gets hit.
                     if (posToStateMap != null) {
-                        IBlockState templateState = posToStateMap.get(new BlockPos(offset));
+                        BlockState templateState = posToStateMap.get(new BlockPos(offset));
                         if (templateState == null || !(
                                 (templateState.getBlock() instanceof BranchBlock) ||
                                         (templateState.getBlock() instanceof LogBlock) ||
@@ -250,7 +259,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
                     BlockPos worldPos = pos.add(centerOffset).add(offset);
 
-                    IBlockState localState = world.getBlockState(worldPos);
+                    BlockState localState = world.getBlockState(worldPos);
                     Block localBlock = localState.getBlock();
 
                     if (localBlock instanceof BranchBlock || localBlock instanceof LogBlock) {
@@ -269,7 +278,8 @@ public class TileEntityTree extends TileEntity implements ITickable {
                         }
 
                         // Otherwise, just remove branches and logs
-                        world.removeBlock(worldPos);
+                        // TODO should "isMoving" be false?
+                        world.removeBlock(worldPos, false);
                     } else if (localBlock instanceof LeavesBlock) {
                         WoodType woodType = ((LeavesBlock) localBlock).woodType;
                         // We don't want to modify other trees' leaves!
@@ -280,7 +290,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
                         int numTrees = localState.get(LeavesBlock.NUM_TREES);
                         if (numTrees == 1) {
                             // Leaves are only part of this tree, so remove
-                            world.removeBlock(worldPos);
+                            world.removeBlock(worldPos, false);
                         } else if (numTrees > 1) {
                             // Leaves are part of >1 tree, so decrement count
                             world.setBlockState(worldPos, localState.with(LeavesBlock.NUM_TREES, numTrees - 1));
@@ -293,19 +303,19 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
     @Nonnull
     @Override
-    public NBTTagCompound write(NBTTagCompound compound) {
+    public CompoundNBT write(CompoundNBT compound) {
         compound = super.write(compound);
-        compound.setInt("woodTypeInt", woodType.ordinal());
-        compound.setInt("age", age);
-        compound.setInt("count", count);
-        compound.setBoolean("doneGrowing", doneGrowing);
-        compound.setInt("variant", variant);
+        compound.putInt("woodTypeInt", woodType.ordinal());
+        compound.putInt("age", age);
+        compound.putInt("count", count);
+        compound.putBoolean("doneGrowing", doneGrowing);
+        compound.putInt("variant", variant);
 //        System.out.println("Wrote age: " + age);
         return compound;
     }
 
     @Override
-    public void read(NBTTagCompound compound) {
+    public void read(CompoundNBT compound) {
         super.read(compound);
         this.woodType = WoodType.values()[compound.getInt("woodTypeInt")];
         this.age = compound.getInt("age");
@@ -316,21 +326,21 @@ public class TileEntityTree extends TileEntity implements ITickable {
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public SUpdateTileEntityPacket getUpdatePacket() {
         System.out.println("getUpdatePacket");
 
-        NBTTagCompound nbtTag = new NBTTagCompound();
+        CompoundNBT nbtTag = new CompoundNBT();
         this.write(nbtTag);
-        return new SPacketUpdateTileEntity(this.pos, 1, nbtTag);
+        return new SUpdateTileEntityPacket(this.pos, 1, nbtTag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
         System.out.println("onDataPacket");
         read(packet.getNbtCompound());
     }
 
-    private class TemplateProcessorTrees implements ITemplateProcessor {
+    private class TemplateProcessorTrees extends StructureProcessor {
 
         private WoodType woodType;
 
@@ -340,11 +350,11 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
         @Nullable
         @Override
-        public Template.BlockInfo processBlock(IBlockReader worldIn, BlockPos pos, Template.BlockInfo blockInfoIn) {
+        public Template.BlockInfo process(IWorldReader worldIn, BlockPos pos, Template.BlockInfo unsure, Template.BlockInfo blockInfoIn, PlacementSettings placementSettings) {
             // If the world pos is a leaf block AND so is the block we are going to place,
             // then we need to do additional processing.
-            IBlockState currentBlockState = worldIn.getBlockState(pos);
-            IBlockState placingBlockState = blockInfoIn.blockState;
+            BlockState currentBlockState = worldIn.getBlockState(pos);
+            BlockState placingBlockState = blockInfoIn.state;
             if ((currentBlockState.getBlock() instanceof LeavesBlock) && (placingBlockState.getBlock() instanceof LeavesBlock)) {
                 // If the woodtype is different, then we don't replace leaves
                 WoodType theirWoodType = ((LeavesBlock) currentBlockState.getBlock()).woodType;
@@ -354,18 +364,29 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
                 // Else if the woodtype is the same, we increment the numTree count.
                 int numTrees = currentBlockState.get(LeavesBlock.NUM_TREES);
-                return new Template.BlockInfo(pos, currentBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.tileentityData);
+                return new Template.BlockInfo(pos, currentBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
             }
 
             // Ensure that we always place leaves with numTrees at least 1.
             if (placingBlockState.getBlock() instanceof LeavesBlock) {
                 if (placingBlockState.get(LeavesBlock.NUM_TREES) == 0) {
-                    return new Template.BlockInfo(pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.tileentityData);
+                    return new Template.BlockInfo(pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);
                 }
             }
 
             // Default- place whatever we were going to place.
             return blockInfoIn;
+        }
+
+        @Override
+        protected IStructureProcessorType getType() {
+            return IStructureProcessorType.RULE;
+        }
+
+        // TODO I'm not sure what this method does. I used the NopProcessor's code as a placeholder
+        @Override
+        protected <T> Dynamic<T> serialize0(DynamicOps<T> p_215193_1_) {
+            return new Dynamic<>(p_215193_1_, p_215193_1_.emptyMap());
         }
     }
 

@@ -20,12 +20,12 @@ import javax.annotation.Nullable;
 
 import static tfcr.blocks.BranchBlock.ROOT;
 
-public class BlockTallSapling extends DoublePlantBlock implements ISelfRegisterBlock, ISelfRegisterItem {
+public class TallSaplingBlock extends DoublePlantBlock implements ISelfRegisterBlock, ISelfRegisterItem {
 
     // TODO implement multiple wood type saplings
     private WoodType woodType;
 
-    public BlockTallSapling() {
+    public TallSaplingBlock() {
         super(Block.Properties.from(Blocks.TALL_GRASS));
         setRegistryName(TFCR.MODID, "tall_sapling");
     }
