@@ -1,0 +1,20 @@
+{
+    "textures": {
+        "texture": "tfcr:blocks/wood/bark/wood_pine",
+        "particle": "tfcr:blocks/wood/bark/wood_pine"
+    },
+    "elements": [
+        {
+            "from": [ 7, 0, 7 ],
+            "to": [ 9, 16, 9 ],
+            "faces": {
+                "north": { "uv": [ 2, 0, 3, 16 ], "texture": "#texture" },
+                "south": { "uv": [ 2, 0, 3, 16 ], "texture": "#texture" },
+                "west":  { "uv": [ 2, 0, 3, 16 ], "texture": "#texture" },
+                "east":  { "uv": [ 2, 0, 3, 16 ], "texture": "#texture" },
+                "up":  { "uv": [ 3, 3, 4, 4 ], "texture": "#texture", "cullface": "down" }
+            },
+            "__comment": "middle support pole"
+        }
+    ]
+}

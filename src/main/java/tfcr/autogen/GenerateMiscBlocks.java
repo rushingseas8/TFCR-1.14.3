@@ -3,9 +3,9 @@ package tfcr.autogen;
 import java.io.File;
 
 public class GenerateMiscBlocks {
-    private static final String blockstateLocation = "blockstates/NAME";
-    private static final String modelLocation = "models/block/NAME";
-    private static final String itemModelLocation = "models/item/NAME";
+    private static final String defaultBlockstateLocation = "blockstates/NAME";
+    private static final String defaultModelLocation = "models/block/NAME";
+    private static final String defaultItemModelLocation = "models/item/NAME";
 
     private static final String blockStateJSON = "{\n" +
             "  \"variants\": {\n" +
@@ -26,61 +26,36 @@ public class GenerateMiscBlocks {
             "  \"parent\": \"tfcr:block/NAME\"\n" +
             "}";
 
-    private static String guessName(String registryName) {
-        String[] words = registryName.split("_");
-        StringBuilder builder = new StringBuilder();
-        boolean first = true;
-        for (String word : words) {
-            // Ignore empty words by skipping them entirely (to avoid double spaces)
-            if (word == null || word.isEmpty()) {
-                continue;
-            }
-
-            // Handle spacing between words, but not before the first word
-            if (first) {
-                first = false;
-            } else {
-                builder.append(" ");
-            }
-
-            // Add the title-case'd word
-            builder.append(word.substring(0, 1).toUpperCase());
-            builder.append(word.substring(1).toLowerCase());
-        }
-        return builder.toString();
-    }
-
     public static void generate() {
-        System.out.print("Generating random extra blocks... ");
+        System.out.print("Generating random extra block assets... ");
 
-        GenerateBase.appendSpacerToLangFile();
-
-        String[] names = new String[]{
-                "mud"
+        String[] cubeBlocks = new String[] {
+                "mud",
+                "leaf_roof"
         };
 
-        for (String name : names) {
+        for (String name : cubeBlocks) {
+            String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + defaultBlockstateLocation.replace("NAME", name);
+            String modelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultModelLocation.replace("NAME", name);
+            String itemModelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultItemModelLocation.replace("NAME", name);
+
             // Blockstate JSON
-            String filePath = GenerateBase.RESOURCE_BASE + File.separator + blockstateLocation.replace("NAME", name) + ".json";
             String toWrite = blockStateJSON.replace("NAME", name);
-
-            GenerateBase.writeToFile(filePath, toWrite);
-
-            // Item JSON
-            filePath = GenerateBase.RESOURCE_BASE + File.separator + itemModelLocation.replace("NAME", name) + ".json";
-            toWrite = itemJSON.replace("NAME", name);
-
-            GenerateBase.writeToFile(filePath, toWrite);
+            GenerateBase.writeToFile(blockstateDir, toWrite);
 
             // Model JSON
-            filePath = GenerateBase.RESOURCE_BASE + File.separator + modelLocation.replace("NAME", name) + ".json";
             toWrite = modelJSON.replace("NAME", name);
+            GenerateBase.writeToFile(modelDir, toWrite);
 
-            GenerateBase.writeToFile(filePath, toWrite);
+            // Item model JSON
+            toWrite = itemModelDir.replace("NAME", name);
+            GenerateBase.writeToFile(itemModelDir, toWrite);
 
             // Lang file entries
-            GenerateBase.appendToLangFile("block.tfcr." + name, guessName(name));
+            GenerateBase.appendToLangFile("item.tfcr." + name, GenerateBase.guessName(name));
         }
+
+        GenerateBase.appendSpacerToLangFile();
         System.out.println("Done");
     }
 }

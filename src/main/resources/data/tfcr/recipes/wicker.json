@@ -3,7 +3,6 @@
   "pattern":
   [
     "xxx",
-    "xxx",
     "xxx"
   ],
   "key":
@@ -15,7 +14,7 @@
   },
   "result":
   {
-    "item": "tfcr:stick_mesh",
+    "item": "tfcr:wicker",
     "count": 1
   }
 }
