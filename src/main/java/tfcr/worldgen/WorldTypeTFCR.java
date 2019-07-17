@@ -1,18 +1,16 @@
 package tfcr.worldgen;
 
-import net.minecraft.init.Biomes;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.provider.BiomeProviderType;
 import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
-import net.minecraft.world.biome.provider.SingleBiomeProviderSettings;
-import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraft.world.gen.IContextExtended;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.IExtendedNoiseRandom;
 import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.area.IArea;
 import net.minecraft.world.gen.area.IAreaFactory;
-import net.minecraft.world.gen.layer.GenLayerZoom;
-import tfcr.init.ModBiomes;
+import net.minecraft.world.gen.layer.ZoomLayer;
+import tfcr.worldgen.genlayer.BiomeEdgeLayer;
+import tfcr.worldgen.genlayer.BiomeLayer;
 
 import java.util.function.LongFunction;
 
@@ -34,9 +32,13 @@ public class WorldTypeTFCR extends WorldType {
      * @return
      */
     @Override
-    public IChunkGenerator<?> createChunkGenerator(World world) {
+    public ChunkGenerator<?> createChunkGenerator(World world) {
 //        SingleBiomeProviderSettings settings = BiomeProviderType.FIXED.createSettings().setBiome(ModBiomes.BIOME_TFCR_BASE);
-        return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(world.getWorldInfo(), new OverworldGenSettings()), new OverworldGenSettings());
+//        return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(world.getWorldInfo(), new OverworldGenSettings()), new OverworldGenSettings());
+        OverworldGenSettings overworldGenSettings = new OverworldGenSettings();
+        OverworldBiomeProviderSettings obpSettings = new OverworldBiomeProviderSettings().setGeneratorSettings(overworldGenSettings).setWorldInfo(world.getWorldInfo());
+
+        return new ChunkGeneratorTFCR(world, new BiomeProviderTFCR(obpSettings), overworldGenSettings);
     }
 
     /**
@@ -53,10 +55,10 @@ public class WorldTypeTFCR extends WorldType {
      * @return
      */
     @Override
-    public <T extends IArea, C extends IContextExtended<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer, OverworldGenSettings chunkSettings, LongFunction<C> contextFactory) {
-        parentLayer = (new GenLayerBiome(chunkSettings)).apply((IContextExtended) contextFactory.apply(200L), parentLayer);
-        parentLayer = LayerUtilsTFCR.repeat(1000L, GenLayerZoom.NORMAL, parentLayer, 2, contextFactory);
-        parentLayer = GenLayerBiomeEdge.INSTANCE.apply((IContextExtended) contextFactory.apply(1000L), parentLayer);
+    public <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer, OverworldGenSettings chunkSettings, LongFunction<C> contextFactory) {
+        parentLayer = (new BiomeLayer(chunkSettings)).apply(contextFactory.apply(200L), parentLayer);
+        parentLayer = LayerUtilsTFCR.repeat(1000L, ZoomLayer.NORMAL, parentLayer, 2, contextFactory);
+        parentLayer = BiomeEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), parentLayer);
         return parentLayer;
     }
 

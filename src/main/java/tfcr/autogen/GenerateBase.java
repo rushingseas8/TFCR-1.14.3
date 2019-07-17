@@ -36,6 +36,30 @@ public class GenerateBase {
         langFile.append("\n");
     }
 
+    public static String guessName(String registryName) {
+        String[] words = registryName.split("_");
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (String word : words) {
+            // Ignore empty words by skipping them entirely (to avoid double spaces)
+            if (word == null || word.isEmpty()) {
+                continue;
+            }
+
+            // Handle spacing between words, but not before the first word
+            if (first) {
+                first = false;
+            } else {
+                builder.append(" ");
+            }
+
+            // Add the title-case'd word
+            builder.append(word.substring(0, 1).toUpperCase());
+            builder.append(word.substring(1).toLowerCase());
+        }
+        return builder.toString();
+    }
+
     public static void main(String[] args) {
         GenerateBranch.generate();
         GenerateLog.generate();

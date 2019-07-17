@@ -17,11 +17,11 @@ import tfcr.items.ItemTFCR;
 @ObjectHolder(TFCR.MODID)
 public class ModItems {
 
-    public static final ItemOre bismuthinite = null;
+//    public static final ItemOre bismuthinite = null;
     public static final ItemTFCR mud_ball = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
 
     public static final Item[] allItems = {
-            bismuthinite,
+//            bismuthinite,
             mud_ball
     };
 
@@ -41,7 +41,7 @@ public class ModItems {
             if (item instanceof ISelfRegisterItem) {
                 ((ISelfRegisterItem) item).registerItem(registry);
             } else {
-                System.out.println("Warning: non self-registering item found in item list: " + item.toString());
+                System.out.println("Warning: non self-registering item found in item list: " + item);
                 event.getRegistry().register(item);
             }
         }

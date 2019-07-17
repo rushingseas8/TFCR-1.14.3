@@ -1,6 +1,5 @@
 package tfcr.worldgen;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -26,10 +25,13 @@ public class TreePieces {
         private ResourceLocation location;
         private Rotation rotation;
 
-        public Piece() { }
+        public Piece() {
+            super(null, 0);
+        }
 
         public Piece(TemplateManager manager, ResourceLocation location, BlockPos pos, Rotation rotation) {
-            super(0); // TODO unsure what this type represents
+//            super(0); // TODO unsure what this type represents
+            super(null, 0); // TODO i just did this to prevent compiler errors, this is wrong
             this.location = location;
             this.rotation = rotation;
             this.templatePosition = pos;
@@ -46,24 +48,26 @@ public class TreePieces {
             this.setup(template, this.templatePosition, settings);
         }
 
-        /**
-         * (abstract) Helper method to write subclass data to NBT
-         */
-        protected void writeStructureToNBT(NBTTagCompound tagCompound) {
-            super.writeStructureToNBT(tagCompound);
-            tagCompound.setString("Location", this.location.toString());
-            tagCompound.setString("Rotation", this.rotation.name());
-        }
-
-        /**
-         * (abstract) Helper method to read subclass data from NBT
-         */
-        protected void readStructureFromNBT(NBTTagCompound tagCompound, TemplateManager manager) {
-            super.readStructureFromNBT(tagCompound, manager);
-            this.location = new ResourceLocation(tagCompound.getString("Location"));
-            this.rotation = Rotation.valueOf(tagCompound.getString("Rotation"));
-            this.setup(manager);
-        }
+        // TODO find out how this is supposed to work in 1.14
+//        /**
+//         * (abstract) Helper method to write subclass data to NBT
+//         */
+//        @Override
+//        protected void writeStructureToNBT(CompoundNBT tagCompound) {
+//            super.writeStructureToNBT(tagCompound);
+//            tagCompound.setString("Location", this.location.toString());
+//            tagCompound.setString("Rotation", this.rotation.name());
+//        }
+//
+//        /**
+//         * (abstract) Helper method to read subclass data from NBT
+//         */
+//        protected void readStructureFromNBT(CompoundNBT tagCompound, TemplateManager manager) {
+//            super.readStructureFromNBT(tagCompound, manager);
+//            this.location = new ResourceLocation(tagCompound.getString("Location"));
+//            this.rotation = Rotation.valueOf(tagCompound.getString("Rotation"));
+//            this.setup(manager);
+//        }
 
         @Override
         protected void handleDataMarker(String function, BlockPos pos, IWorld worldIn, Random rand, MutableBoundingBox sbb) {
