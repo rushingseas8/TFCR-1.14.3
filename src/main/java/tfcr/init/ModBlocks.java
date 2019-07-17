@@ -1,6 +1,7 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -12,8 +13,11 @@ import tfcr.blocks.BlockBranch;
 import tfcr.blocks.BlockFlowerTFCR;
 import tfcr.blocks.BlockLeaves;
 import tfcr.blocks.BlockLog;
+import tfcr.blocks.BlockMud;
 import tfcr.blocks.BlockSapling;
+import tfcr.blocks.BlockSmallRock;
 import tfcr.blocks.BlockTallSapling;
+import tfcr.blocks.BlockWattle;
 import tfcr.tileentity.TileEntityTree;
 
 import java.util.ArrayList;
@@ -46,6 +50,9 @@ public class ModBlocks {
         // Add other one-off blocks
         allBlocks.add(new BlockFlowerTFCR("marsh_marigold"));
         allBlocks.add(new BlockTallSapling());
+        allBlocks.add(BlockMud.get());
+        allBlocks.add(BlockWattle.get());
+        allBlocks.add(new BlockSmallRock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock"));
 
         System.out.println("Done initializing.");
     }

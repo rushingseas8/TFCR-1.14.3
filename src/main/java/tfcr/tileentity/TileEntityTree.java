@@ -98,9 +98,9 @@ public class TileEntityTree extends TileEntity implements ITickable {
         }
 
         // Get the Template for this current stage
-        Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+        Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
         if (template == null) {
-            System.out.println("Failed to remove additional blocks- template " + getTemplateLocation() + " could not be found.");
+            System.out.println("Failed to remove additional blocks- template " + TemplateHelper.getTreeTemplateLocation(woodType, age) + " could not be found.");
             return;
         }
 
@@ -129,7 +129,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
 
                 // Remove old template
                 if (age > 0 && age <= BlockSapling.getMaxAge()) {
-                    Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+                    Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
                     if (template != null) {
                         cleanupTree(template);
                     }
@@ -152,19 +152,15 @@ public class TileEntityTree extends TileEntity implements ITickable {
         }
     }
 
-    private String getTemplateLocation() {
-        return this.woodType.getName() + "/age_" + age;
-    }
-
     private void spawnTree() {
         System.out.println("Trying to spawn structure at pos: " + pos);
         // TODO try to cleanup old structure before spawning new one
         // TODO ensure that we can place the new structure down before adding it
 
         // Access the Template for the tree's structure
-        Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+        Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
         if (template == null) {
-            System.out.println("Failed to find structure: " + getTemplateLocation());
+            System.out.println("Failed to find structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age));
             return;
         }
 
@@ -330,7 +326,7 @@ public class TileEntityTree extends TileEntity implements ITickable {
         read(packet.getNbtCompound());
     }
 
-    private class TemplateProcessorTrees implements ITemplateProcessor {
+    public static class TemplateProcessorTrees implements ITemplateProcessor {
 
         private WoodType woodType;
 

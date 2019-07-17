@@ -16,6 +16,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
@@ -27,6 +28,7 @@ import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 import tfcr.init.ModTabs;
+import tfcr.items.ItemLog;
 import tfcr.tileentity.TileEntityTree;
 
 import javax.annotation.Nonnull;
@@ -84,15 +86,19 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
 
     public static void init() {
         allBlocks = new BlockBranch[WoodType.values().length * 7 * 2];
-        WoodType[] values = WoodType.values();
+        WoodType[] woodTypes = WoodType.values();
+
+        int numDiameters = 7;
         for (int leafy = 0; leafy < 2; leafy++) {
-            for (int woodIndex = 0; woodIndex < values.length; woodIndex++) {
-                WoodType woodType = values[woodIndex];
+            for (int woodIndex = 0; woodIndex < woodTypes.length; woodIndex++) {
+                WoodType woodType = woodTypes[woodIndex];
                 for (int width = 0; width < 7; width++) {
-                    allBlocks[(leafy * 7 * values.length) + (woodIndex * 7) + width] = new BlockBranch(woodType, (width + 1) * 2, leafy == 0);
+                    int index = (leafy * woodTypes.length * numDiameters) + (woodIndex * numDiameters) + width;
+                    allBlocks[index] = new BlockBranch(woodType, (width + 1) * 2, leafy == 0);
                 }
             }
         }
+
     }
 
     /**
@@ -118,7 +124,9 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         if (allBlocks == null) {
             init();
         }
-        return allBlocks[((leaflogged ? 0 : 1) * 7 * 2) + (woodType.ordinal() * 7) + (diameter / 2) - 1];
+        int numDiameters = 7;
+        int index = ((leaflogged ? 0 : 1) * WoodType.values().length * numDiameters) + (woodType.ordinal() * numDiameters) + (diameter / 2) - 1;
+        return allBlocks[index];
     }
 
     @Override
@@ -320,5 +328,14 @@ public class BlockBranch extends Block implements ISelfRegisterBlock, ISelfRegis
         // Return this block state, possibly with axes extended.
         return stateIn.with(EXTEND_POSITIVE, shouldExtendPositive)
                 .with(EXTEND_NEGATIVE, shouldExtendNegative);
+    }
+
+    @Override
+    public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
+        drops.clear();
+
+        BlockBranch blockBranch = (BlockBranch) state.getBlock();
+        int diameter = blockBranch.diameter;
+        drops.add(new ItemStack(ItemLog.get(blockBranch.woodType), diameter));
     }
 }

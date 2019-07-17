@@ -33,26 +33,26 @@ public enum WoodType implements IStringSerializable {
 //    WILLOW		("Willow",		ModBlocks.WOOD_WILLOW, 		ModBlocks.LEAVES_WILLOW, 10, 30)
 
 
-    ACACIA		("Acacia", 28, 50),
-    ASH			("Ash", 4, 24),
-    ASPEN		("Aspen", -5, 18),
-    BIRCH		("Birch", -10, 12),
-    BLACKWOOD	("Blackwood", 0, 0),
-    CHESTNUT	("Chestnut", 3, 24),
-    DOUGLAS_FIR	("Douglas Fir", 1, 14),
-    HICKORY		("Hickory", 4, 28),
-    KAPOK		("Kapok", 30, 50),
-    MAPLE		("Maple", 3, 20),
-    OAK			("Oak", 5, 25),
-    PALM		("Palm", 0, 0),
-    PINE		("Pine", -15, 24),
-    ROSEWOOD	("Rosewood", 0, 0),
-    SEQUOIA		("Sequoia", 10, 16),
-    SPRUCE		("Spruce", -5, 24),
-    SYCAMORE	("Sycamore", 6, 30),
-    WHITE_CEDAR	("White Cedar", -5, 24),
-    WHITE_ELM	("White Elm", 4, 30),
-    WILLOW		("Willow", 10, 30)
+    ACACIA		("Acacia", 82, 122),
+    ASH			("Ash", 39, 75),
+    ASPEN		("Aspen", 23, 64),
+    BIRCH		("Birch", 14, 54),
+    BLACKWOOD	("Blackwood", -1, -1),
+    CHESTNUT	("Chestnut", 37, 75),
+    DOUGLAS_FIR	("Douglas Fir", 34, 57),
+    HICKORY		("Hickory", 39, 82),
+    KAPOK		("Kapok", 86, 122),
+    MAPLE		("Maple", 37, 68),
+    OAK			("Oak", 41, 77),
+    PALM		("Palm", -1, -1),
+    PINE		("Pine", 5, 75),
+    ROSEWOOD	("Rosewood", -1, -1),
+    SEQUOIA		("Sequoia", 50, 60),
+    SPRUCE		("Spruce", 23, 75),
+    SYCAMORE	("Sycamore", 42, 86),
+    WHITE_CEDAR	("White Cedar", 23, 75),
+    WHITE_ELM	("White Elm", 39, 86),
+    WILLOW		("Willow", 50, 86)
     ;
 
     // The common name of this tree.
