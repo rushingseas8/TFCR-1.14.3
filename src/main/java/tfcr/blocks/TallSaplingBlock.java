@@ -14,7 +14,7 @@ import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
-import tfcr.tileentity.TileEntityTree;
+import tfcr.tileentity.TreeTileEntity;
 
 import javax.annotation.Nullable;
 
@@ -38,7 +38,7 @@ public class TallSaplingBlock extends DoublePlantBlock implements ISelfRegisterB
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityTree(this.woodType);
+        return new TreeTileEntity(this.woodType);
     }
 
     @Override

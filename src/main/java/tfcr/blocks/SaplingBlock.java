@@ -19,7 +19,7 @@ import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 import tfcr.init.ModTabs;
-import tfcr.tileentity.TileEntityTree;
+import tfcr.tileentity.TreeTileEntity;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -84,7 +84,7 @@ public class SaplingBlock extends BushBlock implements ISelfRegisterBlock, ISelf
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityTree(this.woodType);
+        return new TreeTileEntity(this.woodType);
     }
 
     @Override

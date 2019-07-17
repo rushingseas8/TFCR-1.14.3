@@ -33,7 +33,7 @@ public class TemperateConiferousBiome extends BaseTFCRBiome {
         // TODO create specific Feature that encapsulates all tree types, with frequency based on temp/precip,
         //  age (so most trees are middle-age, with rare old trees and medium rarity young trees), and height (mountains = no trees).
         // TODO This method freezes the game on load.
-        // TODO Needs to spawn a TileEntityTree as well- what about level 0 structures containing only saplings?
+        // TODO Needs to spawn a TreeTileEntity as well- what about level 0 structures containing only saplings?
 //        addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, new CompositeFeature<>(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 4), SURFACE_PLUS_32, new FrequencyConfig(2)));
 //        addFeature(
 //                GenerationStage.Decoration.VEGETAL_DECORATION,

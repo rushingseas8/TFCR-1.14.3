@@ -7,6 +7,7 @@ import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.template.Template;
 import tfcr.TFCR;
+import tfcr.data.WoodType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -15,6 +16,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TemplateHelper {
+
+    public static String getTreeTemplateLocation(WoodType woodType, int age) {
+        return woodType.getName() + "/age_" + age;
+    }
 
     public static Template getTemplate(World world, String name) {
         if (world.isRemote) {

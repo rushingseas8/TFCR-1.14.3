@@ -1,6 +1,7 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -9,12 +10,15 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.BranchBlock;
+import tfcr.blocks.MudBlock;
+import tfcr.blocks.SmallRockBlock;
 import tfcr.blocks.TFCRFlowerBlock;
 import tfcr.blocks.LeavesBlock;
 import tfcr.blocks.LogBlock;
 import tfcr.blocks.SaplingBlock;
 import tfcr.blocks.TallSaplingBlock;
-import tfcr.tileentity.TileEntityTree;
+import tfcr.blocks.WattleBlock;
+import tfcr.tileentity.TreeTileEntity;
 
 import java.util.ArrayList;
 
@@ -46,6 +50,9 @@ public class ModBlocks {
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
         allBlocks.add(new TallSaplingBlock());
+        allBlocks.add(MudBlock.get());
+        allBlocks.add(WattleBlock.get());
+        allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock"));
 
         System.out.println("Done initializing.");
     }
@@ -73,6 +80,6 @@ public class ModBlocks {
     @SubscribeEvent
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         System.out.println("Registering tileentities.");
-        TileEntityTree.registerTileEntity(event.getRegistry());
+        TreeTileEntity.registerTileEntity(event.getRegistry());
     }
 }

@@ -31,10 +31,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class TileEntityTree extends TileEntity implements ITickableTileEntity {
+public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
     /**
-     * The type of wood this TileEntityTree corresponds to.
+     * The type of wood this TreeTileEntity corresponds to.
      */
     private WoodType woodType;
 
@@ -63,7 +63,7 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
     private int variant = -1;
 
 
-    private static TileEntityType<TileEntityTree> TREE;
+    private static TileEntityType<TreeTileEntity> TREE;
 
     /**
      * Called during registry event for this mod (specifically, in ModBlocks). Registers this TileEntity.
@@ -71,19 +71,19 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
      */
     public static void registerTileEntity(IForgeRegistry<TileEntityType<?>> tileEntityRegistry) {
         // TODO build with null? is that right?
-        TREE = TileEntityType.Builder.create(TileEntityTree::new).build(null);
+        TREE = TileEntityType.Builder.create(TreeTileEntity::new).build(null);
         TREE.setRegistryName(TFCR.MODID, "tile_entity_tree");
         tileEntityRegistry.register(TREE);
 
     }
 
     // Used internally to register the TileEntity. Should not be called externally.
-    private TileEntityTree() {
+    private TreeTileEntity() {
         super(TREE);
         this.woodType = null;
     }
 
-    public TileEntityTree(@Nonnull WoodType woodType) {
+    public TreeTileEntity(@Nonnull WoodType woodType) {
         super(TREE);
         this.woodType = woodType;
     }
@@ -105,9 +105,9 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
         }
 
         // Get the Template for this current stage
-        Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+        Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
         if (template == null) {
-            System.out.println("Failed to remove additional blocks- template " + getTemplateLocation() + " could not be found.");
+            System.out.println("Failed to remove additional blocks- template " + TemplateHelper.getTreeTemplateLocation(woodType, age) + " could not be found.");
             return;
         }
 
@@ -136,7 +136,7 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
 
                 // Remove old template
                 if (age > 0 && age <= SaplingBlock.getMaxAge()) {
-                    Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+                    Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
                     if (template != null) {
                         cleanupTree(template);
                     }
@@ -159,19 +159,15 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
         }
     }
 
-    private String getTemplateLocation() {
-        return this.woodType.getName() + "/age_" + age;
-    }
-
     private void spawnTree() {
         System.out.println("Trying to spawn structure at pos: " + pos);
         // TODO try to cleanup old structure before spawning new one
         // TODO ensure that we can place the new structure down before adding it
 
         // Access the Template for the tree's structure
-        Template template = TemplateHelper.getTemplate(world, getTemplateLocation());
+        Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
         if (template == null) {
-            System.out.println("Failed to find structure: " + getTemplateLocation());
+            System.out.println("Failed to find structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age));
             return;
         }
 
@@ -189,10 +185,10 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
         System.out.println("Successfully added blocks.");
 
         // Validate the tree after it is added into the world, by making sure
-        // there is a TileEntityTree after the structure blocks are placed down.
+        // there is a TreeTileEntity after the structure blocks are placed down.
         BlockState newRoot = world.getBlockState(pos);
         Block blockType = newRoot.getBlock();
-        TileEntityTree tileEntityTree = ((TileEntityTree) world.getTileEntity(pos));
+        TreeTileEntity treeTileEntity = ((TreeTileEntity) world.getTileEntity(pos));
 
         if (blockType instanceof SaplingBlock) {
             // Valid, for now do nothing else
@@ -205,25 +201,25 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
         } else if (blockType instanceof LogBlock) {
             // Valid, for now do nothing else
         } else {
-            // Some other block was generated which can't support a TileEntityTree.
+            // Some other block was generated which can't support a TreeTileEntity.
             // This means there's a bug somewhere in the code, so we report it.
-            // Either way, we return, since there won't be a TileEntityTree to modify.
+            // Either way, we return, since there won't be a TreeTileEntity to modify.
             // TODO crash? Log error?
-            System.out.println("TileEntityTree created invalid trunk block: " + newRoot.getBlock().toString());
+            System.out.println("TreeTileEntity created invalid trunk block: " + newRoot.getBlock().toString());
             return;
         }
 
         // Ensure root block has proper TileEntity
-        if (tileEntityTree == null) {
+        if (treeTileEntity == null) {
             System.out.println("No TE found for root block: " + newRoot.getBlock().toString());
             return;
         }
 
         // Update the TileEntity there, since it is recreated if the Block type changes.
         // TODO update all other values.
-        tileEntityTree.age = this.age;
-        tileEntityTree.variant = this.variant;
-        tileEntityTree.count = 0;
+        treeTileEntity.age = this.age;
+        treeTileEntity.variant = this.variant;
+        treeTileEntity.count = 0;
         System.out.println("Updated base of tree to have TileEntity.");
     }
 
@@ -273,7 +269,7 @@ public class TileEntityTree extends TileEntity implements ITickableTileEntity {
                         }
 
                         // Don't remove TileEntityTrees- that could break growing up mechanics.
-                        if (world.getTileEntity(worldPos) != null && world.getTileEntity(worldPos) instanceof TileEntityTree) {
+                        if (world.getTileEntity(worldPos) != null && world.getTileEntity(worldPos) instanceof TreeTileEntity) {
                             continue;
                         }
 

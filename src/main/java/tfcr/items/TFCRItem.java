@@ -4,8 +4,8 @@ import net.minecraft.item.Item;
 import tfcr.TFCR;
 import tfcr.init.ISelfRegisterItem;
 
-public class ItemTFCR extends Item implements ISelfRegisterItem {
-    public ItemTFCR(Properties properties, String name) {
+public class TFCRItem extends Item implements ISelfRegisterItem {
+    public TFCRItem(Properties properties, String name) {
         super(properties);
         setRegistryName(TFCR.MODID, name);
     }

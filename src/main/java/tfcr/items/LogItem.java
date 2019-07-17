@@ -9,35 +9,35 @@ import tfcr.init.ISelfRegisterItem;
 import java.util.Arrays;
 import java.util.List;
 
-public class ItemLog extends Item implements ISelfRegisterItem {
+public class LogItem extends Item implements ISelfRegisterItem {
 
     private WoodType woodType;
 
-    private static ItemLog[] allItems;
+    private static LogItem[] allItems;
 
-    public ItemLog(WoodType woodType) {
+    public LogItem(WoodType woodType) {
         super(new Properties().group(ItemGroup.MATERIALS));
         this.woodType = woodType;
         setRegistryName(TFCR.MODID, "itemlog/" + woodType.getName());
     }
 
     private static void init() {
-        allItems = new ItemLog[WoodType.values().length];
+        allItems = new LogItem[WoodType.values().length];
         WoodType[] values = WoodType.values();
         for (int i = 0; i < values.length; i++) {
             WoodType woodType = values[i];
-            allItems[i] = new ItemLog(woodType);
+            allItems[i] = new LogItem(woodType);
         }
     }
 
-    public static List<ItemLog> getAllItems() {
+    public static List<LogItem> getAllItems() {
         if (allItems == null) {
             init();
         }
         return Arrays.asList(allItems);
     }
 
-    public static ItemLog get(WoodType woodType) {
+    public static LogItem get(WoodType woodType) {
         if (allItems == null) {
             init();
         }

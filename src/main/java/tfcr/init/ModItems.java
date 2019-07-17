@@ -9,24 +9,34 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.data.OreType;
-import tfcr.items.ItemOre;
-import tfcr.items.ItemTFCR;
+import tfcr.items.LogItem;
+import tfcr.items.TFCRItem;
+
+import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(modid = TFCR.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(TFCR.MODID)
 public class ModItems {
 
-//    public static final ItemOre bismuthinite = null;
-    public static final ItemTFCR mud_ball = new ItemTFCR(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
+//    public static final OreItem bismuthinite = null;
+    public static final TFCRItem leaves = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "leaves");
+    public static final TFCRItem mud_ball = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
+    public static final TFCRItem wicker = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "wicker");
 
-    public static final Item[] allItems = {
-//            bismuthinite,
-            mud_ball
-    };
+    public static ArrayList<Item> allItems = new ArrayList<>();
+
+    private static void initItems() {
+        allItems.addAll(LogItem.getAllItems());
+
+//        allItems.add(bismuthinite);
+        allItems.add(leaves);
+        allItems.add(mud_ball);
+        allItems.add(wicker);
+    }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
+        initItems();
 
         System.out.println("Register items called");
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -38,10 +48,15 @@ public class ModItems {
         }
 
         for (Item item : allItems) {
+            if (item == null) {
+                System.out.println("Warning: found null item.");
+                continue;
+            }
+
             if (item instanceof ISelfRegisterItem) {
                 ((ISelfRegisterItem) item).registerItem(registry);
             } else {
-                System.out.println("Warning: non self-registering item found in item list: " + item);
+                System.out.println("Warning: non self-registering item found in item list: " + item.toString());
                 event.getRegistry().register(item);
             }
         }

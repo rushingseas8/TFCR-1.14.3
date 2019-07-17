@@ -22,16 +22,19 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 import tfcr.init.ModTabs;
-import tfcr.tileentity.TileEntityTree;
+import tfcr.items.LogItem;
+import tfcr.tileentity.TreeTileEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,20 +49,18 @@ import java.util.List;
  */
 public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
+    private int diameter;
+    public WoodType woodType;
+    private boolean leaflogged;
+
+    private static final int NUM_DIAMETERS = 7;
+
     private static BranchBlock[] allBlocks;
 
     private static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
     public static final BooleanProperty ROOT = BooleanProperty.create("root");
     private static final BooleanProperty EXTEND_NEGATIVE = BooleanProperty.create("extend_negative");
     private static final BooleanProperty EXTEND_POSITIVE = BooleanProperty.create("extend_positive");
-
-    private int diameter;
-    public WoodType woodType;
-    private boolean leaflogged;
-
-    // Used for leafy variants to determine if we should use fast or fancy graphics.
-    // TODO need to add to WorldRenderers?
-    private boolean renderTranslucent = true;
 
     public BranchBlock(WoodType woodType, int diameter, boolean leaflogged) {
         // Hardness is based on diameter. Sound is based on leaflogged property.
@@ -85,12 +86,14 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
 
     public static void init() {
         allBlocks = new BranchBlock[WoodType.values().length * 7 * 2];
-        WoodType[] values = WoodType.values();
+        WoodType[] woodTypes = WoodType.values();
+
         for (int leafy = 0; leafy < 2; leafy++) {
-            for (int woodIndex = 0; woodIndex < values.length; woodIndex++) {
-                WoodType woodType = values[woodIndex];
-                for (int width = 0; width < 7; width++) {
-                    allBlocks[(leafy * 7 * values.length) + (woodIndex * 7) + width] = new BranchBlock(woodType, (width + 1) * 2, leafy == 0);
+            for (int woodIndex = 0; woodIndex < woodTypes.length; woodIndex++) {
+                WoodType woodType = woodTypes[woodIndex];
+                for (int width = 0; width < NUM_DIAMETERS; width++) {
+                    int index = (leafy * woodTypes.length * NUM_DIAMETERS) + (woodIndex * NUM_DIAMETERS) + width;
+                    allBlocks[index] = new BranchBlock(woodType, (width + 1) * 2, leafy == 0);
                 }
             }
         }
@@ -119,7 +122,9 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
         if (allBlocks == null) {
             init();
         }
-        return allBlocks[((leaflogged ? 0 : 1) * 7 * 2) + (woodType.ordinal() * 7) + (diameter / 2) - 1];
+
+        int index = ((leaflogged ? 0 : 1) * WoodType.values().length * NUM_DIAMETERS) + (woodType.ordinal() * NUM_DIAMETERS) + (diameter / 2) - 1;
+        return allBlocks[index];
     }
 
     @Override
@@ -220,13 +225,13 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileEntityTree(this.woodType);
+        return new TreeTileEntity(this.woodType);
     }
 
     /**
      * Called when this block is removed from the world, or replaced by another one.
      *
-     * This implementation ensures the TileEntityTree is properly preserved, if the ROOT
+     * This implementation ensures the TreeTileEntity is properly preserved, if the ROOT
      * property is true (or does nothing otherwise).
      * @param state The blockstate of the block that was removed.
      * @param worldIn World reference.
@@ -322,5 +327,14 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
         // Return this block state, possibly with axes extended.
         return stateIn.with(EXTEND_POSITIVE, shouldExtendPositive)
                 .with(EXTEND_NEGATIVE, shouldExtendNegative);
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        ArrayList<ItemStack> drops = new ArrayList<>();
+        BranchBlock branch = (BranchBlock) state.getBlock();
+        int diameter = branch.diameter;
+        drops.add(new ItemStack(LogItem.get(branch.woodType), diameter));
+        return drops;
     }
 }
