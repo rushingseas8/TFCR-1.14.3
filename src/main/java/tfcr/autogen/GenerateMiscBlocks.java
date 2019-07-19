@@ -35,9 +35,9 @@ public class GenerateMiscBlocks {
         };
 
         for (String name : cubeBlocks) {
-            String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + defaultBlockstateLocation.replace("NAME", name);
-            String modelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultModelLocation.replace("NAME", name);
-            String itemModelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultItemModelLocation.replace("NAME", name);
+            String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + defaultBlockstateLocation.replace("NAME", name) + ".json";
+            String modelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultModelLocation.replace("NAME", name) + ".json";
+            String itemModelDir = GenerateBase.RESOURCE_BASE + File.separator + defaultItemModelLocation.replace("NAME", name) + ".json";
 
             // Blockstate JSON
             String toWrite = blockStateJSON.replace("NAME", name);
@@ -48,7 +48,7 @@ public class GenerateMiscBlocks {
             GenerateBase.writeToFile(modelDir, toWrite);
 
             // Item model JSON
-            toWrite = itemModelDir.replace("NAME", name);
+            toWrite = itemJSON.replace("NAME", name);
             GenerateBase.writeToFile(itemModelDir, toWrite);
 
             // Lang file entries

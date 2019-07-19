@@ -1,6 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "tfcr:item/raw_fiber"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "tfcr:item/raw_fiber"
+  }
 }

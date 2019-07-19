@@ -82,15 +82,15 @@ public class GenerateBase {
         System.out.println("Finalizing lang file.");
         System.out.println("---");
 
-        appendSpacerToLangFile();
-        appendToLangFile("block.tfcr.block_branch", "Branch");
-        appendToLangFile("block.tfcr.marsh_marigold", "Marsh Marigold");
+//        appendSpacerToLangFile();
+//        appendToLangFile("block.tfcr.block_branch", "Branch");
+//        appendToLangFile("block.tfcr.marsh_marigold", "Marsh Marigold");
 
         appendSpacerToLangFile();
         appendToLangFile("item.tfcr.ore.bismuthinite", "Bismuthinite");
 
-        appendSpacerToLangFile();
-        appendToLangFile("itemGroup.tfcrWood", "TFCR Wood");
+//        appendSpacerToLangFile();
+//        appendToLangFile("itemGroup.tfcrWood", "TFCR Wood");
 
         langFile.delete(langFile.length() - 2, langFile.length());
         langFile.append("\n}\n");

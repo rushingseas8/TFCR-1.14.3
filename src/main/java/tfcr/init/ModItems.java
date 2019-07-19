@@ -24,6 +24,9 @@ public class ModItems {
     public static final TFCRItem wicker = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "wicker");
     public static final TFCRItem raw_fiber = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "raw_fiber");
     public static final TFCRItem plant_fiber = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "plant_fiber");
+    public static final TFCRItem small_rock = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "small_rock");
+    public static final TFCRItem sharp_rock = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "sharp_rock");
+    public static final TFCRItem cordage = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "cordage");
 
     public static ArrayList<Item> allItems = new ArrayList<>();
 
@@ -36,6 +39,9 @@ public class ModItems {
         allItems.add(wicker);
         allItems.add(raw_fiber);
         allItems.add(plant_fiber);
+        allItems.add(small_rock);
+        allItems.add(sharp_rock);
+        allItems.add(cordage);
     }
 
     @SubscribeEvent

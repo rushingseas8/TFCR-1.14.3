@@ -2,10 +2,7 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "tag": "forge:rods/wooden"
-        },
-        {
-            "tag": "tfcr:string"
+            "item": "tfcr:small_rock"
         },
         {
             "item": "tfcr:small_rock"
@@ -13,6 +10,6 @@
     ],
     "result":
     {
-        "item": "minecraft:stone_axe"
+        "item": "minecraft:rock_sharp"
     }
 }

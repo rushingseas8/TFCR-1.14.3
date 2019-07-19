@@ -5,15 +5,20 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
 import tfcr.data.WoodType;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.init.ModItems;
 import tfcr.init.ModTabs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,5 +95,17 @@ public class LeavesBlock extends net.minecraft.block.LeavesBlock implements ISel
     public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(DISTANCE).add(PERSISTENT).add(NUM_TREES);
         // TODO if we remove LeavesBlock subclass then remove distance/persistent
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        ArrayList<ItemStack> drops = new ArrayList<>();
+
+        int leafCount = builder.getWorld().getRandom().nextInt(3) + 1;
+        int stickCount = builder.getWorld().getRandom().nextFloat() < 0.25f ? 1 : 0;
+
+        drops.add(new ItemStack(ModItems.leaves, leafCount));
+        drops.add(new ItemStack(Items.STICK, stickCount));
+        return drops;
     }
 }

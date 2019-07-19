@@ -52,7 +52,7 @@ public class ModBlocks {
         allBlocks.add(new TallSaplingBlock());
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
-        allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock"));
+        allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
 
         System.out.println("Done initializing.");
     }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "tfcr:item/small_rock"
+    "layer0": "tfcr:item/sharp_rock"
   }
 }

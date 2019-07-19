@@ -22,7 +22,12 @@ public class GenerateMiscItems {
         String[] names = new String[]{
                 "leaves",
                 "mud_ball",
-                "wicker"
+                "wicker",
+                "small_rock",
+                "sharp_rock",
+                "raw_fiber",
+                "plant_fiber",
+                "cordage"
         };
 
         for (String name : names) {
