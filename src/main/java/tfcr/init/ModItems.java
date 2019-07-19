@@ -22,6 +22,8 @@ public class ModItems {
     public static final TFCRItem leaves = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "leaves");
     public static final TFCRItem mud_ball = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "mud_ball");
     public static final TFCRItem wicker = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "wicker");
+    public static final TFCRItem raw_fiber = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "raw_fiber");
+    public static final TFCRItem plant_fiber = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "plant_fiber");
 
     public static ArrayList<Item> allItems = new ArrayList<>();
 
@@ -32,6 +34,8 @@ public class ModItems {
         allItems.add(leaves);
         allItems.add(mud_ball);
         allItems.add(wicker);
+        allItems.add(raw_fiber);
+        allItems.add(plant_fiber);
     }
 
     @SubscribeEvent

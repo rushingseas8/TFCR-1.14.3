@@ -4,8 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import tfcr.TFCR;
+
+import java.io.File;
 
 public interface ISelfRegisterItem {
 
