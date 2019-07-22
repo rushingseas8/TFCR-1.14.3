@@ -161,10 +161,11 @@ public class WattleBlock extends FourWayBlock implements ISelfRegisterItem, ISel
         boolean isFenceGate = block instanceof FenceGateBlock && FenceGateBlock.isParallel(other, facing);
 
         // This fence can connect iff:
-        //  - the block is not an exception block (@see Block#cannotAttach), like leaves or barriers
-        //  - AND the block has a solid side facing this fence
-        //  - OR the block is a fence (tested via tags) with the same material as us
+        //  - The block is a fence (tested via tags) with the same material as us
         //  - OR the block is a fence gate in line with this fence
-        return !cannotAttach(block) && Block.hasSolidSide(other, world, offset, facing.getOpposite()) || isMatchingFence || isFenceGate;
+        //  - OR the block is not an exception block (@see Block#cannotAttach), like leaves or barriers
+        //  - AND the block has a solid side facing this fence
+        return isMatchingFence || isFenceGate ||
+                (!cannotAttach(block) && Block.hasSolidSide(other, world, offset, facing.getOpposite()));
     }
 }
