@@ -10,6 +10,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.BranchBlock;
+import tfcr.blocks.FarmlandBlock;
 import tfcr.blocks.MudBlock;
 import tfcr.blocks.SmallRockBlock;
 import tfcr.blocks.TFCRFlowerBlock;
@@ -53,6 +54,7 @@ public class ModBlocks {
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
+        allBlocks.add(FarmlandBlock.get());
 
         System.out.println("Done initializing.");
     }
