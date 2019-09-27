@@ -16,12 +16,7 @@ import tfcr.TFCR;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
-public class FarmlandBlock extends Block implements ISelfRegisterItem, ISelfRegisterBlock {
-
-    /**
-     * Moisture property. Copied from vanilla FarmlandBlock.
-     */
-    public static IntegerProperty MOISTURE = BlockStateProperties.MOISTURE_0_7;
+public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements ISelfRegisterItem, ISelfRegisterBlock {
 
     /**
      * Fertility status. Custom to TFCR farmland.
@@ -37,8 +32,6 @@ public class FarmlandBlock extends Block implements ISelfRegisterItem, ISelfRegi
      */
     public static EnumProperty<Fertility> FERTILITY = EnumProperty.create("fertility", Fertility.class);
 
-    protected static final VoxelShape SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
-
     private static FarmlandBlock INSTANCE;
 
     public FarmlandBlock(Properties properties) {
@@ -49,12 +42,7 @@ public class FarmlandBlock extends Block implements ISelfRegisterItem, ISelfRegi
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(MOISTURE, FERTILITY);
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return SHAPE;
+        builder.add(FERTILITY);
     }
 
     private static void init() {
