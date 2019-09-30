@@ -2,6 +2,7 @@ package tfcr.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.CropsBlock;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,6 +11,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.BranchBlock;
+import tfcr.blocks.CropBlock;
 import tfcr.blocks.FarmlandBlock;
 import tfcr.blocks.MudBlock;
 import tfcr.blocks.SmallRockBlock;
@@ -55,6 +57,8 @@ public class ModBlocks {
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
         allBlocks.add(FarmlandBlock.get());
+
+        allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));
 
         System.out.println("Done initializing.");
     }
