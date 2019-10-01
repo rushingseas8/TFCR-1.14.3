@@ -27,7 +27,9 @@ public class GenerateMiscItems {
                 "sharp_rock",
                 "raw_fiber",
                 "plant_fiber",
-                "cordage"
+                "cordage",
+                "empty_ceramic_jug",
+                "filled_ceramic_jug"
         };
 
         for (String name : names) {

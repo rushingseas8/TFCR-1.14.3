@@ -344,7 +344,6 @@
 	"block.tfcr.sapling.willow": "Willow Sapling",
 	"item.tfcr.mud": "Mud",
 	"item.tfcr.leaf_roof": "Leaf Roof",
-	"item.tfcr.small_rock_block": "Small Rock Block",
 
 
 	"item.tfcr.itemlog.acacia": "Acacia Log",
@@ -376,6 +375,8 @@
 	"item.tfcr.raw_fiber": "Raw Fiber",
 	"item.tfcr.plant_fiber": "Plant Fiber",
 	"item.tfcr.cordage": "Cordage",
+	"item.tfcr.empty_ceramic_jug": "Empty Ceramic Jug",
+	"item.tfcr.filled_ceramic_jug": "Filled Ceramic Jug",
 
 	"item.tfcr.ore.bismuthinite": "Bismuthinite"
 }

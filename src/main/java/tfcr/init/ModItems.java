@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
+import tfcr.items.JugItem;
 import tfcr.items.LogItem;
 import tfcr.items.TFCRItem;
 
@@ -31,7 +32,11 @@ public class ModItems {
     public static ArrayList<Item> allItems = new ArrayList<>();
 
     private static void initItems() {
+        // Add all the individual log items
         allItems.addAll(LogItem.getAllItems());
+
+        // Add all the ceramic jug variants
+        allItems.addAll(JugItem.getAllItems());
 
 //        allItems.add(bismuthinite);
         allItems.add(leaves);

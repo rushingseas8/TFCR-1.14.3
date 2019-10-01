@@ -43,7 +43,7 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
 
     public FarmlandBlock(Properties properties) {
         super(properties);
-        this.setDefaultState(getDefaultState().with(MOISTURE, 7).with(FERTILITY, Fertility.NORMAL));
+        this.setDefaultState(getDefaultState().with(MOISTURE, 0).with(FERTILITY, Fertility.NORMAL));
         setRegistryName(TFCR.MODID, "farmland");
     }
 
