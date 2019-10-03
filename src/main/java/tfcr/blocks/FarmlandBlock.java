@@ -18,9 +18,13 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import tfcr.TFCR;
+import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements ISelfRegisterItem, ISelfRegisterBlock {
@@ -37,30 +41,43 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
      * Normal is the same as vanilla farmland.
      * Fertile will boost crop growth speed and yield.
      */
-    public static EnumProperty<Fertility> FERTILITY = EnumProperty.create("fertility", Fertility.class);
+//    public static EnumProperty<Fertility> FERTILITY = TFCRBlock.FERTILITY;
+    public Fertility fertility;
 
-    private static FarmlandBlock INSTANCE;
+    private static FarmlandBlock[] allBlocks;
 
-    public FarmlandBlock(Properties properties) {
+    public FarmlandBlock(Properties properties, Fertility fertility) {
         super(properties);
-        this.setDefaultState(getDefaultState().with(MOISTURE, 0).with(FERTILITY, Fertility.NORMAL));
-        setRegistryName(TFCR.MODID, "farmland");
+        this.setDefaultState(getDefaultState().with(MOISTURE, 0));
+        this.fertility = fertility;
+        setRegistryName(TFCR.MODID, "farmland/" + fertility.getName());
     }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(MOISTURE).add(FERTILITY);
+        //builder.add(MOISTURE);
+        super.fillStateContainer(builder);
     }
 
     private static void init() {
-        INSTANCE = new FarmlandBlock(Properties.from(Blocks.FARMLAND));
+        allBlocks = new FarmlandBlock[Fertility.values().length];
+        for (int i = 0; i < Fertility.values().length; i++) {
+            allBlocks[i] = new FarmlandBlock(Properties.from(Blocks.FARMLAND), Fertility.values()[i]);
+        }
     }
 
-    public static FarmlandBlock get() {
-        if (INSTANCE == null) {
+    public static FarmlandBlock get(Fertility fertility) {
+        if (allBlocks == null) {
             init();
         }
-        return INSTANCE;
+        return allBlocks[fertility.ordinal()];
+    }
+
+    public static List<FarmlandBlock> getAllBlocks() {
+        if (allBlocks == null) {
+            init();
+        }
+        return Arrays.asList(allBlocks);
     }
 
     /**
@@ -124,19 +141,5 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
     private boolean hasCrops(IBlockReader worldIn, BlockPos pos) {
         BlockState state = worldIn.getBlockState(pos.up());
         return state.getBlock() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, worldIn, pos, Direction.UP, (net.minecraftforge.common.IPlantable)state.getBlock());
-    }
-
-    public enum Fertility implements IStringSerializable {
-        // SALTED, // possibly as a joke
-        BARREN,
-        LOW,
-        NORMAL,
-        FERTILE
-        ;
-
-        @Override
-        public String getName() {
-            return name().toLowerCase();
-        }
     }
 }

@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "all": "tfcr:blocks/dirt/barren_dirt"
+    }
+}

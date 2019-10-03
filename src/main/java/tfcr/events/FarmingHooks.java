@@ -19,7 +19,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import tfcr.blocks.DirtBlock;
 import tfcr.blocks.FarmlandBlock;
+import tfcr.data.Fertility;
 
 import java.util.Map;
 
@@ -28,7 +30,20 @@ public class FarmingHooks {
 
     // Copied from ItemHoe. Map of what blocks can be hoed, and what the result will be.
     // Modified to return TFCR farmland instead.
-    private static final Map<Block, BlockState> HOE_LOOKUP = Maps.newHashMap(ImmutableMap.of(Blocks.GRASS_BLOCK, FarmlandBlock.get().getDefaultState(), Blocks.GRASS_PATH, FarmlandBlock.get().getDefaultState(), Blocks.DIRT, FarmlandBlock.get().getDefaultState(), Blocks.COARSE_DIRT, Blocks.DIRT.getDefaultState()));
+    private static final Map<Block, BlockState> HOE_LOOKUP = Maps.newHashMap(new ImmutableMap.Builder<Block, BlockState>()
+            // Vanilla blocks --> TFCR blocks
+            .put(Blocks.GRASS_BLOCK, FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
+            .put(Blocks.GRASS_PATH, FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
+            .put(Blocks.DIRT, FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
+            .put(Blocks.COARSE_DIRT, DirtBlock.get(Fertility.INFERTILE).getDefaultState())
+
+            // TFCR --> TFCR blocks
+            .put(DirtBlock.get(Fertility.BARREN), FarmlandBlock.get(Fertility.BARREN).getDefaultState())
+            .put(DirtBlock.get(Fertility.INFERTILE), FarmlandBlock.get(Fertility.INFERTILE).getDefaultState())
+            .put(DirtBlock.get(Fertility.NORMAL), FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
+            .put(DirtBlock.get(Fertility.FERTILE), FarmlandBlock.get(Fertility.FERTILE).getDefaultState())
+            .build()
+    );
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onHoeUse(UseHoeEvent useHoeEvent) {

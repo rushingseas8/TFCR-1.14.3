@@ -1,7 +1,9 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.state.EnumProperty;
 import tfcr.TFCR;
+import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
@@ -10,6 +12,9 @@ import tfcr.init.ISelfRegisterItem;
  * and self-registers a Block and ItemBlock.
  */
 public class TFCRBlock extends Block implements ISelfRegisterItem, ISelfRegisterBlock {
+
+    public static final EnumProperty<Fertility> FERTILITY = EnumProperty.create("fertility", Fertility.class);
+
     public TFCRBlock(Properties properties, String name) {
         super(properties);
         setRegistryName(TFCR.MODID, name);

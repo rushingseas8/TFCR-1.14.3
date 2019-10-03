@@ -1,0 +1,8 @@
+{
+    "parent": "minecraft:block/template_farmland",
+    "textures": {
+        "particle": "tfcr:blocks/dirt/infertile_dirt",
+        "dirt": "tfcr:blocks/dirt/infertile_dirt",
+        "top": "tfcr:blocks/farmland/infertile_farmland_dry"
+    }
+}

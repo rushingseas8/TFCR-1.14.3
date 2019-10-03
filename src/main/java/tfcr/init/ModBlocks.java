@@ -12,7 +12,9 @@ import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.BranchBlock;
 import tfcr.blocks.CropBlock;
+import tfcr.blocks.DirtBlock;
 import tfcr.blocks.FarmlandBlock;
+import tfcr.blocks.GrassBlock;
 import tfcr.blocks.MudBlock;
 import tfcr.blocks.SmallRockBlock;
 import tfcr.blocks.TFCRFlowerBlock;
@@ -50,13 +52,18 @@ public class ModBlocks {
         // Sapling variants
         allBlocks.addAll(SaplingBlock.getAllBlocks());
 
+        // Farmland, dirt, grass
+        allBlocks.addAll(FarmlandBlock.getAllBlocks());
+        allBlocks.addAll(DirtBlock.getAllBlocks());
+        allBlocks.addAll(GrassBlock.getAllBlocks());
+
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
         allBlocks.add(new TallSaplingBlock());
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
-        allBlocks.add(FarmlandBlock.get());
+//        allBlocks.add(FarmlandBlock.get());
 
         allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));
 

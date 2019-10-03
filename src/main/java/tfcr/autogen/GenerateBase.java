@@ -69,6 +69,8 @@ public class GenerateBase {
         GenerateLog.generate();
         GenerateLeaves.generate();
         GenerateSapling.generate();
+        GenerateFarmland.generate();
+        GenerateDirt.generate();
         GenerateMiscBlocks.generate();
 
         System.out.println("---");
