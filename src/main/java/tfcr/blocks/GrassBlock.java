@@ -1,13 +1,11 @@
 package tfcr.blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SnowBlock;
 import net.minecraft.block.SpreadableSnowyDirtBlock;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -15,6 +13,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.lighting.LightEngine;
 import tfcr.TFCR;
 import tfcr.data.Fertility;
+import tfcr.init.ISelfRegisterBlock;
+import tfcr.init.ISelfRegisterItem;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * TFCR grass block. Supports fertility.
  */
-public class GrassBlock extends SpreadableSnowyDirtBlock {
+public class GrassBlock extends SpreadableSnowyDirtBlock implements ISelfRegisterItem, ISelfRegisterBlock {
 
     public Fertility fertility;
 
@@ -38,15 +38,22 @@ public class GrassBlock extends SpreadableSnowyDirtBlock {
 
 
     private static void init() {
-        allBlocks = new GrassBlock[Fertility.values().length];
+        allBlocks = new GrassBlock[Fertility.values().length - 1];
+        int count = 0;
         for (int i = 0; i < Fertility.values().length; i++) {
-            allBlocks[i] = new GrassBlock(Properties.from(Blocks.FARMLAND), Fertility.values()[i]);
+            if (Fertility.values()[i] == Fertility.BARREN) {
+                continue;
+            }
+            allBlocks[count++] = new GrassBlock(Properties.from(Blocks.GRASS_BLOCK), Fertility.values()[i]);
         }
     }
 
-    public static GrassBlock get(Fertility fertility) {
+    public static GrassBlock get(Fertility fertility) throws Exception {
         if (allBlocks == null) {
             init();
+        }
+        if (fertility == Fertility.BARREN) {
+            throw new Exception("Barren grass does not exist.");
         }
         return allBlocks[fertility.ordinal()];
     }
@@ -152,8 +159,29 @@ public class GrassBlock extends SpreadableSnowyDirtBlock {
     // Helper method to set the target position to be the same grass type as this block.
     // Uses the snowy variant if applicable.
     private void grow(BlockState ourBlockState, BlockState targetBlockState, BlockPos targetPos, World world) {
-        if (isSnowyOrCoveredNotWet(targetBlockState, world, targetPos)) {
-            world.setBlockState(targetPos, ourBlockState.with(SNOWY, world.getBlockState(targetPos.up()).getBlock() == Blocks.SNOW));
+        Fertility targetFertility = ((DirtBlock) targetBlockState.getBlock()).fertility;
+        if (targetFertility == Fertility.BARREN) {
+            return;
         }
+
+        try {
+            if (isSnowyOrCoveredNotWet(targetBlockState, world, targetPos)) {
+                world.setBlockState(targetPos, GrassBlock.get(targetFertility).getDefaultState().with(SNOWY, world.getBlockState(targetPos.up()).getBlock() == Blocks.SNOW)))
+            }
+        } catch (Exception ignore) { } // Shouldn't happen, we catch it above
+    }
+
+    @Override
+    public boolean isSolid(BlockState state) {
+        return true;
+    }
+
+    /**
+     * Gets the render layer this block will render on. SOLID for solid blocks, CUTOUT or CUTOUT_MIPPED for on-off
+     * transparency (glass, reeds), TRANSLUCENT for fully blended transparency (stained glass)
+     */
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 }

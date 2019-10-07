@@ -3,6 +3,7 @@ package tfcr.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IntegerProperty;
@@ -22,6 +23,7 @@ import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -141,5 +143,25 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
     private boolean hasCrops(IBlockReader worldIn, BlockPos pos) {
         BlockState state = worldIn.getBlockState(pos.up());
         return state.getBlock() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, worldIn, pos, Direction.UP, (net.minecraftforge.common.IPlantable)state.getBlock());
+    }
+
+
+    /**
+     * Block's chance to react to a living entity falling on it.
+     *
+     * We turn into the respective fertility dirt block on trample.
+     */
+    public void onFallenUpon(World worldIn, @Nonnull BlockPos pos, Entity entityIn, float fallDistance) {
+        if (!worldIn.isRemote && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(worldIn, pos, DirtBlock.get(fertility).getDefaultState(), fallDistance, entityIn)) { // Forge: Move logic to Entity#canTrample
+            turnToDirt(worldIn.getBlockState(pos), worldIn, pos);
+        }
+
+        // Copied from Block's onFallenUpon, since direct super() would revert block to Vanilla dirt
+        entityIn.fall(fallDistance, 1.0F);
+    }
+
+    public static void turnToDirt(BlockState state, World worldIn, @Nonnull BlockPos pos) {
+        Fertility thisFertility = ((FarmlandBlock) state.getBlock()).fertility;
+        worldIn.setBlockState(pos, nudgeEntitiesWithNewState(state, DirtBlock.get(thisFertility).getDefaultState(), worldIn, pos));
     }
 }
