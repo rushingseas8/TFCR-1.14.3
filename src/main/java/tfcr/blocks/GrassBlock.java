@@ -17,6 +17,7 @@ import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -38,22 +39,15 @@ public class GrassBlock extends SpreadableSnowyDirtBlock implements ISelfRegiste
 
 
     private static void init() {
-        allBlocks = new GrassBlock[Fertility.values().length - 1];
-        int count = 0;
+        allBlocks = new GrassBlock[Fertility.values().length];
         for (int i = 0; i < Fertility.values().length; i++) {
-            if (Fertility.values()[i] == Fertility.BARREN) {
-                continue;
-            }
-            allBlocks[count++] = new GrassBlock(Properties.from(Blocks.GRASS_BLOCK), Fertility.values()[i]);
+            allBlocks[i] = new GrassBlock(Properties.from(Blocks.GRASS_BLOCK), Fertility.values()[i]);
         }
     }
 
-    public static GrassBlock get(Fertility fertility) throws Exception {
+    public static GrassBlock get(Fertility fertility) {
         if (allBlocks == null) {
             init();
-        }
-        if (fertility == Fertility.BARREN) {
-            throw new Exception("Barren grass does not exist.");
         }
         return allBlocks[fertility.ordinal()];
     }
@@ -159,16 +153,23 @@ public class GrassBlock extends SpreadableSnowyDirtBlock implements ISelfRegiste
     // Helper method to set the target position to be the same grass type as this block.
     // Uses the snowy variant if applicable.
     private void grow(BlockState ourBlockState, BlockState targetBlockState, BlockPos targetPos, World world) {
+        boolean snowy = world.getBlockState(targetPos.up()).getBlock() == Blocks.SNOW;
+
+        // Handle converting Vanilla dirt into TFCR grass.
+        if (targetBlockState.getBlock() == Blocks.DIRT) {
+            world.setBlockState(targetPos, GrassBlock.get(Fertility.NORMAL).getDefaultState().with(SNOWY, snowy));
+            return;
+        }
+
+        // Otherwise, this is already a TFCR dirt block; convert based on its fertility.
         Fertility targetFertility = ((DirtBlock) targetBlockState.getBlock()).fertility;
         if (targetFertility == Fertility.BARREN) {
             return;
         }
 
-        try {
-            if (isSnowyOrCoveredNotWet(targetBlockState, world, targetPos)) {
-                world.setBlockState(targetPos, GrassBlock.get(targetFertility).getDefaultState().with(SNOWY, world.getBlockState(targetPos.up()).getBlock() == Blocks.SNOW)))
-            }
-        } catch (Exception ignore) { } // Shouldn't happen, we catch it above
+        if (isSnowyOrCoveredNotWet(targetBlockState, world, targetPos)) {
+            world.setBlockState(targetPos, GrassBlock.get(targetFertility).getDefaultState().with(SNOWY, snowy));
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import tfcr.blocks.DirtBlock;
 import tfcr.blocks.FarmlandBlock;
+import tfcr.blocks.GrassBlock;
 import tfcr.data.Fertility;
 
 import java.util.Map;
@@ -42,6 +43,11 @@ public class FarmingHooks {
             .put(DirtBlock.get(Fertility.INFERTILE), FarmlandBlock.get(Fertility.INFERTILE).getDefaultState())
             .put(DirtBlock.get(Fertility.NORMAL), FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
             .put(DirtBlock.get(Fertility.FERTILE), FarmlandBlock.get(Fertility.FERTILE).getDefaultState())
+            .put(GrassBlock.get(Fertility.INFERTILE), FarmlandBlock.get(Fertility.INFERTILE).getDefaultState())
+            .put(GrassBlock.get(Fertility.NORMAL), FarmlandBlock.get(Fertility.NORMAL).getDefaultState())
+            .put(GrassBlock.get(Fertility.FERTILE), FarmlandBlock.get(Fertility.FERTILE).getDefaultState())
+
+
             .build()
     );
 

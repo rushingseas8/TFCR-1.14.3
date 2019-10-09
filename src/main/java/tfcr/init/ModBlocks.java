@@ -57,6 +57,9 @@ public class ModBlocks {
         allBlocks.addAll(DirtBlock.getAllBlocks());
         allBlocks.addAll(GrassBlock.getAllBlocks());
 
+        // Crops
+        allBlocks.addAll(CropBlock.getAllBlocks());
+
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
         allBlocks.add(new TallSaplingBlock());
@@ -65,7 +68,7 @@ public class ModBlocks {
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
 //        allBlocks.add(FarmlandBlock.get());
 
-        allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));
+        //allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));
 
         System.out.println("Done initializing.");
     }
