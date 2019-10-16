@@ -12,10 +12,10 @@ public class TFCRTime {
     public static long time;
 
     // Note that a vanilla minecraft day is 24,000 ticks = 20 minutes.
-    private static final int TICKS_PER_DAY = 24_000;
+    public static final int TICKS_PER_DAY = 24_000;
 
-    private static final int DAYS_PER_SEASON = 14;
-    private static final int DAYS_PER_YEAR = DAYS_PER_SEASON * 4;
+    public static final int DAYS_PER_SEASON = 14;
+    public static final int DAYS_PER_YEAR = DAYS_PER_SEASON * 4;
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onServerWorldTick(TickEvent.WorldTickEvent event) {

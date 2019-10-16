@@ -2,7 +2,6 @@ package tfcr.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.CropsBlock;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,6 +22,7 @@ import tfcr.blocks.LogBlock;
 import tfcr.blocks.SaplingBlock;
 import tfcr.blocks.TallSaplingBlock;
 import tfcr.blocks.WattleBlock;
+import tfcr.tileentity.FarmlandTileEntity;
 import tfcr.tileentity.TreeTileEntity;
 
 import java.util.ArrayList;
@@ -97,5 +97,6 @@ public class ModBlocks {
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         System.out.println("Registering tileentities.");
         TreeTileEntity.registerTileEntity(event.getRegistry());
+        FarmlandTileEntity.registerTileEntity(event.getRegistry());
     }
 }

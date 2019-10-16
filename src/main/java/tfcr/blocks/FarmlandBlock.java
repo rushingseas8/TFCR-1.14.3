@@ -10,6 +10,7 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
@@ -22,13 +23,28 @@ import tfcr.TFCR;
 import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
+import tfcr.tileentity.FarmlandTileEntity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Custom TFCR implementation of a Farmland block.
+ *
+ * Contains 4 possible states, corresponding to the different Fertility enum values.
+ *
+ * When this block is randomly ticked, it checks its surroundings for irrigation
+ * and other water source status (like raining). This can only increase the
+ * moisture level of the soil, but not decrease it.
+ *
+ * Has a TileEntity: FarmlandTileEntity. This TileEntity is used for decrementing
+ * moisture level on a fixed timer, exactly 8 times per day starting from the
+ * moment this block is first placed or created in the world.
+ */
 public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements ISelfRegisterItem, ISelfRegisterBlock {
 
     /**
@@ -83,11 +99,8 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
     }
 
     /**
-     * Random tick update
-     * @param state
-     * @param worldIn
-     * @param pos
-     * @param random
+     * Random tick update. Used to check for water (in block form, or as rain),
+     * and increases the moisture level of the farmland if found.
      */
     @Override
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
@@ -95,18 +108,13 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
         if (!state.isValidPosition(worldIn, pos)) {
             turnToDirt(state, worldIn, pos);
         } else {
-            int i = state.get(MOISTURE);
-
-            // If we're not irrigated..
-            if (!hasWater(worldIn, pos) && !worldIn.isRainingAt(pos.up())) {
-                // And we have some moisture, then decrement moisture
-                if (i > 0) {
-                    worldIn.setBlockState(pos, state.with(MOISTURE, i - 1), 2);
-                } else if (!hasCrops(worldIn, pos)) { // If fully dry, then revert to dirt.
-                    turnToDirt(state, worldIn, pos);
+            // If the water level of this blockstate is not maximum
+            if (state.get(MOISTURE) < 7) {
+                // Check if it's either raining, or if we're near a water block.
+                // If so, then set this block's moisture level to maximum.
+                if (worldIn.isRainingAt(pos.up()) || hasWater(worldIn, pos)) {
+                    worldIn.setBlockState(pos, state.with(MOISTURE, 7), 2);
                 }
-            } else if (i < 7) { // If we're irrigated, set immediately to max moisture when ticked
-                worldIn.setBlockState(pos, state.with(MOISTURE, 7), 2);
             }
         }
     }
@@ -151,6 +159,7 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
      *
      * We turn into the respective fertility dirt block on trample.
      */
+    @Override
     public void onFallenUpon(World worldIn, @Nonnull BlockPos pos, Entity entityIn, float fallDistance) {
         if (!worldIn.isRemote && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(worldIn, pos, DirtBlock.get(fertility).getDefaultState(), fallDistance, entityIn)) { // Forge: Move logic to Entity#canTrample
             turnToDirt(worldIn.getBlockState(pos), worldIn, pos);
@@ -160,8 +169,33 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
         entityIn.fall(fallDistance, 1.0F);
     }
 
+    /**
+     * Converts this farmland block into a TFCR dirt block. Used by #onFallenUpon.
+     */
     public static void turnToDirt(BlockState state, World worldIn, @Nonnull BlockPos pos) {
         Fertility thisFertility = ((FarmlandBlock) state.getBlock()).fertility;
         worldIn.setBlockState(pos, nudgeEntitiesWithNewState(state, DirtBlock.get(thisFertility).getDefaultState(), worldIn, pos));
+    }
+
+    /**
+     * Farmland blocks have a TileEntity- FarmlandTileEntity.
+     * @param state
+     * @return
+     */
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
+    /**
+     * Returns a new instance of a FarmlandTileEntity.
+     * @param state
+     * @param world
+     * @return
+     */
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new FarmlandTileEntity();
     }
 }
