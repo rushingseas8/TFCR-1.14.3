@@ -14,12 +14,12 @@ public class GenerateFarmland {
     private static final String blockStateJSON = "{\n" +
             "  \"variants\": {\n" +
             "    \"moisture=0\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=1\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=2\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=3\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=4\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=5\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
-            "    \"moisture=6\": { \"model\": \"tfcr:block/farmland/TYPEDRY\" },\n" +
+            "    \"moisture=1\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
+            "    \"moisture=2\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
+            "    \"moisture=3\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
+            "    \"moisture=4\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
+            "    \"moisture=5\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
+            "    \"moisture=6\": { \"model\": \"tfcr:block/farmland/TYPEWET\" },\n" +
             "    \"moisture=7\": { \"model\": \"tfcr:block/farmland/TYPEWET\" }\n" +
             "  }\n" +
             "}\n";

@@ -50,7 +50,7 @@ public class JugItem extends TFCRItem {
     private JugFluid fluid;
 
     public JugItem(JugFluid fluid) {
-        super(new Item.Properties().group(ItemGroup.TOOLS).maxStackSize(1),
+        super(new Item.Properties().group(ItemGroup.TOOLS).maxDamage(8),
                 fluid == JugFluid.EMPTY ? "empty_ceramic_jug" : "filled_ceramic_jug");
         this.fluid = fluid;
     }
@@ -119,7 +119,6 @@ public class JugItem extends TFCRItem {
                         return new ActionResult<>(ActionResultType.FAIL, itemstack);
                     } else {
                         // Water the farmland
-                        // TODO make this last longer
                         if (!worldIn.isRemote()) {
                             worldIn.setBlockState(blockpos, blockState.with(FarmlandBlock.MOISTURE, 7));
                         }
@@ -128,13 +127,28 @@ public class JugItem extends TFCRItem {
 
                         // TODO Particles?
 
+                        // Decrease durability by 1. If empty, return empty jug.
+                        if (itemstack.getDamage() == itemstack.getMaxDamage() - 1) {
+                            return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+                        } else {
+                            itemstack.damageItem(1, playerIn, (T) -> {});
+                            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+                        }
+
                         // Return empty jug
-                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+//                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
                     }
                 } else if (blockState.getFluidState().getFluid().isIn(FluidTags.WATER)) {
                     // Logic for dumping water back into a water block
-                    playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
-                    return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+                    // Only occurs when we're full on water.
+                    if (itemstack.getDamage() == 0) {
+                        playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
+                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+                    } else {
+                        // If we've used some water, fill the jug back up instead.
+                        playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL, 1.0F, 1.0F);
+                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.WATER)));
+                    }
                 } else {
                     // How did we get here?
                 }

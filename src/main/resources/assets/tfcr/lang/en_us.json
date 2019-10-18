@@ -348,10 +348,10 @@
 	"block.tfcr.farmland.normal": "Normal Farmland",
 	"block.tfcr.farmland.fertile": "Fertile Farmland",
 
-	"block.tfcr.dirt.barren": "barren Dirt",
-	"block.tfcr.dirt.infertile": "infertile Dirt",
-	"block.tfcr.dirt.normal": "normal Dirt",
-	"block.tfcr.dirt.fertile": "fertile Dirt",
+	"block.tfcr.dirt.barren": "Barren Dirt",
+	"block.tfcr.dirt.infertile": "Infertile Dirt",
+	"block.tfcr.dirt.normal": "Normal Dirt",
+	"block.tfcr.dirt.fertile": "Fertile Dirt",
 	"item.tfcr.mud": "Mud",
 	"item.tfcr.leaf_roof": "Leaf Roof",
 

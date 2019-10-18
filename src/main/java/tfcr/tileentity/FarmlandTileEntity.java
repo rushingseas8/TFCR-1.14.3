@@ -26,7 +26,12 @@ public class FarmlandTileEntity extends TileEntity implements ITickableTileEntit
     }
 
     public static void registerTileEntity(IForgeRegistry<TileEntityType<?>> tileEntityRegistry) {
-        FARMLAND = TileEntityType.Builder.create(FarmlandTileEntity::new).build(null);
+        FARMLAND = TileEntityType.Builder
+                .create(
+                    FarmlandTileEntity::new,
+                    FarmlandBlock.getAllBlocks().toArray(new FarmlandBlock[0])
+                )
+                .build(null);
         FARMLAND.setRegistryName(TFCR.MODID, "tile_entity_farmland");
         tileEntityRegistry.register(FARMLAND);
     }
@@ -36,8 +41,7 @@ public class FarmlandTileEntity extends TileEntity implements ITickableTileEntit
         count++;
 
         // Only trigger an update 8 times per minecraft day
-//        if (count >= TFCRTime.TICKS_PER_DAY / 8) {
-        if (count >= 100) {
+        if (count >= TFCRTime.TICKS_PER_DAY / 8) {
             count = 0;
 
             // If we're server-side, then flip a coin to see if we update dryness this cycle.
