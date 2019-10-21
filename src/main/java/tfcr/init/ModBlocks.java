@@ -10,6 +10,10 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.BranchBlock;
+import tfcr.blocks.CropBlock;
+import tfcr.blocks.DirtBlock;
+import tfcr.blocks.FarmlandBlock;
+import tfcr.blocks.GrassBlock;
 import tfcr.blocks.MudBlock;
 import tfcr.blocks.SmallRockBlock;
 import tfcr.blocks.TFCRFlowerBlock;
@@ -18,6 +22,7 @@ import tfcr.blocks.LogBlock;
 import tfcr.blocks.SaplingBlock;
 import tfcr.blocks.TallSaplingBlock;
 import tfcr.blocks.WattleBlock;
+import tfcr.tileentity.FarmlandTileEntity;
 import tfcr.tileentity.TreeTileEntity;
 
 import java.util.ArrayList;
@@ -47,12 +52,23 @@ public class ModBlocks {
         // Sapling variants
         allBlocks.addAll(SaplingBlock.getAllBlocks());
 
+        // Farmland, dirt, grass
+        allBlocks.addAll(FarmlandBlock.getAllBlocks());
+        allBlocks.addAll(DirtBlock.getAllBlocks());
+        allBlocks.addAll(GrassBlock.getAllBlocks());
+
+        // Crops
+        allBlocks.addAll(CropBlock.getAllBlocks());
+
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
         allBlocks.add(new TallSaplingBlock());
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
+//        allBlocks.add(FarmlandBlock.get());
+
+        //allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));
 
         System.out.println("Done initializing.");
     }
@@ -81,5 +97,6 @@ public class ModBlocks {
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         System.out.println("Registering tileentities.");
         TreeTileEntity.registerTileEntity(event.getRegistry());
+        FarmlandTileEntity.registerTileEntity(event.getRegistry());
     }
 }

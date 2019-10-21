@@ -1,7 +1,9 @@
 package tfcr.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.state.EnumProperty;
 import tfcr.TFCR;
+import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
 

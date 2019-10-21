@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "snowy=false": [
+      { "model": "tfcr:block/grass/barren" },
+      { "model": "tfcr:block/grass/barren", "y": 90 },
+      { "model": "tfcr:block/grass/barren", "y": 180 },
+      { "model": "tfcr:block/grass/barren", "y": 270 }
+    ],
+    "snowy=true":  { "model": "block/grass_block_snow" }
+  }
+}

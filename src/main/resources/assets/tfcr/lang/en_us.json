@@ -342,9 +342,18 @@
 	"block.tfcr.sapling.white_cedar": "White Cedar Sapling",
 	"block.tfcr.sapling.white_elm": "White Elm Sapling",
 	"block.tfcr.sapling.willow": "Willow Sapling",
+
+	"block.tfcr.farmland.barren": "Barren Farmland",
+	"block.tfcr.farmland.infertile": "Infertile Farmland",
+	"block.tfcr.farmland.normal": "Normal Farmland",
+	"block.tfcr.farmland.fertile": "Fertile Farmland",
+
+	"block.tfcr.dirt.barren": "Barren Dirt",
+	"block.tfcr.dirt.infertile": "Infertile Dirt",
+	"block.tfcr.dirt.normal": "Normal Dirt",
+	"block.tfcr.dirt.fertile": "Fertile Dirt",
 	"item.tfcr.mud": "Mud",
 	"item.tfcr.leaf_roof": "Leaf Roof",
-	"item.tfcr.small_rock_block": "Small Rock Block",
 
 
 	"item.tfcr.itemlog.acacia": "Acacia Log",
@@ -376,6 +385,8 @@
 	"item.tfcr.raw_fiber": "Raw Fiber",
 	"item.tfcr.plant_fiber": "Plant Fiber",
 	"item.tfcr.cordage": "Cordage",
+	"item.tfcr.empty_ceramic_jug": "Empty Ceramic Jug",
+	"item.tfcr.filled_ceramic_jug": "Filled Ceramic Jug",
 
 	"item.tfcr.ore.bismuthinite": "Bismuthinite"
 }
