@@ -1,20 +1,11 @@
 package tfcr.items;
 
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.IBucketPickupHandler;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.fluid.WaterFluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.particles.BlockParticleData;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -28,7 +19,6 @@ import net.minecraft.world.World;
 import tfcr.blocks.FarmlandBlock;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,70 +81,70 @@ public class JugItem extends TFCRItem {
      */
     public @Nonnull ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn) {
         // Currently held item, to know what to return
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
+        ItemStack heldItem = playerIn.getHeldItem(handIn);
 
-        // Manually ray trace
+        // Manually ray trace. If we miss, then pass-through this right-click action.
         RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.ANY);
         if (raytraceresult.getType() == RayTraceResult.Type.MISS) {
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
+            return new ActionResult<>(ActionResultType.PASS, heldItem);
         } else if (raytraceresult.getType() != RayTraceResult.Type.BLOCK) {
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
-        } else { // Found a block
-            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceresult;
-            BlockPos blockpos = blockraytraceresult.getPos();
+            return new ActionResult<>(ActionResultType.PASS, heldItem);
+        }
 
-            BlockState blockState = worldIn.getBlockState(blockpos);
+        // If we hit a block, then store the result.
+        BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceresult;
+        BlockPos blockPos = blockraytraceresult.getPos();
 
-            // Logic for trying to pick up water with empty jug
-            if (this.fluid == JugFluid.EMPTY) {
-                Fluid fluid = blockState.getFluidState().getFluid();
-                if (fluid.isIn(FluidTags.WATER)) {
-                    // Play water pickup sound and return full jug
+        BlockState blockState = worldIn.getBlockState(blockPos);
+
+        // Logic for trying to pick up water with empty jug
+        if (this.fluid == JugFluid.EMPTY) {
+            Fluid fluid = blockState.getFluidState().getFluid();
+            if (fluid.isIn(FluidTags.WATER)) {
+                // Play water pickup sound and return full jug
+                playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL, 1.0F, 1.0F);
+                return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.WATER)));
+            }
+        } else if (this.fluid == JugFluid.WATER) {
+            // Logic for watering TFCR farmland
+            if (blockState.getBlock() instanceof FarmlandBlock) {
+                if (blockState.get(FarmlandBlock.MOISTURE) == 7) {
+                    return new ActionResult<>(ActionResultType.FAIL, heldItem);
+                } else {
+                    // Water the farmland
+                    if (!worldIn.isRemote()) {
+                        worldIn.setBlockState(blockPos, blockState.with(FarmlandBlock.MOISTURE, 7));
+                    }
+
+                    // Play water sploosh sound
+                    playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
+
+                    // TODO Particles?
+
+                    // If we're at max durability, return an empty jug. Else,
+                    // decrease durability by 1 and return the result.
+                    if (heldItem.getDamage() == heldItem.getMaxDamage() - 1) {
+                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+                    } else {
+                        heldItem.damageItem(1, playerIn, (T) -> {});
+                        return new ActionResult<>(ActionResultType.SUCCESS, heldItem);
+                    }
+                }
+            } else if (blockState.getFluidState().getFluid().isIn(FluidTags.WATER)) { // Logic for refilling/emptying water
+                // Logic for dumping water back into a water block
+                // Only occurs when we're full on water.
+                if (heldItem.getDamage() == 0) {
+                    playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
+                    return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
+                } else {
+                    // If we've used some water, fill the jug back up instead.
                     playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL, 1.0F, 1.0F);
                     return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.WATER)));
                 }
-            } else if (this.fluid == JugFluid.WATER) { // Logic for watering TFCR farmland
-                if (blockState.getBlock() instanceof FarmlandBlock) {
-                    if (blockState.get(FarmlandBlock.MOISTURE) == 7) {
-                        return new ActionResult<>(ActionResultType.FAIL, itemstack);
-                    } else {
-                        // Water the farmland
-                        if (!worldIn.isRemote()) {
-                            worldIn.setBlockState(blockpos, blockState.with(FarmlandBlock.MOISTURE, 7));
-                        }
-                        // Play water sploosh sound
-                        playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
-
-                        // TODO Particles?
-
-                        // Decrease durability by 1. If empty, return empty jug.
-                        if (itemstack.getDamage() == itemstack.getMaxDamage() - 1) {
-                            return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
-                        } else {
-                            itemstack.damageItem(1, playerIn, (T) -> {});
-                            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
-                        }
-
-                        // Return empty jug
-//                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
-                    }
-                } else if (blockState.getFluidState().getFluid().isIn(FluidTags.WATER)) {
-                    // Logic for dumping water back into a water block
-                    // Only occurs when we're full on water.
-                    if (itemstack.getDamage() == 0) {
-                        playerIn.playSound(SoundEvents.ITEM_BUCKET_EMPTY, 1.0F, 1.0F);
-                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.EMPTY)));
-                    } else {
-                        // If we've used some water, fill the jug back up instead.
-                        playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL, 1.0F, 1.0F);
-                        return new ActionResult<>(ActionResultType.SUCCESS, new ItemStack(get(JugFluid.WATER)));
-                    }
-                } else {
-                    // How did we get here?
-                }
             }
-
         }
-        return new ActionResult<>(ActionResultType.PASS, itemstack);
+
+        // Default is a no-op.
+        return new ActionResult<>(ActionResultType.PASS, heldItem);
     }
 }
