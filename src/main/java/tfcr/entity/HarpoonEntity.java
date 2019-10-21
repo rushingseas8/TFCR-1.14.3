@@ -1,0 +1,21 @@
+package tfcr.entity;
+
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import tfcr.items.HarpoonItem;
+
+public class HarpoonEntity extends AbstractArrowEntity {
+
+    private ItemStack thrownStack = new ItemStack(HarpoonItem::new);
+
+    protected HarpoonEntity(EntityType<? extends AbstractArrowEntity> type, World p_i48546_2_) {
+        super(type, p_i48546_2_);
+    }
+
+    @Override
+    protected ItemStack getArrowStack() {
+        return thrownStack.copy();
+    }
+}
