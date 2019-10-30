@@ -1,5 +1,6 @@
 package tfcr.entity;
 
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -10,8 +11,8 @@ public class HarpoonEntity extends AbstractArrowEntity {
 
     private ItemStack thrownStack = new ItemStack(HarpoonItem::new);
 
-    protected HarpoonEntity(EntityType<? extends AbstractArrowEntity> type, World p_i48546_2_) {
-        super(type, p_i48546_2_);
+    protected HarpoonEntity(World p_i48546_2_) {
+        super(EntityType.Builder.<HarpoonEntity>create(HarpoonEntity::new, EntityClassification.MISC).size(0.5F, 0.5F), p_i48546_2_);
     }
 
     @Override

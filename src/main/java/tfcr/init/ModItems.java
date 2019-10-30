@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
+import tfcr.items.HarpoonItem;
 import tfcr.items.JugItem;
 import tfcr.items.LogItem;
 import tfcr.items.TFCRItem;
@@ -28,6 +29,7 @@ public class ModItems {
     public static final TFCRItem small_rock = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "small_rock");
     public static final TFCRItem sharp_rock = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "sharp_rock");
     public static final TFCRItem cordage = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "cordage");
+    public static final HarpoonItem harpoon = new HarpoonItem();
 
     public static ArrayList<Item> allItems = new ArrayList<>();
 
@@ -47,6 +49,7 @@ public class ModItems {
         allItems.add(small_rock);
         allItems.add(sharp_rock);
         allItems.add(cordage);
+        allItems.add(harpoon);
     }
 
     @SubscribeEvent
