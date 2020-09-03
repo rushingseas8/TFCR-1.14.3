@@ -9,15 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.blocks.BlockBranch;
-import tfcr.blocks.BlockFlowerTFCR;
-import tfcr.blocks.BlockLeaves;
-import tfcr.blocks.BlockLog;
-import tfcr.blocks.BlockMud;
-import tfcr.blocks.BlockSapling;
-import tfcr.blocks.BlockSmallRock;
-import tfcr.blocks.BlockTallSapling;
-import tfcr.blocks.BlockWattle;
+import tfcr.blocks.*;
 import tfcr.tileentity.TileEntityTree;
 
 import java.util.ArrayList;
@@ -53,6 +45,7 @@ public class ModBlocks {
         allBlocks.add(BlockMud.get());
         allBlocks.add(BlockWattle.get());
         allBlocks.add(new BlockSmallRock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock"));
+        allBlocks.add(new BlockLeafRoof());
 
         System.out.println("Done initializing.");
     }
