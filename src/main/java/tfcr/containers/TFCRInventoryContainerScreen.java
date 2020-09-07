@@ -2,6 +2,7 @@ package tfcr.containers;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,12 +13,14 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod;
 import tfcr.TFCR;
+import tfcr.init.ModContainers;
 
 // annotation for the GUI override
 @Mod.EventBusSubscriber(modid = TFCR.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class TFCRInventoryContainerScreen extends ContainerScreen {
+public class TFCRInventoryContainerScreen extends ContainerScreen<TFCRInventoryContainer> {
 
     private float oldMouseX;
     private float oldMouseY;
@@ -25,11 +28,11 @@ public class TFCRInventoryContainerScreen extends ContainerScreen {
     public static final ResourceLocation INVENTORY_BACKGROUND = new ResourceLocation(TFCR.MODID, "textures/gui/container/inventory.png");
 
     public TFCRInventoryContainerScreen(Container p_i51105_1_, PlayerInventory p_i51105_2_, ITextComponent p_i51105_3_) {
-        super(p_i51105_1_, p_i51105_2_, p_i51105_3_);
+        super((TFCRInventoryContainer) p_i51105_1_, p_i51105_2_, p_i51105_3_);
     }
 
     public TFCRInventoryContainerScreen(PlayerEntity player) {
-        super(player.openContainer, player.inventory, new TranslationTextComponent("containers.tfcr.inventory"));
+        super((TFCRInventoryContainer) player.openContainer, player.inventory, new TranslationTextComponent("containers.tfcr.inventory"));
         // TODO link this to the player's extra capabilities (player.getcapabilities)
         // TODO link to the custom container
         // TODO make this inventory NOT open in creative mode (change the event)
@@ -57,7 +60,10 @@ public class TFCRInventoryContainerScreen extends ContainerScreen {
     public static void onGuiOpenEvent(GuiOpenEvent event) {
         if (event.getGui() instanceof InventoryScreen) {
             System.out.println("Player inventory opened");
-            event.setGui(new TFCRInventoryContainerScreen(Minecraft.getInstance().player));
+            ClientPlayerEntity clientPlayerEntity = Minecraft.getInstance().player;
+            event.setGui(new TFCRInventoryContainerScreen(clientPlayerEntity));
+            //clientPlayerEntity.openContainer = ModContainers.TFCR_INVENTORY_CONTAINER_TYPE.create()
+
         }
     }
 }
