@@ -1,7 +1,18 @@
 {
   "variants": {
-    "": {
-      "model": "tfcr:block/leaf_roof"
-    }
+    "facing=west,shape=straight": { "model": "tfcr:block/leafroof/straight" },
+    "facing=north,shape=straight": { "model": "tfcr:block/leafroof/straight", "y": 90 },
+    "facing=east,shape=straight": { "model": "tfcr:block/leafroof/straight", "y": 180 },
+    "facing=south,shape=straight": { "model": "tfcr:block/leafroof/straight", "y": 270 },
+
+    "facing=west,shape=outer_right": { "model": "tfcr:block/leafroof/corner", "y": 90 },
+    "facing=north,shape=outer_right": { "model": "tfcr:block/leafroof/corner", "y": 180 },
+    "facing=east,shape=outer_right": { "model": "tfcr:block/leafroof/corner", "y": 270 },
+    "facing=south,shape=outer_right": { "model": "tfcr:block/leafroof/corner", "y": 0 },
+
+    "facing=west,shape=outer_left": { "model": "tfcr:block/leafroof/corner", "y": 0 },
+    "facing=north,shape=outer_left": { "model": "tfcr:block/leafroof/corner", "y": 90 },
+    "facing=east,shape=outer_left": { "model": "tfcr:block/leafroof/corner", "y": 180 },
+    "facing=south,shape=outer_left": { "model": "tfcr:block/leafroof/corner", "y": 270 }
   }
 }
