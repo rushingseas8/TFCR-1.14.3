@@ -55,6 +55,7 @@ public class ModBlocks {
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
         allBlocks.add(new LeafRoofBlock());
+        allBlocks.add(new WickerBlock());
 //        allBlocks.add(FarmlandBlock.get());
 
         //allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));

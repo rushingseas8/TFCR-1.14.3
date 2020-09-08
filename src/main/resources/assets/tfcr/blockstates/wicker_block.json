@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "tfcr:block/wicker_block"
+    }
+  }
+}
