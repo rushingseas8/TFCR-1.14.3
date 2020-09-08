@@ -22,6 +22,11 @@ import tfcr.init.ISelfRegisterItem;
 
 public class LeafRoofBlock extends TFCRBlock implements ISelfRegisterBlock, ISelfRegisterItem {
 
+    // TODO: not all permutations are valid.
+    // Innerleft/innerright/outerleft/outerright/straight all need facing, but center does not.
+    // left/right are the same model, but mirrored. This is the same as a 90 degree turn, since
+    // the models are actually non-chiral.
+    // Maybe this just means we should not include center?
     public enum LeafRoofShape implements IStringSerializable {
         CENTER("center"),
         STRAIGHT("straight"),
