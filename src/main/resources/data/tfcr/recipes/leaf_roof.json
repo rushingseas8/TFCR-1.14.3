@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "sss",
+        "lll",
+        "lll"
+    ],
+    "key":
+    {
+        "s":
+        {
+            "tag": "forge:rods/wooden"
+        },
+        "l":
+        {
+            "item": "tfcr:leaves"
+        }
+    },
+    "result":
+    {
+        "item": "tfcr:leaf_roof",
+        "count": 1
+    }
+}

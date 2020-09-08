@@ -82,8 +82,10 @@ public class LeavesBlock extends net.minecraft.block.LeavesBlock implements ISel
     }
 
     @Override
-    public void registerItem(IForgeRegistry<Item> itemRegistry) {
-        itemRegistry.register(new BlockItem(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath()));
+    public Item registerItem(IForgeRegistry<Item> itemRegistry) {
+        Item toReturn = new BlockItem(this, new Item.Properties().group(ModTabs.TFCR_WOOD)).setRegistryName(TFCR.MODID, getRegistryName().getPath());
+        itemRegistry.register(toReturn);
+        return toReturn;
     }
 
     @Override

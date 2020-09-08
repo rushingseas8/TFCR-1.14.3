@@ -1,0 +1,6 @@
+{
+    "parent": "tfcr:block/cube_all",
+    "textures": {
+        "all": "tfcr:blocks/wattle_daub_full"
+    }
+}

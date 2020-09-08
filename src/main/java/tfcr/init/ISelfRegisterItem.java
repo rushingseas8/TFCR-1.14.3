@@ -20,14 +20,18 @@ public interface ISelfRegisterItem {
      * as default ItemBlocks in the Building blocks creative category.
      * @param itemRegistry The registry where we will register this Item.
      */
-    default void registerItem(IForgeRegistry<Item> itemRegistry) {
+    default Item registerItem(IForgeRegistry<Item> itemRegistry) {
+        Item toReturn;
         if (this instanceof Item) {
-            itemRegistry.register((Item)this);
+            toReturn = (Item)this;
         } else if (this instanceof Block) {
-            itemRegistry.register(new BlockItem((Block)this, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(TFCR.MODID, ((Block) this).getRegistryName().getPath()));
+            toReturn = new BlockItem((Block)this, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(TFCR.MODID, ((Block) this).getRegistryName().getPath());
         } else {
             // TODO make me a logging statement
             System.out.println("Failed to self-register non-item class: " + getClass() + " toString(): \"" + toString() + "\"");
+            toReturn = null;
         }
+        itemRegistry.register(toReturn);
+        return toReturn;
     }
 }
