@@ -31,7 +31,7 @@ public class GenerateMiscBlocks {
 
         String[] cubeBlocks = new String[] {
                 "mud",
-                "leaf_roof"
+                "wicker_block"
         };
 
         for (String name : cubeBlocks) {

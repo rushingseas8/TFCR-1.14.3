@@ -22,7 +22,7 @@ public class TFCRTime {
         // On the start of every server tick, we update our local copy of the world's time.
         if (event.phase == TickEvent.Phase.START) {
             TFCRTime.time = event.world.getWorldInfo().getGameTime();
-            System.out.println("Ticks: " + time + " Season: " + getSeason() + " Day: " + getDay());
+//            System.out.println("Ticks: " + time + " Season: " + getSeason() + " Day: " + getDay());
         }
     }
 

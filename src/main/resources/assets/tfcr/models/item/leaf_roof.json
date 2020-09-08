@@ -1,3 +1,6 @@
 {
-  "parent": "tfcr:block/leaf_roof"
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "tfcr:blocks/leaf_roof"
+  }
 }

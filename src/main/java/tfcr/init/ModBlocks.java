@@ -9,19 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
-import tfcr.blocks.BranchBlock;
-import tfcr.blocks.CropBlock;
-import tfcr.blocks.DirtBlock;
-import tfcr.blocks.FarmlandBlock;
-import tfcr.blocks.GrassBlock;
-import tfcr.blocks.MudBlock;
-import tfcr.blocks.SmallRockBlock;
-import tfcr.blocks.TFCRFlowerBlock;
-import tfcr.blocks.LeavesBlock;
-import tfcr.blocks.LogBlock;
-import tfcr.blocks.SaplingBlock;
-import tfcr.blocks.TallSaplingBlock;
-import tfcr.blocks.WattleBlock;
+import tfcr.blocks.*;
 import tfcr.tileentity.FarmlandTileEntity;
 import tfcr.tileentity.TreeTileEntity;
 
@@ -66,6 +54,8 @@ public class ModBlocks {
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
+        allBlocks.add(new LeafRoofBlock());
+        allBlocks.add(new WickerBlock());
 //        allBlocks.add(FarmlandBlock.get());
 
         //allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));

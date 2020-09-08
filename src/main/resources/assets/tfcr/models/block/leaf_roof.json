@@ -1,6 +1,43 @@
 {
-  "parent": "tfcr:block/cube_all",
   "textures": {
     "all": "tfcr:blocks/leaf_roof"
-  }
+  },
+  "elements": [
+    {
+      "from": [7, 0, 0],
+      "to": [9, 16, 16],
+      "rotation": {
+        "origin": [8,8,8],
+        "axis": "z",
+        "angle": 45,
+        "rescale": true
+      },
+      "faces": {
+        "north": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "south": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "east": { "uv": [0, 0, 16, 16], "texture": "#all" },
+        "west": { "uv": [0, 0, 16, 16], "texture": "#all" },
+        "up": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "down": { "uv": [7, 0, 9, 16], "texture": "#all" }
+      }
+    },
+    {
+      "from": [0, 0, 7],
+      "to": [16, 16, 9],
+      "rotation": {
+        "origin": [8,8,8],
+        "axis": "x",
+        "angle": 45,
+        "rescale": true
+      },
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#all" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#all" },
+        "east": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "west": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "up": { "uv": [7, 0, 9, 16], "texture": "#all" },
+        "down": { "uv": [7, 0, 9, 16], "texture": "#all" }
+      }
+    }
+  ]
 }

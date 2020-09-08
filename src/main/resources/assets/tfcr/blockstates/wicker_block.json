@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "durability=bare": { "model": "tfcr:block/wicker/bare" },
+    "durability=partial": { "model": "tfcr:block/wicker/partial" },
+    "durability=full": { "model": "tfcr:block/wicker/full" }
+  }
+}

@@ -14,6 +14,7 @@ import tfcr.items.LogItem;
 import tfcr.items.TFCRItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Mod.EventBusSubscriber(modid = TFCR.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(TFCR.MODID)
@@ -30,6 +31,7 @@ public class ModItems {
     public static final TFCRItem cordage = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "cordage");
 
     public static ArrayList<Item> allItems = new ArrayList<>();
+    public static HashMap<Block, Item> itemForBlocks = new HashMap<>();
 
     private static void initItems() {
         // Add all the individual log items
@@ -58,7 +60,8 @@ public class ModItems {
 
         for (Block b : ModBlocks.allBlocks) {
             if (b instanceof ISelfRegisterItem) {
-                ((ISelfRegisterItem) b).registerItem(registry);
+                Item itemBlock = ((ISelfRegisterItem) b).registerItem(registry);
+                itemForBlocks.put(b, itemBlock);
             }
         }
 
