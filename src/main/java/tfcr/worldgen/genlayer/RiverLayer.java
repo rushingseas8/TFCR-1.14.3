@@ -38,7 +38,7 @@ public enum RiverLayer implements ICastleTransformer {
         // If value >= 2, then take the lowest bit and add 2, so return 2 or 3.
 
 
-        return value >= 2 ? 2 + (value & 1) : value;
+        return value >= 10 ? 10 + (value & 1) : value;
 //        if (LayerUtilsTFCR.isOcean(value)) {
 //            return 1000 + (value & 1);
 //        }

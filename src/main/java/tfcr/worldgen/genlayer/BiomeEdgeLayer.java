@@ -43,19 +43,19 @@ public enum BiomeEdgeLayer implements ICastleTransformer {
         // Else, we take an average of all the non-water tiles around us.
         int average = 0;
         int count = 0;
-        if (!LayerUtilsTFCR.isWater(south)) {
+        if (!LayerUtilsTFCR.isWater(south) && south < 10) {
             average += south;
             count++;
         }
-        if (!LayerUtilsTFCR.isWater(east)) {
+        if (!LayerUtilsTFCR.isWater(east) && east < 10) {
             average += east;
             count++;
         }
-        if (!LayerUtilsTFCR.isWater(north)) {
+        if (!LayerUtilsTFCR.isWater(north) && north < 10) {
             average += north;
             count++;
         }
-        if (!LayerUtilsTFCR.isWater(west)) {
+        if (!LayerUtilsTFCR.isWater(west) && west < 10) {
             average += west;
             count++;
         }

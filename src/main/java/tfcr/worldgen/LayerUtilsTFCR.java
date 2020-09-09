@@ -304,16 +304,16 @@ public class LayerUtilsTFCR {
             }
         }
 
-        biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
-        biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+//        biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
+        //biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
 
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
-        // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
+        // "(100 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
         // with TemperateConiferousBiome biomes (and all its height variations).
-        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (0 << 8) | 35).apply(contextFactory.apply(17L));
+        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
 
         // Apply the temp/precip map on top.
-        biomesAreaFactory = TempPrecipMaskLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
+//        biomesAreaFactory = TempPrecipMaskLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
 
         // No ocean temperature mixing at this time
         IAreaFactory<T> voronoiZoomed = VoroniZoomLayer.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);

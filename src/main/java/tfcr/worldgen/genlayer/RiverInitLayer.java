@@ -3,6 +3,7 @@ package tfcr.worldgen.genlayer;
 import net.minecraft.world.gen.INoiseRandom;
 import net.minecraft.world.gen.layer.traits.IC0Transformer;
 import tfcr.data.TerrainType;
+import tfcr.worldgen.LayerUtilsTFCR;
 
 /**
  * Initializes the river mask layer. Copied from Vanilla.
@@ -17,6 +18,6 @@ public enum RiverInitLayer implements IC0Transformer {
     public int apply(INoiseRandom rand, int value) {
         // If this is an ocean, then keep the ocean value.
         // Else, return an absurdly large range random value (?)
-        return TerrainType.values()[value] == TerrainType.OCEAN ? value : rand.random(299999) + 2;
+        return LayerUtilsTFCR.isOcean(value) ? value : rand.random(299999) + 10;
     }
 }
