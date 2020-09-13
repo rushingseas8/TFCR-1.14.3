@@ -3,7 +3,17 @@ package tfcr.data;
 import net.minecraft.util.IStringSerializable;
 
 public enum CropType implements IStringSerializable {
-    BARLEY(12000);
+    BARLEY(12000, PlantLifeCycle.ANNUAL);
+
+
+    /**
+     * Does this crop live for one, two, or many years?
+     */
+    public enum PlantLifeCycle {
+        ANNUAL,
+        PERENNIAL,
+        BIENNIAL
+    }
 
     /**
      * Boundary temperature conditions for this crop.
@@ -65,9 +75,12 @@ public enum CropType implements IStringSerializable {
      */
     public float idealGrowthChance;
 
-    CropType(int meanGrowthTime) {
+    public PlantLifeCycle plantLifeCycle;
+
+    CropType(int meanGrowthTime, PlantLifeCycle plantLifeCycle) {
         this.meanGrowthTime = meanGrowthTime;
         this.idealGrowthChance = (float)(16 / (meanGrowthTime / 68.27));
+        this.plantLifeCycle = plantLifeCycle;
     }
 
     @Override
