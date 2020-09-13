@@ -4,18 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -23,11 +16,8 @@ import tfcr.TFCR;
 import tfcr.data.Fertility;
 import tfcr.init.ISelfRegisterBlock;
 import tfcr.init.ISelfRegisterItem;
-import tfcr.tileentity.FarmlandTileEntity;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -59,8 +49,32 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
      * Normal is the same as vanilla farmland.
      * Fertile will boost crop growth speed and yield.
      */
-//    public static EnumProperty<Fertility> FERTILITY = TFCRBlock.FERTILITY;
     public Fertility fertility;
+
+    // TODO: Add random weed blocks on top of fallow farmland in model
+    public static final int MAX_FALLOW_STATE = 7;
+    public static IntegerProperty FALLOW_STATE = IntegerProperty.create("fallow", 0, MAX_FALLOW_STATE);
+
+    /**
+     * Chance to dry out one stage each random tick.
+     *
+     * This value is computed using the same formula as in CropType, with a mean
+     * drying out time of 2 days. With 8 dryness states, 90% of farmland will dry
+     * in [1.4, 3.2] days, and 99% will dry fully in [0.9, 4] days.
+     */
+    private static final float DEHYDRATION_CHANCE = (float)(8 / (2 * 20 * 60 / 68.27));
+
+    /**
+     * Chance to increase fallow state by one each random tick.
+     *
+     * TODO: Look into reducing mean fallow time to 20-25 days to make it a more
+     *  consistent mechanic. Would be annoying to have 50% of land still not affected
+     *  by this mechanic by 30 days.
+     *
+     * We expect to fully increase fallow state every 30 days. 90% in [20.64, 48.3],
+     * and 99% in [13.5, 60].
+     */
+    private static final float FALLOW_CHANCE = (float)(8 / (30 * 20 * 60 / 68.27));
 
     private static FarmlandBlock[] allBlocks;
 
@@ -73,8 +87,8 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        //builder.add(MOISTURE);
         super.fillStateContainer(builder);
+        builder.add(FALLOW_STATE);
     }
 
     private static void init() {
@@ -107,14 +121,50 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
         // If the block above us is solid, then we turn into dirt no matter what.
         if (!state.isValidPosition(worldIn, pos)) {
             turnToDirt(state, worldIn, pos);
-        } else {
-            // If the water level of this blockstate is not maximum
-            if (state.get(MOISTURE) < 7) {
-                // Check if it's either raining, or if we're near a water block.
-                // If so, then set this block's moisture level to maximum.
-                if (worldIn.isRainingAt(pos.up()) || hasWater(worldIn, pos)) {
-                    worldIn.setBlockState(pos, state.with(MOISTURE, 7), 2);
-                }
+            return;
+        }
+
+        // If the water level of this blockstate is not maximum
+        if (state.get(MOISTURE) < 7) {
+            // Check if it's either raining, or if we're near a water block.
+            // If so, then set this block's moisture level to maximum.
+            // Note we stop processing further, since we can't dry out this tick.
+            if (worldIn.isRainingAt(pos.up()) || hasWater(worldIn, pos)) {
+                worldIn.setBlockState(pos, state.with(MOISTURE, 7), 2);
+                return;
+            }
+        }
+
+        // Logic for decreasing moisture. We expect to be fully dry in roughly 2 days.
+        if (random.nextFloat() < DEHYDRATION_CHANCE) {
+            worldIn.setBlockState(pos, state.with(MOISTURE, state.get(MOISTURE) - 1), 2);
+        }
+
+        // Before we check fallow logic, we return if it won't apply.
+        // When fertility is high enough, leaving farmland fallow won't matter.
+        if (fertility == Fertility.NORMAL || fertility == Fertility.FERTILE) {
+            return;
+        }
+
+        // TODO check season- you can't leave a field fallow during winter
+
+        // Finally, check if there's a crop above us. Return if so.
+        if (hasCrops(worldIn, pos)) {
+            return;
+        }
+
+        // Logic for laying fallow. If there's no crop above us, roll a chance
+        // to increase the fallow state. When fallow state is max, reset it, and
+        // increment the nutrient level of the soil (up to a limit of 2).
+        if (random.nextFloat() < FALLOW_CHANCE) {
+            int fallowState = state.get(FALLOW_STATE);
+            if (fallowState < MAX_FALLOW_STATE) {
+                worldIn.setBlockState(pos, state.with(FALLOW_STATE, fallowState + 1), 2);
+            } else { // Fallow state is either max or about to be, so update fertility
+                BlockState newState = get(Fertility.values()[fertility.ordinal() + 1]).getDefaultState()
+                        .with(MOISTURE, state.get(MOISTURE))
+                        .with(FALLOW_STATE, 0);
+                worldIn.setBlockState(pos, newState, 2);
             }
         }
     }
@@ -150,7 +200,10 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
      */
     private boolean hasCrops(IBlockReader worldIn, BlockPos pos) {
         BlockState state = worldIn.getBlockState(pos.up());
-        return state.getBlock() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, worldIn, pos, Direction.UP, (net.minecraftforge.common.IPlantable)state.getBlock());
+        // Note: First check is for TFCR crops, second check is copied from vanilla code
+        // and handles vanilla crops.
+        return state.getBlock() instanceof CropBlock ||
+                state.getBlock() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, worldIn, pos, Direction.UP, (net.minecraftforge.common.IPlantable)state.getBlock());
     }
 
 
@@ -175,27 +228,5 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
     public static void turnToDirt(BlockState state, World worldIn, @Nonnull BlockPos pos) {
         Fertility thisFertility = ((FarmlandBlock) state.getBlock()).fertility;
         worldIn.setBlockState(pos, nudgeEntitiesWithNewState(state, DirtBlock.get(thisFertility).getDefaultState(), worldIn, pos));
-    }
-
-    /**
-     * Farmland blocks have a TileEntity- FarmlandTileEntity.
-     * @param state
-     * @return
-     */
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    /**
-     * Returns a new instance of a FarmlandTileEntity.
-     * @param state
-     * @param world
-     * @return
-     */
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new FarmlandTileEntity();
     }
 }
