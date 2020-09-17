@@ -37,13 +37,35 @@ public class TFCRTemperature {
         // There is a minimum just before sunrise, and a maximum just after sunset.
         // If sunrise/sunset times change, this needs to be accounted for.
         // With vanilla, the min is at 0/1, and the max is at 0.5.
-        float timeOfDayScale = (float)(0.5 * (1.0 - Math.cos(2 * Math.PI * timeOfDay)));
+        float timeOfDayScale = (float)(-Math.cos(2 * Math.PI * timeOfDay));
 
         // The actual min/max scaling depends on the latitude and time of year;
         // e.g., +/- 23.5 degrees at the equator, with the 0 tilt points being
         // during the summer and winter solstices. With 0 tilt, there would be
         // the maximum possible contribution to day temp increase when timeOfDay
         // is at its local maximum contribution.
+
+        // For now we go with a simple solution where the variance is 20 degrees
+        // from avg. low to avg. high. This hits -10 at sunrise, and +10 at sunset.
+        return timeOfDayScale * 10f;
+    }
+
+    /**
+     * Each day, there's a random target temperature which can modify the day's temp
+     * by +/- 10 degrees. Essentially, think how adjacent days in a season still have
+     * a small amount of variance to them.
+     *
+     * This function computes the temperature randomness for a given day (which is
+     * computed using a fixed seed value), as well as the surrounding days. It then
+     * interpolates between yesterday and tomorrow to obtain a smooth transition between
+     * the different day temperatures.
+     *
+     * It returns a smooth random offset, with peaks occurring each day, ranging from
+     * -10 to +10.
+     *
+     * TODO: implement cubic splines for this or something similar
+     */
+    public static float getInterDayRandomness(World world, BlockPos pos) {
 
     }
 }
