@@ -14,20 +14,7 @@ import net.minecraft.world.gen.layer.ZoomLayer;
 import net.minecraft.world.gen.layer.traits.IAreaTransformer0;
 import net.minecraft.world.gen.layer.traits.IAreaTransformer1;
 import tfcr.data.TerrainType;
-import tfcr.worldgen.genlayer.AddMountainLayer;
-import tfcr.worldgen.genlayer.Layer;
-import tfcr.worldgen.genlayer.AddIslandLayer;
-import tfcr.worldgen.genlayer.DeepOceanLayer;
-import tfcr.worldgen.genlayer.EqualizeLayer;
-import tfcr.worldgen.genlayer.HillLayer;
-import tfcr.worldgen.genlayer.IslandLayer;
-import tfcr.worldgen.genlayer.RemoveTooMuchOceanLayer;
-import tfcr.worldgen.genlayer.RiverLayer;
-import tfcr.worldgen.genlayer.RiverInitLayer;
-import tfcr.worldgen.genlayer.RiverMaskLayer;
-import tfcr.worldgen.genlayer.ShoreLayer;
-import tfcr.worldgen.genlayer.TempPrecipLayer;
-import tfcr.worldgen.genlayer.TempPrecipMaskLayer;
+import tfcr.worldgen.genlayer.*;
 
 import java.util.Random;
 import java.util.function.LongFunction;
@@ -321,6 +308,51 @@ public class LayerUtilsTFCR {
         return ImmutableList.of(biomesAreaFactory, voronoiZoomed, biomesAreaFactory);
     }
 
+    // WIP rebuilding this method from the ground up to make sure it works right
+    private static <T extends IArea, C extends IExtendedNoiseRandom<T>> ImmutableList<IAreaFactory<T>> buildSimpleProcedure2(WorldType worldTypeIn, OverworldGenSettings settings, LongFunction<C> contextFactory) {
+        IAreaFactory<T> baseAreaFactory = TestLayer0.INSTANCE.apply(contextFactory.apply(1L));
+        baseAreaFactory = TestLayer1.INSTANCE.apply(contextFactory.apply(0L), baseAreaFactory);
+        baseAreaFactory = ZoomLayer.FUZZY.apply(contextFactory.apply(2000L), baseAreaFactory); // Zoom out 2x, fuzz
+//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(1L), baseAreaFactory); // Add small hill islands
+        baseAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(2001L), baseAreaFactory); // Zoom out 2x, normal
+//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);  // Add 3 layers of small hill islands
+//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(50L), baseAreaFactory);
+//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(70L), baseAreaFactory);
+//        baseAreaFactory = RemoveTooMuchOceanLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory); // If a region is all ocean, there's a 50% chance to flip it to flat.
+
+        // This maps to WorldTypeTFCR#getBiomeLayer, which is mostly a pass-through
+        IAreaFactory<T> biomesAreaFactory = worldTypeIn.getBiomeLayer(baseAreaFactory, settings, contextFactory);
+//        IAreaFactory<T> biomesAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+
+        // River and biome size setup
+        int biomeSize = 4;
+        int riverSize = 4;
+
+        for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
+            biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
+            if (zoomIteration == 0) {
+                biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
+            }
+
+            if (zoomIteration == 1 || biomeSize == 1) {
+                biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+            }
+        }
+
+        // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
+        // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
+        // with TemperateConiferousBiome biomes (and all its height variations).
+        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (0 << 8) | 35).apply(contextFactory.apply(17L));
+
+        // Apply the temp/precip map on top.
+        biomesAreaFactory = TempPrecipMaskLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
+
+        // No ocean temperature mixing at this time
+        IAreaFactory<T> voronoiZoomed = VoroniZoomLayer.INSTANCE.apply(contextFactory.apply(10L), biomesAreaFactory);
+
+        return ImmutableList.of(biomesAreaFactory, voronoiZoomed, biomesAreaFactory);
+    }
+
     // Directly copied from LayerUtils
     public static Layer[] buildOverworldProcedure(long seed, WorldType typeIn, OverworldGenSettings settings) {
         int i = 25;
@@ -337,7 +369,8 @@ public class LayerUtilsTFCR {
     public static Layer[] buildSimpleProcedure(long seed, WorldType typeIn, OverworldGenSettings settings) {
         int i = 1;
         int[] aint = new int[1];
-        ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildSimpleProcedure(typeIn, settings, (p_215737_2_) -> {
+        // TODO currently using the WIP simpleProcedure2
+        ImmutableList<IAreaFactory<LazyArea>> immutablelist = buildSimpleProcedure2(typeIn, settings, (p_215737_2_) -> {
             ++aint[0];
             return new LazyAreaLayerContext(25, seed, p_215737_2_);
         });
