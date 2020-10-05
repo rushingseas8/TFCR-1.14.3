@@ -58,7 +58,7 @@ public class WorldTypeTFCR extends WorldType {
     public <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer, OverworldGenSettings chunkSettings, LongFunction<C> contextFactory) {
         parentLayer = (new BiomeLayer(chunkSettings)).apply(contextFactory.apply(200L), parentLayer);
         parentLayer = LayerUtilsTFCR.repeat(1000L, ZoomLayer.NORMAL, parentLayer, 2, contextFactory);
-        parentLayer = BiomeEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), parentLayer);
+//        parentLayer = BiomeEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), parentLayer);
         return parentLayer;
     }
 

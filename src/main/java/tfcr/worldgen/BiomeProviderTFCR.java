@@ -64,8 +64,8 @@ public class BiomeProviderTFCR extends BiomeProvider {
 
     public static BaseTFCRBiome[] biomes;
 
-    // TODO this map only has one entry per terrain type for each biome. Should have them all
-    public static HashMap<Class, Integer> biomeClassToIndexLookup;
+    // Hashmap of a TFCR biome to its index in the global entry list
+    public static HashMap<BaseTFCRBiome, Integer> biomeToIndexLookup;
     static {
         // Initialize biomes
         ArrayList<BaseTFCRBiome> biomesList = new ArrayList<>();
@@ -104,9 +104,9 @@ public class BiomeProviderTFCR extends BiomeProvider {
 
         // Biome reverse lookup map (by class)
         // Keep earlist; this will tend to be the flat versions.
-        biomeClassToIndexLookup = new HashMap<>();
+        biomeToIndexLookup = new HashMap<>();
         for (int i = 0; i < biomes.length; i++) {
-            biomeClassToIndexLookup.putIfAbsent(biomes[i].getClass(), i);
+            biomeToIndexLookup.putIfAbsent(biomes[i], i);
         }
     }
 
@@ -137,7 +137,7 @@ public class BiomeProviderTFCR extends BiomeProvider {
     @Nonnull
     @Override
     public Biome getBiome(int x, int z) {
-        return genBiomes.getByPos(x, z);
+        return biomeFactoryLayer.getByPos(x, z);
     }
 
     // Gets the biomes from the cache. If the temp/precip is already applied, we don't apply it again.

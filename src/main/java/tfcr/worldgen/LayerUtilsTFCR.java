@@ -310,39 +310,108 @@ public class LayerUtilsTFCR {
 
     // WIP rebuilding this method from the ground up to make sure it works right
     private static <T extends IArea, C extends IExtendedNoiseRandom<T>> ImmutableList<IAreaFactory<T>> buildSimpleProcedure2(WorldType worldTypeIn, OverworldGenSettings settings, LongFunction<C> contextFactory) {
-        IAreaFactory<T> baseAreaFactory = TestLayer0.INSTANCE.apply(contextFactory.apply(1L));
-        baseAreaFactory = TestLayer1.INSTANCE.apply(contextFactory.apply(0L), baseAreaFactory);
-        baseAreaFactory = ZoomLayer.FUZZY.apply(contextFactory.apply(2000L), baseAreaFactory); // Zoom out 2x, fuzz
-//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(1L), baseAreaFactory); // Add small hill islands
-        baseAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(2001L), baseAreaFactory); // Zoom out 2x, normal
-//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);  // Add 3 layers of small hill islands
-//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(50L), baseAreaFactory);
-//        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(70L), baseAreaFactory);
-//        baseAreaFactory = RemoveTooMuchOceanLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory); // If a region is all ocean, there's a 50% chance to flip it to flat.
 
-        // This maps to WorldTypeTFCR#getBiomeLayer, which is mostly a pass-through
-        IAreaFactory<T> biomesAreaFactory = worldTypeIn.getBiomeLayer(baseAreaFactory, settings, contextFactory);
-//        IAreaFactory<T> biomesAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        // Basic setup.
+        // This generates islands covering 10% of the land at zoom level 0,
+        // and 1 pass of islands at zoom level 1, and 3 passes at zoom level 2.
+        // There is a final pass with a 50% chance to turn a fully surrounded
+        // ocean tile into a land tile (RemoveTooMuchOcean).
+        // Flat, SmallHill, Ocean
+        IAreaFactory<T> baseAreaFactory = IslandLayer.INSTANCE.apply(contextFactory.apply(1L));
+        baseAreaFactory = ZoomLayer.FUZZY.apply(contextFactory.apply(2000L), baseAreaFactory); // Zoom out 2x, fuzz
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(1L), baseAreaFactory); // Add small hill islands
+        baseAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(2001L), baseAreaFactory); // Zoom out 2x, normal
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);  // Add 3 layers of small hill islands
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(50L), baseAreaFactory);
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(70L), baseAreaFactory);
+        baseAreaFactory = RemoveTooMuchOceanLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory); // If a region is all ocean, there's a 50% chance to flip it to flat.
+
+        // Next, we have a chance to add mountains and more islands. Any land
+        // tile has a chance to turn into either big hills or a mountain.
+        // Flat, SmallHill, Ocean
+//        baseAreaFactory = AddMountainLayer.INSTANCE.apply(contextFactory.apply(2L), baseAreaFactory);
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), baseAreaFactory); // More small hill islands
+
+        // Zoom out twice to level 4, and apply some smaller islands afterwards.
+        // Flat, SmallHill, Ocean
+        baseAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(2002L), baseAreaFactory); // Zoom out 2x
+        baseAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(2003L), baseAreaFactory); // And again, for a total of 4x
+        baseAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // More small hill islands
+
+        // Any central ocean tiles get replaced with deep ocean at this point.
+        // Flat, SmallHill, Ocean, DeepOcean
+        baseAreaFactory = DeepOceanLayer.INSTANCE.apply(contextFactory.apply(4L), baseAreaFactory); // Turn center ocean tiles into deep ocean
+
+        // Custom: at this point, turn flat -> small hills if 3/4 surrounded
+        // This was moved to AFTER the two zooms to provide a fairly thin coastal border
+        baseAreaFactory = RaiseInlandLayer.INSTANCE.apply(contextFactory.apply(5L), baseAreaFactory);
+
+        // separately, repeat the river logic, but replace with mountain ranges instead.
 
         // River and biome size setup
         int biomeSize = 4;
         int riverSize = 4;
 
-        for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
-            biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
-            if (zoomIteration == 0) {
-                biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
-            }
+        // Initialize and create rivers
+        IAreaFactory<T> riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        riverAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
+        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
+        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
+        riverAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
+        riverAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
 
-            if (zoomIteration == 1 || biomeSize == 1) {
-                biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
-            }
-        }
+        // Initialize and create mountains
+        IAreaFactory<T> mountainAreaFactory = repeat(2000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        mountainAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(200L), mountainAreaFactory);
+        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 2, contextFactory);
+        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 4, contextFactory);
+        mountainAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(2L), mountainAreaFactory); // Add rivers
+        mountainAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(2000L), mountainAreaFactory); // Smooth the region
+
+        // This maps to WorldTypeTFCR#getBiomeLayer, which is mostly a pass-through
+        // It calls BiomeLayer, which is a no-op (at this time), then
+        // it zooms out two more times (to level 6), and finally calls BiomeEdgeLayer.
+        IAreaFactory<T> biomesAreaFactory = worldTypeIn.getBiomeLayer(baseAreaFactory, settings, contextFactory);
+//        biomesAreaFactory = HillLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Random chance to raise land (modified from orig)
+
+        // This is the big zoom. We do an additional 4 zoom layers, with beach/shores
+        // being generated at iteration 1 of this loop. Zoom level is now 10.
+//        for (int zoomIteration = 0; zoomIteration < biomeSize; zoomIteration++) {
+//            biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + zoomIteration), biomesAreaFactory);
+//            if (zoomIteration == 0) {
+//                biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
+//            }
+//
+//            if (zoomIteration == 1 || biomeSize == 1) {
+//                biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+//            }
+//        }
+
+        // Manually unrolled big zoom
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 0L), biomesAreaFactory);
+        // then chance to turn small hills -> flat if 4/4 surrounded
+        biomesAreaFactory = RaiseInlandHillLayer.INSTANCE.apply(contextFactory.apply(6L), biomesAreaFactory);
+        // then repeat, small hills -> big hills if 3/4 surrounded
+        // chance to turn area surrounded by big hills -> flat if 3/4 surrounded ?
+        biomesAreaFactory = HighlandPlains.INSTANCE.apply(contextFactory.apply(7L), biomesAreaFactory);
+        // Add one layer of small islands
+        biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
+        biomesAreaFactory = MountainMaskLayer.INSTANCE.apply(contextFactory.apply(200L), biomesAreaFactory, mountainAreaFactory); // Mix in mountains
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 1L), biomesAreaFactory);
+        biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 2L), biomesAreaFactory);
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 3L), biomesAreaFactory);
+
+
+        // We smooth the biome map, and mix in the rivers at this point.
+        biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
+        biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+
 
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
         // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
         // with TemperateConiferousBiome biomes (and all its height variations).
-        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (0 << 8) | 35).apply(contextFactory.apply(17L));
+        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
 
         // Apply the temp/precip map on top.
         biomesAreaFactory = TempPrecipMaskLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);

@@ -25,16 +25,14 @@ public enum AddMountainLayer implements IC1Transformer {
         // Ocean is pass-through
         if (LayerUtilsTFCR.isShallowOcean(value)) {
             return value;
-        } else {
-            // Otherwise roll a six sided die
-            int i = rand.random(6);
-            if (i == 0) { // 1/6 chance to turn into forest in vanilla. Big hills in TFCR.
-                return BIG_HILLS;
-            } else {
-                // 1/6 chance to turn into mountains
-                // 4/6 chance to turn into flat region
-                return i == 1 ? MOUNTAINS : FLAT;
-            }
         }
+
+        // Otherwise roll a six sided die
+        int i = rand.random(6);
+        if (i <= 1) { // 2/6 chance to turn into mountain
+            return MOUNTAINS;
+        }
+        return FLAT;
+//        return MOUNTAINS;
     }
 }

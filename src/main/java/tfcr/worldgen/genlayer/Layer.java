@@ -40,6 +40,7 @@ public class Layer {
 
 //                int value = lazyarea.getValue(j, i);
                 int value = this.lazyArea.getValue(startX + j, startZ + i);
+//                System.out.println("Generate biomes got value: " + value);
                 abiome[j + i * xSize] = value >= maxSize ? defaultBiome : BiomeProviderTFCR.biomes[value];
             }
         }

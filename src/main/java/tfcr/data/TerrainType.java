@@ -14,10 +14,11 @@ public enum TerrainType {
     CLIFF(0.1f, 0.8f), // Based on stone shore biome
     RIVER(-0.5f, 0.0f), // Based on river biome
     // Lake?
-    FLAT(0.125f, 0.05f), // Based on plains
-    SMALL_HILLS(0.1f, 0.2f), // Based on forest
-    BIG_HILLS(0.2f, 0.4f), // Based on dark forest hills biome
-    MOUNTAINS(1f, 0.5f); // Based on mountains biome
+    FLAT(0.2f, 0.05f), // Based on plains
+    SMALL_HILLS(0.5f, 0.2f), // Based on forest
+    BIG_HILLS(0.8f, 0.4f), // Based on dark forest hills biome
+    MOUNTAINS(1.5f, 0.75f); // Based on mountains biome
+    // Highland plains? High depth, but low scale
 
     public float depth;
     public float scale;

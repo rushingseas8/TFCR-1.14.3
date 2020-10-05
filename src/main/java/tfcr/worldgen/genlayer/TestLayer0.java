@@ -17,6 +17,10 @@ public enum TestLayer0 implements IAreaTransformer0 {
 
     @Override
     public int apply(@Nonnull INoiseRandom rand, int x, int z) {
-        return TerrainType.OCEAN.ordinal();
+        if ((x / 16) % 2 == 0) {
+            return TerrainType.OCEAN.ordinal();
+        } else {
+            return TerrainType.FLAT.ordinal();
+        }
     }
 }

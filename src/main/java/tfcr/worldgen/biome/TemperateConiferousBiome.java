@@ -72,14 +72,14 @@ public class TemperateConiferousBiome extends BaseTFCRBiome {
 //                        )
 //                )
 //        );
-        this.addFeature(
-                GenerationStage.Decoration.VEGETAL_DECORATION,createDecoratedFeature(
-                        PlaceholderTreeFeatureTFCR.OAK_PLACEHOLDER,
-                        new NoFeatureConfig(),
-                        Placement.COUNT_HEIGHTMAP,
-                        new FrequencyConfig(16)
-                )
-        );
+//        this.addFeature(
+//                GenerationStage.Decoration.VEGETAL_DECORATION,createDecoratedFeature(
+//                        PlaceholderTreeFeatureTFCR.OAK_PLACEHOLDER,
+//                        new NoFeatureConfig(),
+//                        Placement.COUNT_HEIGHTMAP,
+//                        new FrequencyConfig(16)
+//                )
+//        );
     }
 
     public static BaseTFCRBiome[] generate() {

@@ -1,9 +1,15 @@
 package tfcr.worldgen.biome;
 
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.placement.Placement;
 import tfcr.TFCR;
 import tfcr.data.TerrainType;
 import tfcr.worldgen.LayerUtilsTFCR;
+import tfcr.worldgen.MudFeature;
+
+import static net.minecraft.world.gen.feature.IFeatureConfig.NO_FEATURE_CONFIG;
+import static net.minecraft.world.gen.placement.IPlacementConfig.NO_PLACEMENT_CONFIG;
 
 public class BaseTFCRBiome extends Biome {
 
@@ -11,7 +17,7 @@ public class BaseTFCRBiome extends Biome {
     protected int maxTemp;
     protected int minPrecip;
     protected int maxPrecip;
-    protected TerrainType terrainType;
+    public TerrainType terrainType;
 
     protected BaseTFCRBiome instance;
 
@@ -61,6 +67,10 @@ public class BaseTFCRBiome extends Biome {
         defaultName += "_" + terrainType.name().toLowerCase();
 
         setRegistryName(TFCR.MODID, defaultName);
+
+        // TODO make it so that mud only spawns when directly adjacent to water, rather than
+        //  everywhere in rivers below the surface.
+        this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
     }
 
     /**

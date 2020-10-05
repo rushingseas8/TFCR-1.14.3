@@ -42,7 +42,7 @@ public enum TempPrecipMaskLayer implements IAreaTransformer2, IDimOffset1Transfo
             // If any match the requested range..
             if (biome.matchesRange(temp, precip, TerrainType.values()[placeholderBiome])) {
                 // Return their index
-                return BiomeProviderTFCR.biomeClassToIndexLookup.get(biome.getClass());
+                return BiomeProviderTFCR.biomeToIndexLookup.get(biome);
             }
         }
 
