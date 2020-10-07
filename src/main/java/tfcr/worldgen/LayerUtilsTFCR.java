@@ -168,7 +168,8 @@ public class LayerUtilsTFCR {
 //        }
 
         // Temp/precip layer. TODO find a way to put in world seed here
-        IAreaFactory<T> tempPrecipLayer = new TempPrecipLayer(new Random(-1)).apply(contextFactory.apply(17L));
+//        IAreaFactory<T> tempPrecipLayer = new TempPrecipLayer(new Random(-1)).apply(contextFactory.apply(17L));
+        IAreaFactory<T> tempPrecipLayer = TempPrecipLayer.INSTANCE.apply(contextFactory.apply(17L));
         // Zoom out the temp/precip layer to be roughly the size we need. Without scaling the noise,
         // the isotherms would change roughly every block. So if we zoom 10 times total, we get a scale
         // of 2^10 = 1024 blocks between isotherm changes. This gives us roughly the desired biome size.
@@ -346,28 +347,6 @@ public class LayerUtilsTFCR {
         // This was moved to AFTER the two zooms to provide a fairly thin coastal border
         baseAreaFactory = RaiseInlandLayer.INSTANCE.apply(contextFactory.apply(5L), baseAreaFactory);
 
-        // separately, repeat the river logic, but replace with mountain ranges instead.
-
-        // River and biome size setup
-        int biomeSize = 4;
-        int riverSize = 4;
-
-        // Initialize and create rivers
-        IAreaFactory<T> riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
-        riverAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
-        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
-        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
-        riverAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
-        riverAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
-
-        // Initialize and create mountains
-        IAreaFactory<T> mountainAreaFactory = repeat(2000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
-        mountainAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(200L), mountainAreaFactory);
-        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 2, contextFactory);
-        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 4, contextFactory);
-        mountainAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(2L), mountainAreaFactory); // Add rivers
-        mountainAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(2000L), mountainAreaFactory); // Smooth the region
-
         // This maps to WorldTypeTFCR#getBiomeLayer, which is mostly a pass-through
         // It calls BiomeLayer, which is a no-op (at this time), then
         // it zooms out two more times (to level 6), and finally calls BiomeEdgeLayer.
@@ -387,13 +366,23 @@ public class LayerUtilsTFCR {
 //            }
 //        }
 
+        // Initialize and create mountains
+        IAreaFactory<T> mountainAreaFactory = repeat(2000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        mountainAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(200L), mountainAreaFactory);
+        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 2, contextFactory);
+        mountainAreaFactory = repeat(1001L, ZoomLayer.NORMAL, mountainAreaFactory, 4, contextFactory);
+        mountainAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(2L), mountainAreaFactory); // Add rivers
+        mountainAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(2000L), mountainAreaFactory); // Smooth the region
+
         // Manually unrolled big zoom
         biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 0L), biomesAreaFactory);
         // then chance to turn small hills -> flat if 4/4 surrounded
         biomesAreaFactory = RaiseInlandHillLayer.INSTANCE.apply(contextFactory.apply(6L), biomesAreaFactory);
         // then repeat, small hills -> big hills if 3/4 surrounded
         // chance to turn area surrounded by big hills -> flat if 3/4 surrounded ?
-        biomesAreaFactory = HighlandPlains.INSTANCE.apply(contextFactory.apply(7L), biomesAreaFactory);
+        // TODO look into making another terrain type for highland plains, if desired
+        //  (also maybe look into making valleys surrounded by mountains)
+//        biomesAreaFactory = HighlandPlains.INSTANCE.apply(contextFactory.apply(7L), biomesAreaFactory);
         // Add one layer of small islands
         biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
         biomesAreaFactory = MountainMaskLayer.INSTANCE.apply(contextFactory.apply(200L), biomesAreaFactory, mountainAreaFactory); // Mix in mountains
@@ -402,18 +391,37 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 2L), biomesAreaFactory);
         biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 3L), biomesAreaFactory);
 
+        // Variable used in Vanilla. Affects how large the rivers are.
+        int riverSize = 4;
+
+        // Initialize and create rivers
+        IAreaFactory<T> riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
+        riverAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
+        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
+        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
+        riverAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
+        riverAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
 
         // We smooth the biome map, and mix in the rivers at this point.
         biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
         biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
 
-
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
         // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
         // with TemperateConiferousBiome biomes (and all its height variations).
         IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
+//        IAreaFactory<T> tempPrecipLayer = TempPrecipLayer.INSTANCE.apply(contextFactory.apply(17L));
+        // Zoom out the temp/precip layer to be roughly the size we need. Without scaling the noise,
+        // the isotherms would change roughly every block. So if we zoom 10 times total, we get a scale
+        // of 2^10 = 1024 blocks between isotherm changes. This gives us roughly the desired biome size.
+        // We divide by ~500 in the noisegen, and apply fuzzy zooming on top to get to this value.
+//        tempPrecipLayer = ZoomLayer.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
 
         // Apply the temp/precip map on top.
+        // TODO: look into modifying this to account for the terrain somewhat.
+        // e.g., oceans are more humid, so deserts shouldn't be adjacent to ocean.
+        // similarly, mountains (and taller hills) tend to be colder, so it might be cool
+        // to apply "microbiomes" that are dependent upon height (either terrain type based, or generated)
         biomesAreaFactory = TempPrecipMaskLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory, tempPrecipLayer);
 
         // No ocean temperature mixing at this time

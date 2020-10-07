@@ -9,8 +9,19 @@ import java.util.Random;
 
 /**
  * TFCR custom gen. Applies temperature and precipitation to the map.
+ *
+ * TODO: The nature of perlin noise means that the values approximate a gaussian curve.
+ * This means that values closer to the middle are more likely, and essentially that
+ * biomes on the "corners" of the temp/precip map are significantly less likely than values
+ * in the center. We can either move the biomes around to account for this, with the more
+ * common ones in the center and rarer ones out to the edges (less wetland); or just
+ * fuzz the perlin noise such that the curve is more spread out to the edges (apply a transform
+ * such that extreme values are more common, but smoothly so there's no spikes).
  */
-public class TempPrecipLayer implements IAreaTransformer0 {
+public enum TempPrecipLayer implements IAreaTransformer0 {
+    INSTANCE;
+
+    private static boolean initialized = false;
 
     private static double tempOffsetX;
     private static double tempOffsetZ;
@@ -24,21 +35,19 @@ public class TempPrecipLayer implements IAreaTransformer0 {
     private static final double noiseScaleX = 500f;
     private static final double noiseScaleZ = 500f;
 
-    public TempPrecipLayer(Random random) {
-        // We provide an offset to the Perlin noise based on the world seed.
-        // This ensures thermal biomes are more or less unique per world.
-        // (Technically, based on the noise scaling parameters here, you can
-        // expect repetition on the order of ~500,000 blocks. I think that's
-        // an acceptable level.)
-        tempOffsetX = random.nextInt(1000);
-        tempOffsetZ = random.nextInt(1000);
-
-        precipOffsetX = random.nextInt(1000);
-        precipOffsetZ = random.nextInt(1000);
-    }
-
     @Override
     public int apply(INoiseRandom rand, int x, int z) {
+        // One-off setup
+        if (!initialized) {
+            tempOffsetX = 1 + rand.random(1000);
+            tempOffsetZ = 1 + rand.random(1000);
+
+            precipOffsetX = 1 + rand.random(1000);
+            precipOffsetZ = 1 + rand.random(1000);
+
+            initialized = true;
+        }
+
         ImprovedNoiseGenerator noiseGen = rand.getNoiseGenerator();
 
         double noiseX = x / noiseScaleX;
@@ -50,14 +59,13 @@ public class TempPrecipLayer implements IAreaTransformer0 {
         double tempRaw = noiseGen.func_215456_a(noiseX + tempOffsetX, noiseZ + tempOffsetZ, 0, 0, 0);
         double precipRaw = noiseGen.func_215456_a(noiseX + precipOffsetX, noiseZ + precipOffsetZ, 0, 0, 0);
 
-        int temp = (int)((tempRaw / 2.0) * 100.0); // Temperature ranges from -100 to 100
-        int precip = (int)(((precipRaw / 4.0) + 0.5) * 100.0); // Precipitation ranges from 0 to 100
+        // Perlin noise goes from [-1, 1], so we adjust it to the correct ranges here.
+        int temp = (int) ((tempRaw + 1.0) * 100.0); // [-1, 1] -> [0, 2] -> [0, 200]
+        int precip = (int) ((precipRaw + 1.0) * 50.0); // [-1, 1] -> -> [0, 2] -> [0, 100]
 
-        // Ensure it's within range
-        temp = MathHelper.clamp(temp, -100, 99);
+        // Ensure it's within range (some perlin implementations allow slight deviations from the range)
+        temp = MathHelper.clamp(temp, 0, 199);
         precip = MathHelper.clamp(precip, 0, 99);
-
-        temp += 100; // Normalize [-100, 99] -> [0, 199] to fit in positive byte space
 
         // Return a 16 bit value. This will be used later to resolve the actual biome value.
         return (temp << 8) | precip;
