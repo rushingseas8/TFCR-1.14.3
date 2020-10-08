@@ -415,7 +415,7 @@ public class LayerUtilsTFCR {
         // the isotherms would change roughly every block. So if we zoom 10 times total, we get a scale
         // of 2^10 = 1024 blocks between isotherm changes. This gives us roughly the desired biome size.
         // We divide by ~500 in the noisegen, and apply fuzzy zooming on top to get to this value.
-//        tempPrecipLayer = ZoomLayer.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
+        tempPrecipLayer = ZoomLayer.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
 
         // Apply the temp/precip map on top.
         // TODO: look into modifying this to account for the terrain somewhat.

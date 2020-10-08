@@ -4,6 +4,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import tfcr.data.TerrainType;
 
+// TODO: modify this to only allow flat biome variants to exist.
+// Can replace non-flat with the equivalent forest, deciduous or temp. coniferous forest.
+// Note the converse is NOT true, and forests should not turn into wetlands when flat.
 public class WetlandBiome extends BaseTFCRBiome {
 
     private static final Biome.Builder defaultBuilder =

@@ -2,7 +2,10 @@ package tfcr.worldgen.biome;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
@@ -80,6 +83,16 @@ public class TemperateConiferousBiome extends BaseTFCRBiome {
 //                        new FrequencyConfig(16)
 //                )
 //        );
+
+        this.addFeature(
+                GenerationStage.Decoration.VEGETAL_DECORATION,
+                Biome.createDecoratedFeature(
+                        PlaceholderTreeFeatureTFCR.OAK,
+                        IFeatureConfig.NO_FEATURE_CONFIG,
+                        Placement.COUNT_EXTRA_HEIGHTMAP,
+                        new AtSurfaceWithExtraConfig(5, 0.1F, 1)
+                )
+        );
     }
 
     public static BaseTFCRBiome[] generate() {
