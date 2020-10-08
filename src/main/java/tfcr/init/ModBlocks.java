@@ -10,7 +10,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.*;
-import tfcr.tileentity.FarmlandTileEntity;
 import tfcr.tileentity.TreeTileEntity;
 
 import java.util.ArrayList;
@@ -87,6 +86,5 @@ public class ModBlocks {
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
         System.out.println("Registering tileentities.");
         TreeTileEntity.registerTileEntity(event.getRegistry());
-        FarmlandTileEntity.registerTileEntity(event.getRegistry());
     }
 }

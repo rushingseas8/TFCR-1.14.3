@@ -14,7 +14,7 @@ public class TFCRTime {
     // Note that a vanilla minecraft day is 24,000 ticks = 20 minutes.
     public static final int TICKS_PER_DAY = 24_000;
 
-    public static final int DAYS_PER_SEASON = 14;
+    public static final int DAYS_PER_SEASON = 21;
     public static final int DAYS_PER_YEAR = DAYS_PER_SEASON * 4;
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -38,6 +38,22 @@ public class TFCRTime {
      */
     public static long getDay() {
         return time / TICKS_PER_DAY;
+    }
+
+    /**
+     * @return A float in [0, 1] representing the progress through this day.
+     */
+    public static float getTimeOfDay() {
+        double rawTimeOfDay = (double)time / TICKS_PER_DAY;
+        return (float)(rawTimeOfDay - Math.floor(rawTimeOfDay));
+    }
+
+    /**
+     * @return A float in [0, 1] representing the progress in this year.
+     */
+    public static float getTimeOfYear() {
+        double rawTimeOfYear = (double)time / (TICKS_PER_DAY * DAYS_PER_YEAR);
+        return (float)(rawTimeOfYear - Math.floor(rawTimeOfYear));
     }
 
     /**

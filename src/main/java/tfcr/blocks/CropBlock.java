@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IntegerProperty;
@@ -15,7 +16,12 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
+import tfcr.blocks.crops.AnnualCropBlock;
+import tfcr.blocks.crops.BiennialCropBlock;
+import tfcr.blocks.crops.PerennialCropBlock;
 import tfcr.data.CropType;
+import tfcr.data.Fertility;
+import tfcr.data.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -23,11 +29,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class CropBlock extends TFCRBlock implements IPlantable {
+public abstract class CropBlock extends TFCRBlock implements IPlantable {
 
     // Needed for compatibility with IPlantable.
     public static final PlantType TFCRCrop = PlantType.create("TFCRCrop");
 
+    // TODO: standardize flower/fruit/seed stages
+    // TODO: how to handle death mechanics? 3 stage value that increments when growthChance == 0, and
+    //  only decreases when growthChance > 0?
+    // TODO: should biennial crops die if they cannot grow dormant? Or should they enter dormant stage 1,
+    //  and only increase when the season allows? (i.e. winter)
+    // TODO: should CropType include information about crops during different life cycle stages? or should
+    //  it remain as-is, with custom hard-coded logic for dormant plants?
     public static final int MAX_AGE = 15;
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, MAX_AGE);
 
@@ -38,12 +51,37 @@ public class CropBlock extends TFCRBlock implements IPlantable {
     public CropBlock(Properties properties, CropType cropType) {
         super(properties, "plants/crops/" + cropType.getName());
         this.cropType = cropType;
+
+        // Validation to make sure no accidents happen.
+        switch (cropType.plantLifeCycle) {
+            case ANNUAL:
+                if (!(this instanceof AnnualCropBlock)) {
+                    throw new IllegalStateException("Attempted to create annual crop block for non-annual CropType: " + cropType);
+                }
+            case PERENNIAL:
+                if (!(this instanceof PerennialCropBlock)) {
+                    throw new IllegalStateException("Attempted to create perennial crop block for non-perennial CropType: " + cropType);
+                }
+            case BIENNIAL:
+                if (!(this instanceof BiennialCropBlock)) {
+                    throw new IllegalStateException("Attempted to create biennial crop block for non-biennial CropType: " + cropType);
+                }
+        }
     }
 
     private static void init() {
         allBlocks = new CropBlock[CropType.values().length];
         for (int i = 0; i < CropType.values().length; i++) {
-            allBlocks[i] = new CropBlock(Properties.from(Blocks.WHEAT), CropType.values()[i]);
+            // We assign the correct block type at runtime from the data
+            CropType type = CropType.values()[i];
+            switch (type.plantLifeCycle) {
+                case ANNUAL:
+                    allBlocks[i] = new AnnualCropBlock(Properties.from(Blocks.WHEAT), type); break;
+                case PERENNIAL:
+                    allBlocks[i] = new PerennialCropBlock(Properties.from(Blocks.WHEAT), type); break;
+                case BIENNIAL:
+                    allBlocks[i] = new BiennialCropBlock(Properties.from(Blocks.WHEAT), type); break;
+            }
         }
     }
 
@@ -87,14 +125,43 @@ public class CropBlock extends TFCRBlock implements IPlantable {
     }
 
     @Override
+    public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+        super.onBlockHarvested(worldIn, pos, state, player);
+        if (state.get(AGE) == MAX_AGE) {
+            BlockState rawBlockState = worldIn.getBlockState(pos.down());
+
+            // Ensure we are on TFCR farmland before trying to change the fertility of the soil below us
+            if (!(rawBlockState.getBlock() instanceof FarmlandBlock)) {
+                return;
+            }
+
+            // Get the TFCR soil beneath us
+            FarmlandBlock soil = (FarmlandBlock) rawBlockState.getBlock();
+
+            // If this crop returns nutrients to the soil, increase fertility by up 2 (up to a max of "normal")
+            // Otherwise, decrease fertility by one (but not below "barren").
+            int newFertilityLevel = MathHelper.clamp(0, 2, soil.fertility.ordinal() + (cropType.returnsNutrients ? 2 : -1));
+            FarmlandBlock newSoil = FarmlandBlock.get(Fertility.values()[newFertilityLevel]);
+
+            // Make sure we keep the moisture and reset any fallow state.
+            worldIn.setBlockState(
+                    pos.down(),
+                    newSoil.getDefaultState()
+                            .with(FarmlandBlock.MOISTURE, rawBlockState.get(FarmlandBlock.MOISTURE)),
+                    2
+            );
+        }
+    }
+
+    @Override
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
         super.tick(state, worldIn, pos, random);
         System.out.println("TICK!");
 
         // Make sure we don't load unloaded chunks when doing a light check
-//        if (!worldIn.isAreaLoaded(pos, 1)) {
-//            return;
-//        }
+        if (!worldIn.isAreaLoaded(pos, 1)) {
+            return;
+        }
 
         int age = state.get(AGE);
         // Don't need to grow if we're at max growth
@@ -109,6 +176,9 @@ public class CropBlock extends TFCRBlock implements IPlantable {
         }
     }
 
+    /**
+     * Should this plant grow this growth cycle?
+     */
     private boolean shouldGrow(World worldIn, BlockPos pos, Random random) {
         // This is the chance this plant should grow, bounded between [0, 1].
         float growthChance = 1.0f;
@@ -145,7 +215,7 @@ public class CropBlock extends TFCRBlock implements IPlantable {
         }
 
         // Check temperature. TODO add temperature.
-        System.out.println("Tick called. Final growth chance: " + growthChance + " * " + cropType.idealGrowthChance);
+//        System.out.println("Tick called. Final growth chance: " + growthChance + " * " + cropType.idealGrowthChance);
 
         // Finally, check the chance to grow this time.
         // We multiply the growth chance by the base probability, which is defined by
