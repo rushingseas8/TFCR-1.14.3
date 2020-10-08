@@ -92,4 +92,14 @@ public class BaseTFCRBiome extends Biome {
     public BaseTFCRBiome getActualBiome(TerrainType type) {
         return this;
     }
+
+    /**
+     * @param time Time of year float in the interval [0, 1]. 0 is January 1.
+     * @return The temperature for this given biome at this time.
+     */
+    public float getTemperature(float time) {
+        double scale = ((maxTemp - minTemp) / 2.0);
+        double baseTemp = Math.sin((2 * Math.PI * time) - (Math.PI / 2)) + 1;
+        return (float)(scale * baseTemp) + minTemp;
+    }
 }
