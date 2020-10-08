@@ -58,14 +58,17 @@ public abstract class CropBlock extends TFCRBlock implements IPlantable {
                 if (!(this instanceof AnnualCropBlock)) {
                     throw new IllegalStateException("Attempted to create annual crop block for non-annual CropType: " + cropType);
                 }
+                break;
             case PERENNIAL:
                 if (!(this instanceof PerennialCropBlock)) {
                     throw new IllegalStateException("Attempted to create perennial crop block for non-perennial CropType: " + cropType);
                 }
+                break;
             case BIENNIAL:
                 if (!(this instanceof BiennialCropBlock)) {
                     throw new IllegalStateException("Attempted to create biennial crop block for non-biennial CropType: " + cropType);
                 }
+                break;
         }
     }
 

@@ -31,7 +31,7 @@ public class MudFeature extends Feature<NoFeatureConfig> {
 
     @Override
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random random, BlockPos blockPos, NoFeatureConfig config) {
-        System.out.println("Mud feature called on position: " + (blockPos.getX() / 16) + ", " + (blockPos.getZ() / 16));
+//        System.out.println("Mud feature called on position: " + (blockPos.getX() / 16) + ", " + (blockPos.getZ() / 16));
         // Reusable blockpos
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int x = 0; x < 16; x++) {

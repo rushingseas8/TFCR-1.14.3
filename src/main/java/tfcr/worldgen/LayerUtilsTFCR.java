@@ -409,13 +409,13 @@ public class LayerUtilsTFCR {
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
         // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled
         // with TemperateConiferousBiome biomes (and all its height variations).
-        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
-//        IAreaFactory<T> tempPrecipLayer = TempPrecipLayer.INSTANCE.apply(contextFactory.apply(17L));
+//        IAreaFactory<T> tempPrecipLayer = ((IAreaTransformer0) (context, x, z) -> (100 << 8) | 35).apply(contextFactory.apply(17L));
+        IAreaFactory<T> tempPrecipLayer = TempPrecipLayer.INSTANCE.apply(contextFactory.apply(17L));
         // Zoom out the temp/precip layer to be roughly the size we need. Without scaling the noise,
         // the isotherms would change roughly every block. So if we zoom 10 times total, we get a scale
         // of 2^10 = 1024 blocks between isotherm changes. This gives us roughly the desired biome size.
         // We divide by ~500 in the noisegen, and apply fuzzy zooming on top to get to this value.
-        tempPrecipLayer = ZoomLayer.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
+//        tempPrecipLayer = ZoomLayer.FUZZY.apply(contextFactory.apply(2004L), tempPrecipLayer);
 
         // Apply the temp/precip map on top.
         // TODO: look into modifying this to account for the terrain somewhat.

@@ -1,10 +1,15 @@
 package tfcr.worldgen.biome;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.Placement;
 import tfcr.TFCR;
+import tfcr.data.TFCRTemperature;
 import tfcr.data.TerrainType;
+import tfcr.worldgen.ChooseTreeFeatureTFCR;
 import tfcr.worldgen.LayerUtilsTFCR;
 import tfcr.worldgen.MudFeature;
 
@@ -71,6 +76,17 @@ public class BaseTFCRBiome extends Biome {
         // TODO make it so that mud only spawns when directly adjacent to water, rather than
         //  everywhere in rivers below the surface.
         this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
+
+
+        this.addFeature(
+                GenerationStage.Decoration.VEGETAL_DECORATION,
+                Biome.createDecoratedFeature(
+                        ChooseTreeFeatureTFCR.INSTANCE,
+                        IFeatureConfig.NO_FEATURE_CONFIG,
+                        Placement.COUNT_EXTRA_HEIGHTMAP,
+                        new AtSurfaceWithExtraConfig(10, 0.1F, 1)
+                )
+        );
     }
 
     /**
@@ -104,6 +120,7 @@ public class BaseTFCRBiome extends Biome {
     }
 
     /**
+     * TODO: merge this method with the position-dependant one
      * @param time Time of year float in the interval [0, 1]. 0 is January 1.
      * @return The temperature for this given biome at this time.
      */
@@ -111,5 +128,25 @@ public class BaseTFCRBiome extends Biome {
         double scale = ((maxTemp - minTemp) / 2.0);
         double baseTemp = Math.sin((2 * Math.PI * time) - (Math.PI / 2)) + 1;
         return (float)(scale * baseTemp) + minTemp;
+    }
+
+    /**
+     * Returns the exact temperature of this biome using the worldgen temperature map.
+     * TODO: add effects due to altitude (or include those in worldgen)
+     * @param pos The world position
+     * @return The temperature, ranging from [0, 1], to conform to Biome's contract.
+     *  Note that this temperature is used for things like grass color.
+     */
+    @Override
+    public float getTemperature(BlockPos pos) {
+        return TFCRTemperature.getTemperature_01(pos);
+    }
+
+    public float getTemperatureDegrees(BlockPos pos) {
+        return TFCRTemperature.getTemperatureDegrees(pos);
+    }
+
+    public float getPrecipitation(BlockPos pos) {
+        return TFCRTemperature.getPrecipitation(pos);
     }
 }

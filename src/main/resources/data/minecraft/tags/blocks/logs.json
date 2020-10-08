@@ -1,5 +1,7 @@
 {
+    "replace": false,
     "values": [
+        "tfcr:branch/pine/block_branch_10",
         "tfcr:branch/oak/block_branch_10"
     ]
 }
