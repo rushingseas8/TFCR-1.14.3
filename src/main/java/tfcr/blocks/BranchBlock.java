@@ -1,9 +1,6 @@
 package tfcr.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
@@ -47,7 +44,7 @@ import java.util.List;
  *  have the outer rim be a bark texture instead of a log texture.)
  * TODO: UVs are slightly inconsistent between [unextended, pos, neg] and [both]. Bug?
  */
-public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
+public class BranchBlock extends RotatedPillarBlock implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
     private int diameter;
     public WoodType woodType;
@@ -57,7 +54,7 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
 
     private static BranchBlock[] allBlocks;
 
-    private static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
+//    private static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
     public static final BooleanProperty ROOT = BooleanProperty.create("root");
     private static final BooleanProperty EXTEND_NEGATIVE = BooleanProperty.create("extend_negative");
     private static final BooleanProperty EXTEND_POSITIVE = BooleanProperty.create("extend_positive");
@@ -182,16 +179,6 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
         return leaflogged ? BlockRenderLayer.CUTOUT_MIPPED : BlockRenderLayer.SOLID;
     }
 
-//    @Override
-//    public boolean isBlockNormalCube(IBlockState state) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean isFullCube(IBlockState blockState) {
-//        return false;
-//    }
-
     @Override
     public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
@@ -267,10 +254,73 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
         return true;
     }
 
+    /**
+     * Called when this block is placed down, either by the world or by the player.
+     */
     @Nonnull
     @Override
     public BlockState updatePostPlacement(@Nonnull BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-        return this.getExtendedState(worldIn.getWorld(), stateIn, currentPos);
+        return getPostPlacementState(stateIn, facing, facingState);
+    }
+
+    /**
+     * Handles placement logic during worldgen. During worldgen, we're not allowed to query
+     * world positions, since that can cause infinite loops (if the north branch block
+     * asks for the south branch block's state, then we get such a loop). Instead, we
+     * only query the blockstate given to us via "facingState" in the appropriate direction,
+     * and return the partially completed blockstate. My guess is Minecraft will eventually
+     * provide all adjacent blocks as they are ready, so that the net result of multiple calls
+     * of this method will be equivalent to @getExtendedState.
+     *
+     * @param stateIn
+     * @param facing
+     * @param facingState
+     * @return
+     */
+    private BlockState getPostPlacementState(BlockState stateIn, Direction facing, BlockState facingState) {
+        switch (stateIn.get(AXIS)) {
+            case X:
+                if (facing == Direction.EAST) {
+                    return stateIn.with(EXTEND_POSITIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                if (facing == Direction.WEST) {
+                    return stateIn.with(EXTEND_NEGATIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                break;
+            case Y:
+                if (facing == Direction.UP) {
+                    return stateIn.with(EXTEND_POSITIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                if (facing == Direction.DOWN) {
+                    return stateIn.with(EXTEND_NEGATIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                break;
+            case Z:
+                if (facing == Direction.NORTH) {
+                    return stateIn.with(EXTEND_POSITIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                if (facing == Direction.SOUTH) {
+                    return stateIn.with(EXTEND_NEGATIVE, hasPerpendicularBranch(stateIn, facingState));
+                }
+                break;
+        }
+
+        System.out.println("Error: Got invalid direction for branch post placement");
+        return stateIn;
+    }
+
+    // Returns true if the provided neighbor is perpendicular to this blockstate, and
+    // if our diameter is strictly less than the neighbor's. Used to determine if we should
+    // extend this branch in the direction of the neighbor.
+    private boolean hasPerpendicularBranch(BlockState stateIn, BlockState neighbor) {
+        if (neighbor.getBlock() instanceof BranchBlock) {
+            if (neighbor.get(AXIS) != stateIn.get(AXIS)) {
+                if (((BranchBlock) neighbor.getBlock()).diameter >= ((BranchBlock) stateIn.getBlock()).diameter) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -289,6 +339,10 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
      *
      * This in short makes branches look better.
      *
+     * This logic is specifically used when the player (or any entity) places this block,
+     * since we need to query multiple world positions to get the full state. For logic that
+     * is safe to use during worldgen, see @getPostPlacementState.
+     *
      * @param worldIn
      * @param stateIn
      * @param currentPos
@@ -306,25 +360,13 @@ public class BranchBlock extends Block implements ISelfRegisterBlock, ISelfRegis
         BlockState positiveState = worldIn.getBlockState(positive);
         BlockState negativeState = worldIn.getBlockState(negative);
 
-        boolean shouldExtendPositive = false, shouldExtendNegative = false;
+        boolean shouldExtendPositive, shouldExtendNegative;
 
         // Check in the positive axis
-        if (positiveState.getBlock() instanceof BranchBlock) {
-            if (positiveState.get(AXIS) != stateIn.get(AXIS)) {
-                if (((BranchBlock) positiveState.getBlock()).diameter >= diameter) {
-                    shouldExtendPositive = true;
-                }
-            }
-        }
+        shouldExtendPositive = hasPerpendicularBranch(stateIn, positiveState);
 
         // Check in the negative axis
-        if (negativeState.getBlock() instanceof BranchBlock) {
-            if (negativeState.get(AXIS) != stateIn.get(AXIS)) {
-                if (((BranchBlock) negativeState.getBlock()).diameter >= diameter) {
-                    shouldExtendNegative = true;
-                }
-            }
-        }
+        shouldExtendNegative = hasPerpendicularBranch(stateIn, negativeState);
 
         // Return this block state, possibly with axes extended.
         return stateIn.with(EXTEND_POSITIVE, shouldExtendPositive)

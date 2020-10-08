@@ -8,6 +8,8 @@ import java.io.IOException;
 public class GenerateBase {
 
     public static final File RESOURCE_BASE = new File("./src/main/resources/assets/tfcr");
+    public static final String DATA_BASE = "./src/main/resources/data/";
+    public static final String VANILLA_BLOCKS = "minecraft/tags/blocks/";
 
     private static StringBuilder langFile = new StringBuilder("{");
 
