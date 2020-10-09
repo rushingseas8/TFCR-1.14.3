@@ -2,18 +2,30 @@
     "parent": "minecraft:block/cube",
     "textures": {
         "side": "tfcr:blocks/wood/bark/wood_palm",
-        "end": "tfcr:blocks/wood/log/wood_palm"
+        "end": "tfcr:blocks/wood/log/wood_palm",
+        "leaf": "tfcr:blocks/wood/leaves/leaves_palm"
     },
-    "elements": [{
-        "from": [ 3, 0, 3 ],
-        "to": [ 13, 24, 13 ],
-        "faces": {
-            "down":  { "uv": [ 3, 3, 13, 13 ], "texture": "#end", "cullface": "down" },
-            "up":    { "uv": [ 3, 3, 13, 13 ], "texture": "#end", "cullface": "up"   },
-            "north": { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
-            "south": { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
-            "west":  { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" },
-            "east":  { "uv": [ 1.5, 4, 6.5, 16 ], "texture": "#side" }
+    "elements": [
+        {
+            "from": [ 3, 0, 3 ],
+            "to": [ 13, 16, 13 ],
+            "faces": {
+                "down":  { "uv": [ 3, 3, 13, 13 ], "texture": "#end", "cullface": "down" },
+                "north": { "texture": "#side" },
+                "south": { "texture": "#side" },
+                "west":  { "texture": "#side" },
+                "east":  { "texture": "#side" }
+            }
+        },
+        {
+            "from": [ 2.99, 16, 2.99 ],
+            "to": [ 13.01, 24, 13.01 ],
+            "faces": {
+                "north": { "uv": [ 2.99, 0, 13.01, 8 ], "texture": "#side" },
+                "south": { "uv": [ 2.99, 0, 13.01, 8 ], "texture": "#side" },
+                "west":  { "uv": [ 2.99, 0, 13.01, 8 ], "texture": "#side" },
+                "east":  { "uv": [ 2.99, 0, 13.01, 8 ], "texture": "#side" }
+            }
         }
-    }]
+    ]
 }

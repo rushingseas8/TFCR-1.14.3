@@ -1,10 +1,8 @@
 package tfcr.autogen;
 
-import tfcr.blocks.BranchBlock;
 import tfcr.data.WoodType;
 
 import java.io.File;
-import java.util.List;
 
 public class GenerateLog {
     private static final String blockstateLocation = "blockstates/log/";
@@ -40,20 +38,11 @@ public class GenerateLog {
             "  \"parent\": \"tfcr:block/log/WOOD\"\n" +
             "}";
 
-    private static final String logsTagsJSON = "{\n" +
-            "    \"replace\": false,\n" +
-            "    \"values\": [\n" +
-            "        VALUES" +
-            "    ]\n" +
-            "}";
-
     public static void generate() {
         System.out.print("Generating log assets... ");
         String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + blockstateLocation;
         String modelDir = GenerateBase.RESOURCE_BASE + File.separator + modelLocation;
         String itemModelDir = GenerateBase.RESOURCE_BASE + File.separator + itemModelLocation;
-        String logsTagsDir = GenerateBase.DATA_BASE + GenerateBase.VANILLA_BLOCKS + "logs.json";
-        StringBuilder logsTagsBuilder = new StringBuilder();
 
         GenerateBase.appendSpacerToLangFile();
 
@@ -80,18 +69,6 @@ public class GenerateLog {
 
             // Lang file entries
             GenerateBase.appendToLangFile("block.tfcr.log." + woodType.getName(), woodType.name + " Log");
-        }
-
-        List<BranchBlock> allBlocks = BranchBlock.getAllBlocks();
-        for (int i = 0; i < allBlocks.size(); i++) {
-            BranchBlock branchBlock = allBlocks.get(i);
-
-            // Add the name to the values list
-            logsTagsBuilder.append(branchBlock.getRegistryName());
-            if (i != allBlocks.size() - 1) { // no commas for last entry
-                logsTagsBuilder.append(",");
-            }
-            logsTagsBuilder.append("\n");
         }
 
         System.out.println("Done");
