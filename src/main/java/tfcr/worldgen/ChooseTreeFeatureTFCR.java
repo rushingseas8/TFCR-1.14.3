@@ -60,7 +60,7 @@ public class ChooseTreeFeatureTFCR extends Feature<NoFeatureConfig> {
 
 
 //        PlaceholderTreeFeatureTFCR.OAK.place(worldIn, generator, rand, pos, config);
-        System.out.println("Chose tree type: " + WoodType.values()[foundIndex] + " for temp= " + temperature + ". Should spawn?: " + shouldSpawn);
+//        System.out.println("Chose tree type: " + WoodType.values()[foundIndex] + " for temp= " + temperature + ". Should spawn?: " + shouldSpawn);
         if (shouldSpawn) {
             PlaceholderTreeFeatureTFCR.INSTANCE.configure(WoodType.values()[foundIndex]);
             PlaceholderTreeFeatureTFCR.INSTANCE.place(worldIn, generator, rand, pos, config);

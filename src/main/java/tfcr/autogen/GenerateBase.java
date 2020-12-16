@@ -73,6 +73,7 @@ public class GenerateBase {
         GenerateSapling.generate();
         GenerateFarmland.generate();
         GenerateDirt.generate();
+        GenerateCrops.generate();
         GenerateMiscBlocks.generate();
 
         System.out.println("---");

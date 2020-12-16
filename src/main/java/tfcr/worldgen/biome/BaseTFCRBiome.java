@@ -5,6 +5,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
+import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.placement.Placement;
 import tfcr.TFCR;
 import tfcr.data.TFCRTemperature;
@@ -12,6 +13,7 @@ import tfcr.data.TerrainType;
 import tfcr.worldgen.ChooseTreeFeatureTFCR;
 import tfcr.worldgen.LayerUtilsTFCR;
 import tfcr.worldgen.MudFeature;
+import tfcr.worldgen.NaturalCropFeature;
 
 import static net.minecraft.world.gen.feature.IFeatureConfig.NO_FEATURE_CONFIG;
 import static net.minecraft.world.gen.placement.IPlacementConfig.NO_PLACEMENT_CONFIG;
@@ -77,6 +79,8 @@ public class BaseTFCRBiome extends Biome {
         //  everywhere in rivers below the surface.
         this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
 
+        // Natural crop generation
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(NaturalCropFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(100)));
 
         this.addFeature(
                 GenerationStage.Decoration.VEGETAL_DECORATION,

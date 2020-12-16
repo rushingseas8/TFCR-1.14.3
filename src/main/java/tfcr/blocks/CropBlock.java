@@ -159,7 +159,7 @@ public abstract class CropBlock extends TFCRBlock implements IPlantable {
     @Override
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
         super.tick(state, worldIn, pos, random);
-        System.out.println("TICK!");
+//        System.out.println("TICK!");
 
         // Make sure we don't load unloaded chunks when doing a light check
         if (!worldIn.isAreaLoaded(pos, 1)) {
