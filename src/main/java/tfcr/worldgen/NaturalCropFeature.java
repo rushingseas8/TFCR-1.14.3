@@ -53,7 +53,7 @@ public class NaturalCropFeature extends Feature<NoFeatureConfig> {
                 // For now the valid block list is just any dirt block.
                 if (world.getBlockState(attemptPos.down()).getBlock() instanceof SnowyDirtBlock) {
 //                    System.out.println("Success! Placing at: " + pos);
-                    world.setBlockState(attemptPos, selectedCropBlock.getDefaultState(), 2);
+                    world.setBlockState(attemptPos, selectedCropBlock.getDefaultState().with(CropBlock.AGE, CropBlock.MAX_AGE), 2);
                     success = true;
                 } else {
 //                    System.out.println("Failed! Block was of type " + world.getBlockState(attemptPos.down()).getBlock());

@@ -76,33 +76,10 @@ public class GenerateCrops {
                 GenerateBase.writeToFile(filePath, toWrite);
             }
 
-        }
-
-        for (Fertility fertility : Fertility.values()) {
-            // Blockstate JSON
-            String filePath = blockstateDir + fertility.getName() + ".json";
-            String toWrite = blockStateJSON.replace("TYPE", fertility.getName());
-
-            GenerateBase.writeToFile(filePath, toWrite);
-
-            // Item JSON
-            filePath = itemModelDir + fertility.getName() + ".json";
-            toWrite = itemJSON.replace("TYPE", fertility.getName());
-
-            GenerateBase.writeToFile(filePath, toWrite);
-
-            // Model JSON
-            filePath = modelDir + fertility.getName() + ".json";
-            // Note that textures are currently saved as "TYPE_dirt".
-            toWrite = modelJSON
-                    .replace("TYPE", fertility.getName() + "_dirt");
-
-            GenerateBase.writeToFile(filePath, toWrite);
-
-
             // Lang file entries
-            GenerateBase.appendToLangFile("block.tfcr.dirt." + fertility.getName(), GenerateBase.guessName(fertility.getName() + "_dirt"));
+            GenerateBase.appendToLangFile("block.tfcr.plant.crop." + type.getName(), GenerateBase.guessName(type.getName()));
         }
+
         System.out.println("Done");
     }
 

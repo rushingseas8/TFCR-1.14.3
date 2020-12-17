@@ -17,7 +17,7 @@ public class GenerateBase {
         File file = new File(path);
         if (!file.getParentFile().exists()) {
             System.out.print("Trying to create directory: \"" + file.getParentFile() + "\"... ");
-            boolean success = file.getParentFile().mkdir();
+            boolean success = file.getParentFile().mkdirs();
             System.out.println(success ? "Success." : "Failed!");
         }
 

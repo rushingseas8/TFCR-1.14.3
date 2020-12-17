@@ -80,7 +80,7 @@ public class BaseTFCRBiome extends Biome {
         this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
 
         // Natural crop generation
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(NaturalCropFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(100)));
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(NaturalCropFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(5)));
 
         this.addFeature(
                 GenerationStage.Decoration.VEGETAL_DECORATION,

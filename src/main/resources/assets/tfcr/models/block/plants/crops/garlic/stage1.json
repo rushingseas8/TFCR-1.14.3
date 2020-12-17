@@ -1,0 +1,6 @@
+{
+    "parent": "block/crop",
+    "textures": {
+        "crop": "tfcr:blocks/plants/crops/garlic_1"
+    }
+}

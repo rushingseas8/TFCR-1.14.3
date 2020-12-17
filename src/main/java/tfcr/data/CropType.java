@@ -8,7 +8,7 @@ public enum CropType implements IStringSerializable {
     // Barley is usually planted in spring, and harvested early fall.
     // ~6 months = 180 days
     BARLEY(6 * 8400, PlantLifeCycle.PERENNIAL),
-    // Oats grow fairly quickly, in just 2 months. Can be commonly grown after wheat.
+    // Oats grow quickly, in just 2 months. Can be commonly grown after wheat.
     // However, lower yield/less tolerant of disease.
     OAT(2 * 8400, PlantLifeCycle.PERENNIAL),
     // Depending on variety, 3-6 months. Chose 4.5 as a decent middle ground.
@@ -22,8 +22,20 @@ public enum CropType implements IStringSerializable {
     // 60-90 day growth time
     BELL_PEPPER((int)(2.5 * 8400), PlantLifeCycle.ANNUAL),
     CABBAGE((int)(4.5 * 8400), PlantLifeCycle.ANNUAL),
+    // One of the fastest growing crops. Can be turned into sugar.
+    BEET((int)(1.75 * 8400), PlantLifeCycle.ANNUAL),
+    // Fastest growing crop.
+    RADISH((int)(1.25 * 8400), PlantLifeCycle.ANNUAL),
+    CORN(3 * 8400, PlantLifeCycle.ANNUAL),
+    // Grows moderately quickly, but can be harvested multiple times
+    // Cannot tolerate cold temperatures.
+    TOMATO(2 * 8400, PlantLifeCycle.ANNUAL),
+    PEA(2 * 8400, PlantLifeCycle.ANNUAL),
+
     CARROT((int)(2.5 * 8400), PlantLifeCycle.BIENNIAL),
-    GARLIC(7 * 8400, PlantLifeCycle.BIENNIAL)
+    // Very slow. Grows over winter to produce bulbs, which are re-planted.
+    GARLIC(7 * 8400, PlantLifeCycle.BIENNIAL),
+    ONION(3 * 8400, PlantLifeCycle.BIENNIAL),
     ;
 
 

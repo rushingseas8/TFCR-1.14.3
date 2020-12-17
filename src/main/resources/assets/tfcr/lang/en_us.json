@@ -352,8 +352,17 @@
 	"block.tfcr.dirt.infertile": "Infertile Dirt",
 	"block.tfcr.dirt.normal": "Normal Dirt",
 	"block.tfcr.dirt.fertile": "Fertile Dirt",
+
+	"block.tfcr.plant.crop.barley": "Barley",
+	"block.tfcr.plant.crop.oat": "Oat",
+	"block.tfcr.plant.crop.rice": "Rice",
+	"block.tfcr.plant.crop.rye": "Rye",
+	"block.tfcr.plant.crop.wheat": "Wheat",
+	"block.tfcr.plant.crop.bell_pepper": "Bell Pepper",
+	"block.tfcr.plant.crop.cabbage": "Cabbage",
+	"block.tfcr.plant.crop.carrot": "Carrot",
+	"block.tfcr.plant.crop.garlic": "Garlic",
 	"item.tfcr.mud": "Mud",
-	"item.tfcr.wicker_block": "Wicker Block",
 
 
 	"item.tfcr.itemlog.acacia": "Acacia Log",
