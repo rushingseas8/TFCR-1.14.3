@@ -3,6 +3,7 @@ package tfcr.worldgen.biome;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
 import net.minecraft.world.gen.placement.FrequencyConfig;
@@ -10,10 +11,8 @@ import net.minecraft.world.gen.placement.Placement;
 import tfcr.TFCR;
 import tfcr.data.TFCRTemperature;
 import tfcr.data.TerrainType;
-import tfcr.worldgen.ChooseTreeFeatureTFCR;
-import tfcr.worldgen.LayerUtilsTFCR;
-import tfcr.worldgen.MudFeature;
-import tfcr.worldgen.NaturalCropFeature;
+import tfcr.data.WoodType;
+import tfcr.worldgen.*;
 
 import static net.minecraft.world.gen.feature.IFeatureConfig.NO_FEATURE_CONFIG;
 import static net.minecraft.world.gen.placement.IPlacementConfig.NO_PLACEMENT_CONFIG;
@@ -80,17 +79,23 @@ public class BaseTFCRBiome extends Biome {
         this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
 
         // Natural crop generation
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(NaturalCropFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(5)));
+//        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(NaturalCropFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(5)));
 
-        this.addFeature(
-                GenerationStage.Decoration.VEGETAL_DECORATION,
-                Biome.createDecoratedFeature(
-                        ChooseTreeFeatureTFCR.INSTANCE,
-                        IFeatureConfig.NO_FEATURE_CONFIG,
-                        Placement.COUNT_EXTRA_HEIGHTMAP,
-                        new AtSurfaceWithExtraConfig(10, 0.1F, 1)
-                )
-        );
+        // Universal tree generation
+//        this.addFeature(
+//                GenerationStage.Decoration.VEGETAL_DECORATION,
+//                Biome.createDecoratedFeature(
+//                        ChooseTreeFeatureTFCR.INSTANCE,
+//                        IFeatureConfig.NO_FEATURE_CONFIG,
+//                        Placement.COUNT_EXTRA_HEIGHTMAP,
+//                        new AtSurfaceWithExtraConfig(10, 0.1F, 1)
+//                )
+//        );
+
+        // Tall grass generation
+//        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(TallGrassFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
+        // TODO: combine this with "ChooseTreeFeatureTFCR" to include all types of trees + their different ages.
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 2), Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(10, 0, 0)));
     }
 
     /**

@@ -8,6 +8,7 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
+import tfcr.tileentity.TreeTileEntity;
 import tfcr.utils.TemplateHelper;
 
 import java.util.List;
@@ -26,11 +27,10 @@ public class TreeFeatureTFCR extends Feature<TreeFeatureConfig> {
         // TODO can't use templates directly, need to subclass ScatteredStructure
         //  (like Igloo or SwampHut) to prevent spawning blocks outside of chunk
 
-        System.out.println("Generation? called");
+//        System.out.println("Generation? called");
 
         // TODO readd me
-//        String templateName = TemplateHelper.getTreeTemplateLocation(config.getWoodType(), config.getAge());
-        String templateName = "oak/age_1";
+        String templateName = TemplateHelper.getTreeTemplateLocation(config.getWoodType(), config.getAge());
         Template template = TemplateHelper.getTemplate(worldIn.getWorld(), templateName);
 
         if (template == null) {
@@ -38,14 +38,18 @@ public class TreeFeatureTFCR extends Feature<TreeFeatureConfig> {
             return false;
         }
 
-        List<Template.BlockInfo> blocks = TemplateHelper.getBlocks(template);
-
         BlockPos size = template.getSize();
         BlockPos center = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
 
+        // TODO: This works, but because worldgen is done in parallel, there's no way to tell if we're growing into
+        //  a neighboring tree. Either use external storage, or just don't let trees get too close.
+        // (could create all trees in one place() call, and keep track of all leaves generated per chunk?)
         PlacementSettings settings = new PlacementSettings().setCenterOffset(center);
+        settings.addProcessor(new TreeTileEntity.TemplateProcessorTrees(config.getWoodType()));
+//        System.out.println("Template adding blocks to world");
+        template.addBlocksToWorld(worldIn, pos, settings, 2);
 
-        System.out.println("Template adding blocks to world");
+
         return true;
     }
 }

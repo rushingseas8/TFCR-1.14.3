@@ -46,9 +46,9 @@ import java.util.List;
  */
 public class BranchBlock extends RotatedPillarBlock implements ISelfRegisterBlock, ISelfRegisterItem, IBlockWood {
 
-    private int diameter;
+    public int diameter;
     public WoodType woodType;
-    private boolean leaflogged;
+    public boolean leaflogged;
 
     private static final int NUM_DIAMETERS = 7;
 
@@ -214,7 +214,7 @@ public class BranchBlock extends RotatedPillarBlock implements ISelfRegisterBloc
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TreeTileEntity(this.woodType);
+        return new TreeTileEntity(this.woodType, 2);
     }
 
     /**
@@ -305,7 +305,7 @@ public class BranchBlock extends RotatedPillarBlock implements ISelfRegisterBloc
                 break;
         }
 
-        System.out.println("Error: Got invalid direction for branch post placement");
+//        System.out.println("Error: Got invalid direction for branch post placement");
         return stateIn;
     }
 

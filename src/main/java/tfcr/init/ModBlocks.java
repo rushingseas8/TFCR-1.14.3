@@ -38,6 +38,7 @@ public class ModBlocks {
 
         // Sapling variants
         allBlocks.addAll(SaplingBlock.getAllBlocks());
+        allBlocks.addAll(TallSaplingBlock.getAllBlocks());
 
         // Farmland, dirt, grass
         allBlocks.addAll(FarmlandBlock.getAllBlocks());
@@ -49,7 +50,7 @@ public class ModBlocks {
 
         // Add other one-off blocks
         allBlocks.add(new TFCRFlowerBlock("marsh_marigold"));
-        allBlocks.add(new TallSaplingBlock());
+//        allBlocks.add(new TallSaplingBlock());
         allBlocks.add(MudBlock.get());
         allBlocks.add(WattleBlock.get());
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
