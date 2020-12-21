@@ -155,8 +155,8 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 if (age > 0 && age < SaplingBlock.getMaxAge()) {
                     Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
                     if (template != null) {
-                        System.out.println("Removing template with age: " + age);
-                        cleanupTree(template);
+//                        System.out.println("Removing template with age: " + age);
+//                        cleanupTree(template);
                     }
                 }
 
@@ -184,6 +184,72 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
         System.out.println("Trying to spawn structure at pos: " + pos);
         // TODO try to cleanup old structure before spawning new one
         // TODO ensure that we can place the new structure down before adding it
+
+        // Remove partial of old template
+        // We skip leaves, since that's handled afterwards.
+        if (age >= 2) {
+            Template oldTemplate = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age - 1));
+            if (oldTemplate == null) {
+                System.out.println("Failed to find old structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age - 1));
+                return;
+            }
+
+            Map<BlockPos, BlockState> posToStateMap = TemplateHelper.getBlockMap(oldTemplate);
+            if (posToStateMap == null) {
+                System.out.println("Failed to get position to state map. Can't remove template.");
+                return;
+            }
+
+            BlockPos size = oldTemplate.getSize();
+            Vec3i centerOffset = new Vec3i(-size.getX() / 2, 0, -size.getZ() / 2);
+            for (Map.Entry<BlockPos, BlockState> entry : posToStateMap.entrySet()) {
+                BlockPos localPos = entry.getKey();
+                BlockPos worldPos = pos.add(centerOffset).add(localPos);
+
+                BlockState localState = world.getBlockState(worldPos);
+                Block localBlock = localState.getBlock();
+
+                BlockState expectedState = posToStateMap.get(localPos);
+                Block expectedBlock = expectedState.getBlock();
+
+                // We skip all instances of leaves, since they need special attention.
+                if (localBlock instanceof LeavesBlock || expectedBlock instanceof LeavesBlock) {
+                    continue;
+                }
+
+                // Otherwise, if the state is the same as the one in the template, remove it.
+                if (localState == expectedState) {
+                    world.removeBlock(worldPos, false);
+                }
+            }
+
+//            for (int x = 0; x < size.getX(); x++) {
+//                for (int z = 0; z < size.getZ(); z++) {
+//                    for (int y = 0; y < size.getY(); y++) {
+//                        Vec3i offset = new Vec3i(x, y, z);
+//
+//                        BlockPos localPos = new BlockPos(offset);
+//                        BlockPos worldPos = pos.add(centerOffset).add(offset);
+//
+//                        BlockState localState = world.getBlockState(worldPos);
+//                        Block localBlock = localState.getBlock();
+//
+//                        BlockState expectedState = posToStateMap.get(localPos);
+//                        Block expectedBlock = expectedState.getBlock();
+//
+//                        // We skip all instances of leaves, since they need special attention.
+//                        if (localBlock instanceof LeavesBlock || expectedBlock instanceof LeavesBlock) {
+//                            return;
+//                        }
+//
+//                        // Otherwise, if the state is the same as the one in the template, remove it.
+//                        if (localState == expectedState) {
+//                            world.removeBlock(worldPos, false);
+//                        }
+//                    }
+//                }
+//            }
+        }
 
         // Access the Template for the tree's structure
         Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
@@ -248,6 +314,71 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
         treeTileEntity.variant = this.variant;
         treeTileEntity.count = 0;
         System.out.println("Updated base of tree to have TileEntity.");
+
+        if (age >= 2) {
+            Template oldTemplate = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age - 1));
+            if (oldTemplate == null) {
+                System.out.println("Failed to find old structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age - 1));
+                return;
+            }
+
+            Map<BlockPos, BlockState> posToStateMap = TemplateHelper.getBlockMap(oldTemplate);
+            if (posToStateMap == null) {
+                System.out.println("Failed to get position to state map. Can't remove template.");
+                return;
+            }
+
+            Map<BlockPos, BlockState> newTemplatePosToStateMap = TemplateHelper.getBlockMap(template);
+            if (newTemplatePosToStateMap == null) {
+                System.out.println("Failed to get position to state map. Can't remove template.");
+                return;
+            }
+
+
+            size = oldTemplate.getSize();
+            Vec3i centerOffset = new Vec3i(-size.getX() / 2, 0, -size.getZ() / 2);
+            for (Map.Entry<BlockPos, BlockState> entry : posToStateMap.entrySet()) {
+                BlockPos localPos = entry.getKey();
+                BlockPos worldPos = pos.add(centerOffset).add(localPos);
+
+                BlockState expectedState = posToStateMap.get(localPos);
+                Block expectedBlock = expectedState.getBlock();
+
+                BlockState worldState = world.getBlockState(worldPos);
+                BlockState newState = newTemplatePosToStateMap.get(localPos);
+                if ((newState == null || !(newState.getBlock() instanceof LeavesBlock)) && expectedBlock instanceof LeavesBlock && worldState.getBlock() instanceof LeavesBlock) {
+                    // Try to decrement. If it's <= 1, just remove.
+                    int numTrees = worldState.get(LeavesBlock.NUM_TREES);
+                    if (numTrees <= 1) {
+                        world.removeBlock(worldPos, false);
+                    } else {
+                        world.setBlockState(worldPos, worldState.with(LeavesBlock.NUM_TREES, numTrees - 1), 3);
+                    }
+                    continue;
+                }
+                Block newBlock = newState.getBlock();
+
+
+                // Okay, now we process leaves. Decrement the numTrees of all blocks
+                // that match the leaf type we expect.
+                if (newBlock instanceof LeavesBlock && expectedBlock instanceof LeavesBlock) {
+                    LeavesBlock newLeaves = (LeavesBlock) newBlock;
+                    LeavesBlock expectedLeaves = (LeavesBlock) expectedBlock;
+
+                    if (newLeaves.woodType != expectedLeaves.woodType) {
+                        continue;
+                    }
+
+                    // Try to decrement. If it's <= 1, just remove.
+                    int numTrees = newState.get(LeavesBlock.NUM_TREES);
+                    if (numTrees <= 1) {
+//                        world.removeBlock(worldPos, false);
+                    } else {
+                        world.setBlockState(worldPos, newState.with(LeavesBlock.NUM_TREES, numTrees - 1), 3);
+                    }
+                }
+            } // for each entry in posToStateMap
+        } // if age >= 2
     }
 
     private void cleanupTree(Template template) {
@@ -443,12 +574,12 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 return null;
             }
 
+            BlockPos centerOffset = placementSettings.func_207664_d();
+
             // If the world pos is a leaf block AND so is the block we are going to place,
             // then we need to do additional processing.
-            BlockState currentBlockState = worldIn.getBlockState(pos.add(unsure.pos));
+            BlockState currentBlockState = worldIn.getBlockState(pos.add(centerOffset).add(unsure.pos));
             BlockState placingBlockState = blockInfoIn.state;
-
-            BlockState possibleBlockState = worldIn.getBlockState(pos);
 
             if ((currentBlockState.getBlock() instanceof LeavesBlock) && (placingBlockState.getBlock() instanceof LeavesBlock)) {
                 // If the woodtype is different, then we don't replace leaves
@@ -460,7 +591,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 // Else if the woodtype is the same, we increment the numTree count.
                 int numTrees = currentBlockState.get(LeavesBlock.NUM_TREES);
                 System.out.println("Both are leaves! Existing numTrees: " + numTrees);
-                return new Template.BlockInfo(pos.add(unsure.pos), placingBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
+                return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
             }
 
             // Ensure that we always place leaves with numTrees at least 1.
@@ -475,7 +606,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 System.out.println("Growing leaves into space containing: " + currentBlockState);
 
                 if (placingBlockState.get(LeavesBlock.NUM_TREES) == 0) {
-                    return new Template.BlockInfo(pos.add(unsure.pos), placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);
+                    return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);
                 }
             }
 
