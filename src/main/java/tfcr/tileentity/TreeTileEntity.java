@@ -448,8 +448,6 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
             BlockState currentBlockState = worldIn.getBlockState(pos.add(unsure.pos));
             BlockState placingBlockState = blockInfoIn.state;
 
-            BlockState possibleBlockState = worldIn.getBlockState(pos);
-
             if ((currentBlockState.getBlock() instanceof LeavesBlock) && (placingBlockState.getBlock() instanceof LeavesBlock)) {
                 // If the woodtype is different, then we don't replace leaves
                 WoodType theirWoodType = ((LeavesBlock) currentBlockState.getBlock()).woodType;
@@ -460,7 +458,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 // Else if the woodtype is the same, we increment the numTree count.
                 int numTrees = currentBlockState.get(LeavesBlock.NUM_TREES);
                 System.out.println("Both are leaves! Existing numTrees: " + numTrees);
-                return new Template.BlockInfo(pos.add(unsure.pos), placingBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
+                return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
             }
 
             // Ensure that we always place leaves with numTrees at least 1.
@@ -475,7 +473,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 System.out.println("Growing leaves into space containing: " + currentBlockState);
 
                 if (placingBlockState.get(LeavesBlock.NUM_TREES) == 0) {
-                    return new Template.BlockInfo(pos.add(unsure.pos), placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);
+                    return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);
                 }
             }
 
