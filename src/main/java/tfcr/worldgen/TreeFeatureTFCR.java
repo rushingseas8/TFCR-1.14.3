@@ -1,6 +1,8 @@
 package tfcr.worldgen;
 
 import com.mojang.datafixers.Dynamic;
+import net.minecraft.block.Block;
+import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.ChunkGenerator;
@@ -8,6 +10,7 @@ import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
+import net.minecraftforge.common.IPlantable;
 import tfcr.tileentity.TreeTileEntity;
 import tfcr.utils.TemplateHelper;
 
@@ -40,6 +43,16 @@ public class TreeFeatureTFCR extends Feature<TreeFeatureConfig> {
 
         BlockPos size = template.getSize();
         BlockPos center = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
+
+        // Check that the placing block is valid. It's the pos + the center offset.
+        Block placingBlock = worldIn.getBlockState(pos.add(center).down()).getBlock();
+        Block baseBlock = worldIn.getBlockState(pos.add(center)).getBlock();
+        if (!(placingBlock instanceof SnowyDirtBlock)) {
+            return false;
+        }
+        if (!(worldIn.isAirBlock(pos.add(center))) && !(baseBlock instanceof IPlantable)) {
+            return false;
+        }
 
         // TODO: This works, but because worldgen is done in parallel, there's no way to tell if we're growing into
         //  a neighboring tree. Either use external storage, or just don't let trees get too close.

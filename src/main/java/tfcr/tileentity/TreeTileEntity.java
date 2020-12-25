@@ -120,7 +120,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
         if (age > 0) {
             Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
             if (template == null) {
-                System.out.println("Failed to remove additional blocks- template " + TemplateHelper.getTreeTemplateLocation(woodType, age) + " could not be found.");
+//                System.out.println("Failed to remove additional blocks- template " + TemplateHelper.getTreeTemplateLocation(woodType, age) + " could not be found.");
                 return;
             }
 
@@ -135,7 +135,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
         if (variant == -1 && hasWorld() && !world.isRemote) {
             variant = world.getRandom().nextInt(2);
-            System.out.println("Initializing variant to: " + variant);
+//            System.out.println("Initializing variant to: " + variant);
         }
 
         if (doneGrowing) {
@@ -144,10 +144,10 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
         // TODO call markDirty() somewhat often so tree progress gets properly saved
         count++;
-        if (count % 100 == 0) {
+        if (count % (20 * 60 * 20) == 0) {
             if (!world.isRemote) {
 
-                System.out.println("Tile entity tree tick. Age = " + age);
+//                System.out.println("Tile entity tree tick. Age = " + age);
 
                 // TODO Check if we can grow up first.
 
@@ -155,7 +155,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 if (age > 0 && age < SaplingBlock.getMaxAge()) {
                     Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
                     if (template != null) {
-                        System.out.println("Removing template with age: " + age);
+//                        System.out.println("Removing template with age: " + age);
                         cleanupTree(template);
                     }
                 }
@@ -164,14 +164,14 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                 age++;
                 // Ensure age is within range. If at max, stop growing and ticking.
                 if (age >= SaplingBlock.getMaxAge()) {
-                    System.out.println("Done growing now");
+//                    System.out.println("Done growing now");
                     age = SaplingBlock.getMaxAge();
                     doneGrowing = true;
                 }
 
                 // Otherwise, we grew. So spawn new template
                 // TODO this is a relatively slow method call- maybe find a way to schedule it?
-                System.out.println("Growing template with age: " + age);
+//                System.out.println("Growing template with age: " + age);
                 spawnTree();
 
                 // Mark this TileEntity as dirty, so it saves its metadata to disk
@@ -181,14 +181,14 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
     }
 
     private void spawnTree() {
-        System.out.println("Trying to spawn structure at pos: " + pos);
+//        System.out.println("Trying to spawn structure at pos: " + pos);
         // TODO try to cleanup old structure before spawning new one
         // TODO ensure that we can place the new structure down before adding it
 
         // Access the Template for the tree's structure
         Template template = TemplateHelper.getTemplate(world, TemplateHelper.getTreeTemplateLocation(woodType, age));
         if (template == null) {
-            System.out.println("Failed to find structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age));
+//            System.out.println("Failed to find structure: " + TemplateHelper.getTreeTemplateLocation(woodType, age));
             return;
         }
 //        Map<BlockPos, BlockState> map = TemplateHelper.getBlockMap(template);
@@ -209,7 +209,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
         settings.addProcessor(new TemplateProcessorTrees(this.woodType));
         template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
 //        template.addBlocksToWorld(world, pos.add(-center.getX(), 0, -center.getZ()), settings);
-        System.out.println("Successfully added blocks.");
+//        System.out.println("Successfully added blocks.");
 
         // Validate the tree after it is added into the world, by making sure
         // there is a TreeTileEntity after the structure blocks are placed down.
@@ -223,7 +223,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
             // Valid, for now do nothing else
         } else if (blockType instanceof BranchBlock) {
             // Ensure this is a root
-            System.out.println("Setting block type to BranchBlock. Ensuring it is root.");
+//            System.out.println("Setting block type to BranchBlock. Ensuring it is root.");
             world.setBlockState(pos, newRoot.with(BranchBlock.ROOT, true));
         } else if (blockType instanceof LogBlock) {
             // Valid, for now do nothing else
@@ -232,13 +232,13 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
             // This means there's a bug somewhere in the code, so we report it.
             // Either way, we return, since there won't be a TreeTileEntity to modify.
             // TODO crash? Log error?
-            System.out.println("TreeTileEntity created invalid trunk block: " + newRoot.getBlock().toString());
+//            System.out.println("TreeTileEntity created invalid trunk block: " + newRoot.getBlock().toString());
             return;
         }
 
         // Ensure root block has proper TileEntity
         if (treeTileEntity == null) {
-            System.out.println("No TE found for root block: " + newRoot.getBlock().toString());
+//            System.out.println("No TE found for root block: " + newRoot.getBlock().toString());
             return;
         }
 
@@ -247,12 +247,12 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
         treeTileEntity.age = this.age;
         treeTileEntity.variant = this.variant;
         treeTileEntity.count = 0;
-        System.out.println("Updated base of tree to have TileEntity.");
+//        System.out.println("Updated base of tree to have TileEntity.");
     }
 
     private void cleanupTree(Template template) {
         if (template == null) {
-            System.out.println("Failed to cleanup tree. Template was null!");
+//            System.out.println("Failed to cleanup tree. Template was null!");
             return;
         }
 
@@ -325,11 +325,11 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
                             int numTrees = localState.get(LeavesBlock.NUM_TREES);
                             if (numTrees == 1) {
-                                System.out.println("Cleanup found leaves. Removing.");
+//                                System.out.println("Cleanup found leaves. Removing.");
                                 // Leaves are only part of this tree, so remove
                                 world.removeBlock(worldPos, false);
                             } else if (numTrees > 1) {
-                                System.out.println("Cleanup found leaves. Decrementing to: " + (numTrees - 1));
+//                                System.out.println("Cleanup found leaves. Decrementing to: " + (numTrees - 1));
                                 // Leaves are part of >1 tree, so decrement count
                                 // TODO setBlockState seems to occasionally make grow think there's nothing there- does it remove then add?
                                 world.setBlockState(worldPos, localState.with(LeavesBlock.NUM_TREES, numTrees - 1));
@@ -414,7 +414,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        System.out.println("getUpdatePacket");
+//        System.out.println("getUpdatePacket");
 
         CompoundNBT nbtTag = new CompoundNBT();
         this.write(nbtTag);
@@ -423,7 +423,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
-        System.out.println("onDataPacket");
+//        System.out.println("onDataPacket");
         read(packet.getNbtCompound());
     }
 
@@ -457,7 +457,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
 
                 // Else if the woodtype is the same, we increment the numTree count.
                 int numTrees = currentBlockState.get(LeavesBlock.NUM_TREES);
-                System.out.println("Both are leaves! Existing numTrees: " + numTrees);
+//                System.out.println("Both are leaves! Existing numTrees: " + numTrees);
                 return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, numTrees + 1), blockInfoIn.nbt);
             }
 
@@ -470,7 +470,7 @@ public class TreeTileEntity extends TileEntity implements ITickableTileEntity {
                         currentBlockState.getBlock() instanceof TallSaplingBlock) {
                     return null;
                 }
-                System.out.println("Growing leaves into space containing: " + currentBlockState);
+//                System.out.println("Growing leaves into space containing: " + currentBlockState);
 
                 if (placingBlockState.get(LeavesBlock.NUM_TREES) == 0) {
                     return new Template.BlockInfo(blockInfoIn.pos, placingBlockState.with(LeavesBlock.NUM_TREES, 1), blockInfoIn.nbt);

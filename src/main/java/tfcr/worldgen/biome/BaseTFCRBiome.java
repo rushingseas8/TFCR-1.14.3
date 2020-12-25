@@ -95,7 +95,8 @@ public class BaseTFCRBiome extends Biome {
         // Tall grass generation
 //        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(TallGrassFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
         // TODO: combine this with "ChooseTreeFeatureTFCR" to include all types of trees + their different ages.
-        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 2), Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(10, 0, 0)));
+//        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(TreeFeatureTFCR.INSTANCE, new TreeFeatureConfig(WoodType.OAK, 2), Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(10, 0, 0)));
+        this.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, Biome.createDecoratedFeature(ChooseTreeFeatureTFCR2.INSTANCE, NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(25, 0, 0)));
     }
 
     /**
