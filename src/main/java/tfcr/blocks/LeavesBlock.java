@@ -103,8 +103,8 @@ public class LeavesBlock extends net.minecraft.block.LeavesBlock implements ISel
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         ArrayList<ItemStack> drops = new ArrayList<>();
 
-        int leafCount = builder.getWorld().getRandom().nextInt(3) + 1;
-        int stickCount = builder.getWorld().getRandom().nextFloat() < 0.25f ? 1 : 0;
+        int leafCount = builder.func_216018_a().getRandom().nextInt(3) + 1;
+        int stickCount = builder.func_216018_a().getRandom().nextFloat() < 0.25f ? 1 : 0;
 
         drops.add(new ItemStack(ModItems.leaves, leafCount));
         drops.add(new ItemStack(Items.STICK, stickCount));

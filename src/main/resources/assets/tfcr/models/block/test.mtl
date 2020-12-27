@@ -1,0 +1,11 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl None
+Ka 0.000000 0.000000 0.000000
+Kd 1.0 1.0 1.0
+Ks 0.8 0.8 0.8
+Ns 0
+d 1
+map_Kd minecraft:block/stone
+illum 0
