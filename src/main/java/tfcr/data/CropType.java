@@ -3,7 +3,40 @@ package tfcr.data;
 import net.minecraft.util.IStringSerializable;
 
 public enum CropType implements IStringSerializable {
-    BARLEY(12000, PlantLifeCycle.ANNUAL);
+    // Note that one real life month translates to 8400 in-game ticks.
+
+    // Barley is usually planted in spring, and harvested early fall.
+    // ~6 months = 180 days
+    BARLEY(6 * 8400, PlantLifeCycle.PERENNIAL),
+    // Oats grow quickly, in just 2 months. Can be commonly grown after wheat.
+    // However, lower yield/less tolerant of disease.
+    OAT(2 * 8400, PlantLifeCycle.PERENNIAL),
+    // Depending on variety, 3-6 months. Chose 4.5 as a decent middle ground.
+    RICE((int)(4.5 * 8400), PlantLifeCycle.PERENNIAL),
+    // Rye is more hardy (can tolerate saltwater, infertile soil, and colder winter planting)
+    // Less heat tolerant than oat and barley. I'm just gonna say same growth as wheat
+    RYE(5 * 8400, PlantLifeCycle.PERENNIAL),
+    // Plant wheat earliest spring, harvest late summer. ~5 months = 150 days
+    WHEAT(5 * 8400, PlantLifeCycle.PERENNIAL),
+
+    // 60-90 day growth time
+    BELL_PEPPER((int)(2.5 * 8400), PlantLifeCycle.ANNUAL),
+    CABBAGE((int)(4.5 * 8400), PlantLifeCycle.ANNUAL),
+    // One of the fastest growing crops. Can be turned into sugar.
+    BEET((int)(1.75 * 8400), PlantLifeCycle.ANNUAL),
+    // Fastest growing crop.
+    RADISH((int)(1.25 * 8400), PlantLifeCycle.ANNUAL),
+    CORN(3 * 8400, PlantLifeCycle.ANNUAL),
+    // Grows moderately quickly, but can be harvested multiple times
+    // Cannot tolerate cold temperatures.
+    TOMATO(2 * 8400, PlantLifeCycle.ANNUAL),
+    PEA(2 * 8400, PlantLifeCycle.ANNUAL),
+
+    CARROT((int)(2.5 * 8400), PlantLifeCycle.BIENNIAL),
+    // Very slow. Grows over winter to produce bulbs, which are re-planted.
+    GARLIC(7 * 8400, PlantLifeCycle.BIENNIAL),
+    ONION(3 * 8400, PlantLifeCycle.BIENNIAL),
+    ;
 
 
     /**

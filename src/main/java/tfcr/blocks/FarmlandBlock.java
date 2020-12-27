@@ -124,8 +124,9 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
             return;
         }
 
+        int moisture = state.get(MOISTURE);
         // If the water level of this blockstate is not maximum
-        if (state.get(MOISTURE) < 7) {
+        if (moisture < 7) {
             // Check if it's either raining, or if we're near a water block.
             // If so, then set this block's moisture level to maximum.
             // Note we stop processing further, since we can't dry out this tick.
@@ -136,7 +137,7 @@ public class FarmlandBlock extends net.minecraft.block.FarmlandBlock implements 
         }
 
         // Logic for decreasing moisture. We expect to be fully dry in roughly 2 days.
-        if (random.nextFloat() < DEHYDRATION_CHANCE) {
+        if (moisture > 0 && random.nextFloat() < DEHYDRATION_CHANCE) {
             worldIn.setBlockState(pos, state.with(MOISTURE, state.get(MOISTURE) - 1), 2);
         }
 

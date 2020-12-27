@@ -23,9 +23,28 @@ public class BellCurve {
 
     /**
      * Compute the value of the bell curve at the point x.
+     *
+     * If the value is outside of the range of [min, max], this function returns 0.
+     *
+     * TODO: possibly implement a taylor series expansion to make this faster.
      * @return
      */
     public double getValue(double x) {
-        return Math.pow(Math.E, -((x - mean) * (x - mean) / (2 * stdDev * stdDev)));
+        if (x < min || x > max) {
+            return 0;
+        }
+
+        if (x < mean) {
+            return (2.0 / (max - min)) * (x - min);
+        } else {
+            return ((-2.0 / (max - min)) * (x - mean)) + 1;
+        }
+
+
+//        double value = Math.pow(Math.E, -((x - mean) * (x - mean) / (2 * stdDev * stdDev)));
+//        if (value < 0.001) {
+//            return 0;
+//        }
+//        return value;
     }
 }

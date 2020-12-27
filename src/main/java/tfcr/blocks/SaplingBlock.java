@@ -86,7 +86,7 @@ public class SaplingBlock extends BushBlock implements ISelfRegisterBlock, ISelf
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TreeTileEntity(this.woodType);
+        return new TreeTileEntity(this.woodType, 0);
     }
 
     @Override

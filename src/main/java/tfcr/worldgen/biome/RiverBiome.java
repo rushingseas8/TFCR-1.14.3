@@ -23,9 +23,5 @@ public class RiverBiome extends BaseTFCRBiome {
                         .waterFogColor(329011)
         );
         this.setRegistryName(TFCR.MODID, "river");
-
-        // TODO make it so that mud only spawns when directly adjacent to water, rather than
-        //  everywhere in rivers below the surface.
-        this.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, Biome.createDecoratedFeature(MudFeature.INSTANCE, NO_FEATURE_CONFIG, Placement.NOPE, NO_PLACEMENT_CONFIG));
     }
 }

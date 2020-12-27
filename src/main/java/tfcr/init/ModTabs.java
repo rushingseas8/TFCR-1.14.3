@@ -8,6 +8,7 @@ import net.minecraft.util.NonNullList;
 import tfcr.blocks.LogBlock;
 import tfcr.blocks.IBlockWood;
 import tfcr.data.WoodType;
+import tfcr.items.OreItem;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +47,18 @@ public class ModTabs {
 
                 return 0;
             });
+        }
+    };
+
+    public static final ItemGroup TFCR_ORES = new ItemGroup("tfcrOres") {
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModItems.small_rock); // todo replace me with ore
+        }
+
+        @Override
+        public boolean hasScrollbar() {
+            return true;
         }
     };
 }

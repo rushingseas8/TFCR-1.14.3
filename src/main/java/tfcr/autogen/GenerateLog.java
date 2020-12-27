@@ -38,7 +38,6 @@ public class GenerateLog {
             "  \"parent\": \"tfcr:block/log/WOOD\"\n" +
             "}";
 
-
     public static void generate() {
         System.out.print("Generating log assets... ");
         String blockstateDir = GenerateBase.RESOURCE_BASE + File.separator + blockstateLocation;
@@ -68,10 +67,10 @@ public class GenerateLog {
 
             GenerateBase.writeToFile(filePath, toWrite);
 
-
             // Lang file entries
             GenerateBase.appendToLangFile("block.tfcr.log." + woodType.getName(), woodType.name + " Log");
         }
+
         System.out.println("Done");
     }
 

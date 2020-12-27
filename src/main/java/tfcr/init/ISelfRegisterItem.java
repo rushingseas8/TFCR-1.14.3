@@ -34,4 +34,6 @@ public interface ISelfRegisterItem {
         itemRegistry.register(toReturn);
         return toReturn;
     }
+
+    // todo add some capability to describe which tab this item goes in
 }

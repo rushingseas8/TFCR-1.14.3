@@ -18,6 +18,9 @@ import tfcr.tileentity.TreeTileEntity;
 
 import javax.annotation.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static tfcr.blocks.BranchBlock.ROOT;
 
 public class TallSaplingBlock extends DoublePlantBlock implements ISelfRegisterBlock, ISelfRegisterItem {
@@ -25,9 +28,30 @@ public class TallSaplingBlock extends DoublePlantBlock implements ISelfRegisterB
     // TODO implement multiple wood type saplings
     private WoodType woodType;
 
-    public TallSaplingBlock() {
+    private static TallSaplingBlock[] saplings;
+
+    public TallSaplingBlock(WoodType woodType) {
         super(Block.Properties.from(Blocks.TALL_GRASS));
-        setRegistryName(TFCR.MODID, "tall_sapling");
+        this.woodType = woodType;
+        setRegistryName(TFCR.MODID, "tall_sapling/" + woodType.getName());
+    }
+
+    public static void init() {
+        saplings = new TallSaplingBlock[WoodType.values().length];
+        for (int i = 0; i < WoodType.values().length; i++) {
+            saplings[i] = new TallSaplingBlock(WoodType.values()[i]);
+        }
+    }
+
+    public static List<TallSaplingBlock> getAllBlocks() {
+        if (saplings == null) {
+            init();
+        }
+        return Arrays.asList(saplings);
+    }
+
+    public static TallSaplingBlock get(WoodType woodType) {
+        return saplings[woodType.ordinal()];
     }
 
     @Override
@@ -38,7 +62,7 @@ public class TallSaplingBlock extends DoublePlantBlock implements ISelfRegisterB
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TreeTileEntity(this.woodType);
+        return new TreeTileEntity(this.woodType, 1);
     }
 
     @Override

@@ -8,6 +8,8 @@ import java.io.IOException;
 public class GenerateBase {
 
     public static final File RESOURCE_BASE = new File("./src/main/resources/assets/tfcr");
+    public static final String DATA_BASE = "./src/main/resources/data/";
+    public static final String VANILLA_BLOCKS = "minecraft/tags/blocks/";
 
     private static StringBuilder langFile = new StringBuilder("{");
 
@@ -15,7 +17,7 @@ public class GenerateBase {
         File file = new File(path);
         if (!file.getParentFile().exists()) {
             System.out.print("Trying to create directory: \"" + file.getParentFile() + "\"... ");
-            boolean success = file.getParentFile().mkdir();
+            boolean success = file.getParentFile().mkdirs();
             System.out.println(success ? "Success." : "Failed!");
         }
 
@@ -71,6 +73,7 @@ public class GenerateBase {
         GenerateSapling.generate();
         GenerateFarmland.generate();
         GenerateDirt.generate();
+        GenerateCrops.generate();
         GenerateMiscBlocks.generate();
 
         System.out.println("---");

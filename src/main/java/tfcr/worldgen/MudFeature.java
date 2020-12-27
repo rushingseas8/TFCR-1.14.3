@@ -31,14 +31,14 @@ public class MudFeature extends Feature<NoFeatureConfig> {
 
     @Override
     public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random random, BlockPos blockPos, NoFeatureConfig config) {
-
+//        System.out.println("Mud feature called on position: " + (blockPos.getX() / 16) + ", " + (blockPos.getZ() / 16));
         // Reusable blockpos
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 int worldX = blockPos.getX() + x;
                 int worldZ = blockPos.getZ() + z;
-                int worldY = world.getHeight(Heightmap.Type.MOTION_BLOCKING, worldX, worldZ);
+                int worldY = world.getHeight(Heightmap.Type.OCEAN_FLOOR, worldX, worldZ);
 
                 // Look up to 3 blocks under the surface
                 for (int y = 0; y < 3; y++) {

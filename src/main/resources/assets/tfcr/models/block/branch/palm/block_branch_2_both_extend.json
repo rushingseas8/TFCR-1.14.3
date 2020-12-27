@@ -2,18 +2,39 @@
     "parent": "minecraft:block/cube",
     "textures": {
         "side": "tfcr:blocks/wood/bark/wood_palm",
-        "end": "tfcr:blocks/wood/log/wood_palm"
+        "end": "tfcr:blocks/wood/log/wood_palm",
+        "leaf": "tfcr:blocks/wood/leaves/leaves_palm"
     },
-    "elements": [{
-        "from": [ 7, -8, 7 ],
-        "to": [ 9, 24, 9 ],
-        "faces": {
-            "down":  { "uv": [ 7, 7, 9, 9 ], "texture": "#end", "cullface": "down" },
-            "up":    { "uv": [ 7, 7, 9, 9 ], "texture": "#end", "cullface": "up"   },
-            "north": { "uv": [ 3.5, 0, 4.5, 16 ], "texture": "#side" },
-            "south": { "uv": [ 3.5, 0, 4.5, 16 ], "texture": "#side" },
-            "west":  { "uv": [ 3.5, 0, 4.5, 16 ], "texture": "#side" },
-            "east":  { "uv": [ 3.5, 0, 4.5, 16 ], "texture": "#side" }
+    "elements": [
+        {
+            "from": [ 7, 0, 7 ],
+            "to": [ 9, 16, 9 ],
+            "faces": {
+                "north": { "texture": "#side" },
+                "south": { "texture": "#side" },
+                "west":  { "texture": "#side" },
+                "east":  { "texture": "#side" }
+            }
+        },
+        {
+            "from": [ 6.99, 16, 6.99 ],
+            "to": [ 9.01, 24, 9.01 ],
+            "faces": {
+                "north": { "uv": [ 6.99, 0, 9.01, 8 ], "texture": "#side" },
+                "south": { "uv": [ 6.99, 0, 9.01, 8 ], "texture": "#side" },
+                "west":  { "uv": [ 6.99, 0, 9.01, 8 ], "texture": "#side" },
+                "east":  { "uv": [ 6.99, 0, 9.01, 8 ], "texture": "#side" }
+            }
+        },
+        {
+            "from": [ 6.99, -8, 6.99 ],
+            "to": [ 9.01, 0, 9.01 ],
+            "faces": {
+                "north": { "uv": [ 6.99, 8, 9.01, 16 ], "texture": "#side" },
+                "south": { "uv": [ 6.99, 8, 9.01, 16 ], "texture": "#side" },
+                "west":  { "uv": [ 6.99, 8, 9.01, 16 ], "texture": "#side" },
+                "east":  { "uv": [ 6.99, 8, 9.01, 16 ], "texture": "#side" }
+            }
         }
-    }]
+    ]
 }
