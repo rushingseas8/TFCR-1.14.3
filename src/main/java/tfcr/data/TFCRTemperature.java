@@ -55,6 +55,7 @@ public class TFCRTemperature {
         // Get temperature and precipitation as a randomly seeded Perlin noise value.
         // TODO this is just one iteration, check if this is enough (or fuzz)
         // TODO check if this is the right method call on the noise function
+        // TODO unreproduceable, but one time noiseGenerator was null upon reload.
         double tempRaw = noiseGenerator.func_215456_a(noiseX + tempOffsetX, noiseZ + tempOffsetZ, 0, 0, 0);
 
         return (float) ((tempRaw + 1.0) / 2.0); // [-1, 1] -> [0, 2] -> [0, 1]

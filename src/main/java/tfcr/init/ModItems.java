@@ -1,8 +1,11 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Items;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +33,8 @@ public class ModItems {
     public static final TFCRItem sharp_rock = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "sharp_rock");
     public static final TFCRItem cordage = new TFCRItem(new Item.Properties().group(ItemGroup.MATERIALS), "cordage");
 
+//    public static final Item fresh_water_bucket = new BucketItem(ModFluids.FRESH_WATER_FLUID_SOURCE, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC));
+
     public static ArrayList<Item> allItems = new ArrayList<>();
     public static HashMap<Block, Item> itemForBlocks = new HashMap<>();
 
@@ -49,6 +54,10 @@ public class ModItems {
         allItems.add(small_rock);
         allItems.add(sharp_rock);
         allItems.add(cordage);
+
+//        fresh_water_bucket.setRegistryName(TFCR.MODID, "fresh_water_bucket");
+//        allItems.add(fresh_water_bucket);
+        allItems.addAll(ModFluids.getAllItems());
     }
 
     @SubscribeEvent

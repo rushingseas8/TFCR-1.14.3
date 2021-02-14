@@ -2,6 +2,7 @@ package tfcr.init;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -56,6 +57,13 @@ public class ModBlocks {
         allBlocks.add(new SmallRockBlock(Block.Properties.from(Blocks.STONE).hardnessAndResistance(0f), "small_rock_block"));
         allBlocks.add(new LeafRoofBlock());
         allBlocks.add(new WickerBlock());
+
+
+//        ModFluids.FRESH_WATER_FLUID_BLOCK = new TFCRFluidBlock(ModFluids.FRESH_WATER_FLUID_SOURCE, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100f).noDrops());
+//        ModFluids.FRESH_WATER_FLUID_BLOCK.setRegistryName(TFCR.MODID, "fresh_water_block");
+//        allBlocks.add(ModFluids.FRESH_WATER_FLUID_BLOCK);
+        allBlocks.addAll(ModFluids.getAllBlocks());
+
 //        allBlocks.add(FarmlandBlock.get());
 
         //allBlocks.add(new CropBlock(Block.Properties.from(Blocks.WHEAT), "tfcr_wheat"));

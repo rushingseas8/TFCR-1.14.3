@@ -1,7 +1,10 @@
 package tfcr.worldgen.biome;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -12,7 +15,11 @@ import tfcr.TFCR;
 import tfcr.data.TFCRTemperature;
 import tfcr.data.TerrainType;
 import tfcr.data.WoodType;
+import tfcr.init.ModFluids;
 import tfcr.worldgen.*;
+
+import javax.annotation.Nonnull;
+import java.util.Random;
 
 import static net.minecraft.world.gen.feature.IFeatureConfig.NO_FEATURE_CONFIG;
 import static net.minecraft.world.gen.placement.IPlacementConfig.NO_PLACEMENT_CONFIG;
@@ -25,7 +32,19 @@ public class BaseTFCRBiome extends Biome {
     protected int maxPrecip;
     public TerrainType terrainType;
 
+    private static final BlockState STONE = Blocks.STONE.getDefaultState();
+    private static final BlockState WATER = ModFluids.FRESH_WATER_FLUID_BLOCK.getDefaultState();
+
+    @Nonnull
+    public final BlockState DEFAULT_BLOCK;
+    @Nonnull
+    public final BlockState DEFAULT_FLUID;
+
     protected BaseTFCRBiome instance;
+
+    protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, Biome.Builder builder) {
+        this(minTemp, maxTemp, minPrecip, maxPrecip, terrainType, builder, STONE, WATER);
+    }
 
     /**
      * Default constructor for TFCR Biomes to use internally.
@@ -44,9 +63,11 @@ public class BaseTFCRBiome extends Biome {
      * @param minPrecip The lowest amount of precipitation this biome exists in
      * @param maxPrecip The highest amount of precipitation this biome exists in
      * @param terrainType The terrain of this biome
+     * @param defaultBlock The default block to use in this biome. By default, stone.
+     * @param defaultFluid The default fluid to fill this biome with. By default, water.
      * @param builder Information about surface blocks, category, and water colors.
      */
-    protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, Biome.Builder builder) {
+    protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, Biome.Builder builder, BlockState defaultBlock, BlockState defaultFluid) {
         super(builder
                 .depth(terrainType.depth)
                 .scale(terrainType.scale)
@@ -61,6 +82,8 @@ public class BaseTFCRBiome extends Biome {
         this.minPrecip = minPrecip;
         this.maxPrecip = maxPrecip;
         this.terrainType = terrainType;
+        this.DEFAULT_BLOCK = defaultBlock;
+        this.DEFAULT_FLUID = defaultFluid;
 
         // Try to generate a default name that looks like, e.g., "wetland_flat".
         // Skip over the water biomes, since they handle their own logic.
@@ -158,5 +181,36 @@ public class BaseTFCRBiome extends Biome {
 
     public float getPrecipitation(BlockPos pos) {
         return TFCRTemperature.getPrecipitation(pos);
+    }
+
+    /**
+     * @return The default fluid used in this biome. By default, Vanilla water.
+     */
+    public BlockState getDefaultFluid() {
+//        return ModFluids.FRESH_WATER_FLUID_BLOCK.getDefaultState();
+        return DEFAULT_FLUID;
+    }
+
+    /**
+     * @return The default block used in this biome. By default, Vanilla stone.
+     */
+    public BlockState getDefaultBlock() {
+        return DEFAULT_BLOCK;
+    }
+
+    /**
+     * Custom buildSurface that will always override the default block and fluid
+     * types to the values returned by getDefaultBlock() and getDefaultFluid().
+     *
+     * The default values are set to the current vanilla custom of stone and water,
+     * and those should be overridden for custom values.
+     *
+     * Note that surface builders will override these values, too- this is just
+     * for the untouched values.
+     */
+    @Override
+    public void buildSurface(Random random, IChunk chunkIn, int x, int z, int startHeight, double noise, BlockState defaultBlock, BlockState defaultFluid, int seaLevel, long seed) {
+//        System.out.println("Build surface called. Overriding to custom fluid: " + getDefaultFluid().getBlock());
+        super.buildSurface(random, chunkIn, x, z, startHeight, noise, getDefaultBlock(), getDefaultFluid(), seaLevel, seed);
     }
 }

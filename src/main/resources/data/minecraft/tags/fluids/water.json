@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "tfcr:fresh_water_source",
+        "tfcr:fresh_water_flowing"
+    ]
+}
