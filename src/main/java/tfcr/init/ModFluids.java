@@ -26,12 +26,18 @@ public class ModFluids {
 
     public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = FRESH_WATER.sourceFluid;
     public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = FRESH_WATER.flowingFluid;
+//    public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = new FreshWaterFluid.Source();
+//    public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = new FreshWaterFluid.Flowing();
 
-    public static FlowingFluidBlock FRESH_WATER_FLUID_BLOCK = (FlowingFluidBlock) FRESH_WATER.fluidBlock;
+    public static TFCRFluidBlock FRESH_WATER_FLUID_BLOCK = FRESH_WATER.fluidBlock;
 
-
+    // TODO go back to using FreshWaterFluid-like classes
+    // TODO add interaction where fresh + salt water next to each other react to form
+    // brakish water, but otherwise act like water would.
     private static final TFCRFluid[] allFluids = {
             FRESH_WATER,
+//            FRESH_WATER_FLUID_SOURCE,
+//            FRESH_WATER_FLUID_FLOWING,
             TFCRFluid.create("salt_water")
     };
 
@@ -44,8 +50,12 @@ public class ModFluids {
         }
 
         ArrayList<Fluid> toReturn = new ArrayList<>();
-        for (TFCRFluid fluid : allFluids) {
-            toReturn.addAll(fluid.getFluids());
+        for (FlowingFluid fluid : allFluids) {
+            if (fluid instanceof TFCRFluid) {
+                toReturn.addAll(((TFCRFluid) fluid).getFluids());
+            } else {
+                toReturn.add(fluid);
+            }
         }
 
         return toReturn;
@@ -84,8 +94,9 @@ public class ModFluids {
 //
 //        event.getRegistry().register(FRESH_WATER_FLUID_SOURCE);
 //        event.getRegistry().register(FRESH_WATER_FLUID_FLOWING);
-        for (Fluid fluid : allFluids) {
-            event.getRegistry().register(fluid);
+        for (TFCRFluid fluid : allFluids) {
+            event.getRegistry().register(fluid.sourceFluid);
+            event.getRegistry().register(fluid.flowingFluid);
         }
 
     }

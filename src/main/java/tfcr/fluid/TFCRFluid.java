@@ -30,9 +30,9 @@ import java.util.List;
 
 public class TFCRFluid extends FlowingFluid {
 
-    public FlowingFluid sourceFluid;
-    public FlowingFluid flowingFluid;
-    public Block fluidBlock;
+    public TFCRFluid sourceFluid;
+    public TFCRFluid flowingFluid;
+    public TFCRFluidBlock fluidBlock;
     public BucketItem bucketItem;
 
     public static TFCRFluid create(String name) {
@@ -46,6 +46,12 @@ public class TFCRFluid extends FlowingFluid {
         // Set registry names
         fluid.sourceFluid.setRegistryName(TFCR.MODID, name + "_source");
         fluid.flowingFluid.setRegistryName(TFCR.MODID, name + "_flowing");
+
+        // Self-references
+        fluid.sourceFluid.sourceFluid = fluid.sourceFluid;
+        fluid.sourceFluid.flowingFluid = fluid.flowingFluid;
+        fluid.flowingFluid.sourceFluid = fluid.sourceFluid;
+        fluid.flowingFluid.flowingFluid = fluid.flowingFluid;
 
         // Fluid block (physical representation of the fluid when placed in-world)
         fluid.fluidBlock = new TFCRFluidBlock(
@@ -72,6 +78,14 @@ public class TFCRFluid extends FlowingFluid {
         // Registry name
         fluid.bucketItem.setRegistryName(TFCR.MODID, name + "_bucket");
 
+        // Assign sub-references to source
+        fluid.sourceFluid.fluidBlock = fluid.fluidBlock;
+        fluid.sourceFluid.bucketItem = fluid.bucketItem;
+
+        // Assign sub-references to flowing
+        fluid.flowingFluid.fluidBlock = fluid.fluidBlock;
+        fluid.flowingFluid.bucketItem = fluid.bucketItem;
+
         return fluid;
     }
 
@@ -82,7 +96,7 @@ public class TFCRFluid extends FlowingFluid {
         return Arrays.asList(new Fluid[] {sourceFluid, flowingFluid});
     }
 
-    public static TFCRFluid createGenericSourceFluid() {
+    public static TFCRFluid createGenericFlowingFluid() {
         return new TFCRFluid() {
             protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
                 super.fillStateContainer(builder);
@@ -99,7 +113,7 @@ public class TFCRFluid extends FlowingFluid {
         };
     }
 
-    public static TFCRFluid createGenericFlowingFluid() {
+    public static TFCRFluid createGenericSourceFluid() {
         return new TFCRFluid() {
             public int getLevel(IFluidState state) {
                 return 8;
@@ -179,11 +193,11 @@ public class TFCRFluid extends FlowingFluid {
 
     @Override
     public boolean isSource(IFluidState state) {
-        return false;
+        throw new RuntimeException("isSource should not be called on raw TFCRFluid.");
     }
 
     @Override
     public int getLevel(IFluidState p_207192_1_) {
-        return 0;
+        throw new RuntimeException("getLevel should not be called on raw TFCRFluid.");
     }
 }
