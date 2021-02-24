@@ -1,17 +1,11 @@
 package tfcr.fluid;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.fluid.WaterFluid;
+import net.minecraft.fluid.*;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer;
 import tfcr.init.ModFluids;
-import tfcr.init.ModItems;
 
 public abstract class FreshWaterFluid extends WaterFluid {
 
@@ -25,7 +19,6 @@ public abstract class FreshWaterFluid extends WaterFluid {
 
     @Override
     public Item getFilledBucket() {
-//        return ModItems.fresh_water_bucket;
         return null;
     }
 
@@ -34,11 +27,13 @@ public abstract class FreshWaterFluid extends WaterFluid {
         return ModFluids.FRESH_WATER_FLUID_BLOCK.getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
 //        return null;
     }
-
     @Override
     public boolean isEquivalentTo(Fluid fluidIn) {
-        return fluidIn == ModFluids.FRESH_WATER_FLUID_SOURCE || fluidIn == ModFluids.FRESH_WATER_FLUID_FLOWING;
+//        return fluidIn == ModFluids.FRESH_WATER_FLUID_SOURCE || fluidIn == ModFluids.FRESH_WATER_FLUID_FLOWING;
 //        return false;
+//        return fluidIn instanceof WaterFluid;
+        return fluidIn == ModFluids.FRESH_WATER_FLUID_SOURCE || fluidIn == ModFluids.FRESH_WATER_FLUID_FLOWING ||
+                fluidIn == ModFluids.SALT_WATER_FLUID_SOURCE || fluidIn == ModFluids.SALT_WATER_FLUID_FLOWING;
     }
 
     /**

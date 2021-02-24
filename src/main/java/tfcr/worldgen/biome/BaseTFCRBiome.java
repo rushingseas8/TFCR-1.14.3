@@ -6,15 +6,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.placement.AtSurfaceWithExtraConfig;
-import net.minecraft.world.gen.placement.FrequencyConfig;
 import net.minecraft.world.gen.placement.Placement;
 import tfcr.TFCR;
 import tfcr.data.TFCRTemperature;
 import tfcr.data.TerrainType;
-import tfcr.data.WoodType;
 import tfcr.init.ModFluids;
 import tfcr.worldgen.*;
 
@@ -33,7 +29,7 @@ public class BaseTFCRBiome extends Biome {
     public TerrainType terrainType;
 
     private static final BlockState STONE = Blocks.STONE.getDefaultState();
-    private static final BlockState WATER = ModFluids.FRESH_WATER_FLUID_BLOCK.getDefaultState();
+    private static final BlockState WATER = ModFluids.FRESH_WATER.fluidBlock.getDefaultState();
 
     @Nonnull
     public final BlockState DEFAULT_BLOCK;
@@ -43,7 +39,7 @@ public class BaseTFCRBiome extends Biome {
     protected BaseTFCRBiome instance;
 
     protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, Biome.Builder builder) {
-        this(minTemp, maxTemp, minPrecip, maxPrecip, terrainType, builder, STONE, WATER);
+        this(minTemp, maxTemp, minPrecip, maxPrecip, terrainType, STONE, WATER, builder);
     }
 
     /**
@@ -67,7 +63,7 @@ public class BaseTFCRBiome extends Biome {
      * @param defaultFluid The default fluid to fill this biome with. By default, water.
      * @param builder Information about surface blocks, category, and water colors.
      */
-    protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, Biome.Builder builder, BlockState defaultBlock, BlockState defaultFluid) {
+    protected BaseTFCRBiome(int minTemp, int maxTemp, int minPrecip, int maxPrecip, TerrainType terrainType, BlockState defaultBlock, BlockState defaultFluid, Biome.Builder builder) {
         super(builder
                 .depth(terrainType.depth)
                 .scale(terrainType.scale)
@@ -87,7 +83,7 @@ public class BaseTFCRBiome extends Biome {
 
         // Try to generate a default name that looks like, e.g., "wetland_flat".
         // Skip over the water biomes, since they handle their own logic.
-        if (LayerUtilsTFCR.isWater(terrainType.ordinal())) {
+        if (LayerUtilsTFCR.isTechnical(terrainType.ordinal())) {
             return;
         }
 

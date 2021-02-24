@@ -11,29 +11,7 @@ import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
 import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.storage.WorldInfo;
-import tfcr.worldgen.biome.BaseTFCRBiome;
-import tfcr.worldgen.biome.ChaparralBiome;
-import tfcr.worldgen.biome.DeciduousForestBiome;
-import tfcr.worldgen.biome.DeepOceanBiome;
-import tfcr.worldgen.biome.DesertBiome;
-import tfcr.worldgen.biome.DryTundraBiome;
-import tfcr.worldgen.biome.HighGrasslandBiome;
-import tfcr.worldgen.biome.LowGrasslandBiome;
-import tfcr.worldgen.biome.OceanBiome;
-import tfcr.worldgen.biome.BeachBiome;
-import tfcr.worldgen.biome.CliffBiome;
-import tfcr.worldgen.biome.PolarBiome;
-import tfcr.worldgen.biome.SavannaBiome;
-import tfcr.worldgen.biome.ShrublandBiome;
-import tfcr.worldgen.biome.TaigaBiome;
-import tfcr.worldgen.biome.TemperateConiferousBiome;
-import tfcr.worldgen.biome.TemperateDesertBiome;
-import tfcr.worldgen.biome.TemperateRainforestBiome;
-import tfcr.worldgen.biome.TreeShrublandBiome;
-import tfcr.worldgen.biome.TropicalRainforestBiome;
-import tfcr.worldgen.biome.TundraBiome;
-import tfcr.worldgen.biome.WetlandBiome;
-import tfcr.worldgen.biome.RiverBiome;
+import tfcr.worldgen.biome.*;
 import tfcr.worldgen.genlayer.Layer;
 
 import javax.annotation.Nonnull;
@@ -77,7 +55,11 @@ public class BiomeProviderTFCR extends BiomeProvider {
                 new OceanBiome(),
                 new BeachBiome(),
                 new CliffBiome(),
-                new RiverBiome()
+                new RiverBiome(),
+                new EstuaryBiome(),
+                new RiverEdgeBiome(),
+                new RiverDeltaBiome(),
+                new RiverDeltaEdgeBiome()
             )
         );
 

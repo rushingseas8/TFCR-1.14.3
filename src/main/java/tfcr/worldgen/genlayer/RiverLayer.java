@@ -3,6 +3,9 @@ package tfcr.worldgen.genlayer;
 import net.minecraft.world.gen.INoiseRandom;
 import net.minecraft.world.gen.layer.traits.ICastleTransformer;
 import tfcr.data.TerrainType;
+import tfcr.worldgen.LayerUtilsTFCR;
+
+import static tfcr.worldgen.LayerUtilsTFCR.RIVER;
 
 /**
  * Direct copy of Vanilla RiverLayer.
@@ -23,14 +26,16 @@ import tfcr.data.TerrainType;
 public enum RiverLayer implements ICastleTransformer {
     INSTANCE;
 
-    private static final int RIVER = TerrainType.RIVER.ordinal();
-
     @Override
     public int apply(INoiseRandom rand, int south, int east, int north, int west, int center) {
         // TODO implement Vanilla RiverLayer, but first understand what that does
 
         int i = riverFilter(center);
-        return i == riverFilter(north) && i == riverFilter(south) && i == riverFilter(east) && i == riverFilter(west) ? -1 : RIVER;
+        if (i == riverFilter(north) && i == riverFilter(south) && i == riverFilter(east) && i == riverFilter(west)) {
+            return -1;
+        } else {
+            return center <= 300000 ? RIVER : LayerUtilsTFCR.ESTUARY;
+        }
     }
 
     private static int riverFilter(int value) {

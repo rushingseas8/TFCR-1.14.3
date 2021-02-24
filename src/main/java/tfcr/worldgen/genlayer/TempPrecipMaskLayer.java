@@ -23,8 +23,8 @@ public enum TempPrecipMaskLayer implements IAreaTransformer2, IDimOffset1Transfo
         int placeholderBiome = placeholderArea.getValue(x, z);
         int rawTempPrecip = tempPrecipArea.getValue(x, z);
 
-        // Water pass-through
-        if (LayerUtilsTFCR.isWater(placeholderBiome)) {
+        // Technical biomes pass-through
+        if (LayerUtilsTFCR.isTechnical(placeholderBiome)) {
             return placeholderBiome;
         }
 

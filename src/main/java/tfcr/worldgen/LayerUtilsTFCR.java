@@ -34,6 +34,10 @@ public class LayerUtilsTFCR {
     public static final int BEACH = TerrainType.BEACH.ordinal();
     public static final int CLIFF = TerrainType.CLIFF.ordinal();
     public static final int RIVER = TerrainType.RIVER.ordinal();
+    public static final int ESTUARY = TerrainType.ESTUARY.ordinal();
+    public static final int RIVER_EDGE = TerrainType.RIVER_EDGE.ordinal();
+    public static final int RIVER_DELTA = TerrainType.RIVER_DELTA.ordinal();
+    public static final int RIVER_DELTA_EDGE = TerrainType.RIVER_DELTA_EDGE.ordinal();
     public static final int FLAT = TerrainType.FLAT.ordinal();
     public static final int SMALL_HILLS = TerrainType.SMALL_HILLS.ordinal();
     public static final int BIG_HILLS = TerrainType.BIG_HILLS.ordinal();
@@ -47,8 +51,16 @@ public class LayerUtilsTFCR {
         return terrainType == OCEAN;
     }
 
+    public static boolean isOceanOrBeach(int terrainType) {
+        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == BEACH; //  || terrainType == CLIFF;
+    }
+
     public static boolean isWater(int terrainType) {
         return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH || terrainType == CLIFF;
+    }
+
+    public static boolean isTechnical(int terrainType) {
+        return isWater(terrainType) || terrainType == RIVER_EDGE || terrainType == RIVER_DELTA || terrainType == RIVER_DELTA_EDGE || terrainType == ESTUARY;
     }
 
     /**
@@ -93,6 +105,13 @@ public class LayerUtilsTFCR {
                 east == LayerUtilsTFCR.BIG_HILLS ||
                 north == LayerUtilsTFCR.BIG_HILLS ||
                 west == LayerUtilsTFCR.BIG_HILLS;
+    }
+
+    public static boolean hasEstuary(int south, int east, int north, int west) {
+        return south == LayerUtilsTFCR.ESTUARY ||
+                east == LayerUtilsTFCR.ESTUARY ||
+                north == LayerUtilsTFCR.ESTUARY ||
+                west == LayerUtilsTFCR.ESTUARY;
     }
 
     /**
@@ -398,6 +417,7 @@ public class LayerUtilsTFCR {
         IAreaFactory<T> riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
         riverAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
         riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
+        riverAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(101L), riverAreaFactory); // Add estuaries for river/ocean boundaries
         riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
         riverAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
         riverAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
@@ -405,6 +425,22 @@ public class LayerUtilsTFCR {
         // We smooth the biome map, and mix in the rivers at this point.
         biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
         biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
+
+        // Add river deltas
+        biomesAreaFactory = repeat(1000L, AddRiverDeltaLayer.INSTANCE, biomesAreaFactory, 16, contextFactory);
+
+        // Add river edge biome
+        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory);
+        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
+//        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river edge biome
+//        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river edge biome
+
+        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river delta edge biome
+        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
+
+        // Add estuaries (brackish boundary between river + ocean)
+//        biomesAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory);
+//        biomesAreaFactory = repeat(1000L, SpreadEstuaryLayer.INSTANCE, biomesAreaFactory, 32, contextFactory);
 
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
         // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled

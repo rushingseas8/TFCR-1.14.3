@@ -30,18 +30,22 @@ import java.util.List;
 
 public class TFCRFluid extends FlowingFluid {
 
-    public TFCRFluid sourceFluid;
-    public TFCRFluid flowingFluid;
+    public TFCRFluid.Source sourceFluid;
+    public TFCRFluid.Flowing flowingFluid;
     public TFCRFluidBlock fluidBlock;
     public BucketItem bucketItem;
 
     public static TFCRFluid create(String name) {
+        return create(name, createGenericSourceFluid(), createGenericFlowingFluid());
+    }
+
+    public static TFCRFluid create(String name, TFCRFluid.Source source, TFCRFluid.Flowing flowing) {
         // Create a new holder fluid object
         TFCRFluid fluid = new TFCRFluid();
 
         // Create generic water-like fluids
-        fluid.sourceFluid = createGenericSourceFluid();
-        fluid.flowingFluid = createGenericFlowingFluid();
+        fluid.sourceFluid = source;
+        fluid.flowingFluid = flowing;
 
         // Set registry names
         fluid.sourceFluid.setRegistryName(TFCR.MODID, name + "_source");
@@ -96,33 +100,37 @@ public class TFCRFluid extends FlowingFluid {
         return Arrays.asList(new Fluid[] {sourceFluid, flowingFluid});
     }
 
-    public static TFCRFluid createGenericFlowingFluid() {
-        return new TFCRFluid() {
-            protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
-                super.fillStateContainer(builder);
-                builder.add(LEVEL_1_8);
-            }
-
-            public int getLevel(IFluidState state) {
-                return state.get(LEVEL_1_8);
-            }
-
-            public boolean isSource(IFluidState state) {
-                return false;
-            }
-        };
+    public static TFCRFluid.Flowing createGenericFlowingFluid() {
+        return new TFCRFluid.Flowing() {};
     }
 
-    public static TFCRFluid createGenericSourceFluid() {
-        return new TFCRFluid() {
-            public int getLevel(IFluidState state) {
-                return 8;
-            }
+    public static TFCRFluid.Source createGenericSourceFluid() {
+        return new TFCRFluid.Source() {};
+    }
 
-            public boolean isSource(IFluidState state) {
-                return true;
-            }
-        };
+    public static abstract class Flowing extends TFCRFluid {
+        protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
+            super.fillStateContainer(builder);
+            builder.add(LEVEL_1_8);
+        }
+
+        public int getLevel(IFluidState state) {
+            return state.get(LEVEL_1_8);
+        }
+
+        public boolean isSource(IFluidState state) {
+            return false;
+        }
+    }
+
+    public static abstract class Source extends TFCRFluid {
+        public int getLevel(IFluidState state) {
+            return 8;
+        }
+
+        public boolean isSource(IFluidState state) {
+            return true;
+        }
     }
 
     @Override

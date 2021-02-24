@@ -21,7 +21,7 @@ public enum RiverMaskLayer implements IAreaTransformer2, IDimOffset0Transformer 
         if (LayerUtilsTFCR.isOcean(i)) {
             // Pass-through ocean
             return i;
-        } else if (j == LayerUtilsTFCR.RIVER) {
+        } else if (j == LayerUtilsTFCR.RIVER || j == LayerUtilsTFCR.RIVER_EDGE || j == LayerUtilsTFCR.ESTUARY) {
             // If it's a river, then take the river
             return j;
         } else {

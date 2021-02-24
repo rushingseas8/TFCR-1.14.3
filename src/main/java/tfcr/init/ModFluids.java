@@ -1,8 +1,6 @@
 package tfcr.init;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -12,7 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 import tfcr.TFCR;
 import tfcr.blocks.TFCRFluidBlock;
-import tfcr.fluid.FreshWaterFluid;
 import tfcr.fluid.TFCRFluid;
 
 import java.util.ArrayList;
@@ -22,23 +19,88 @@ import java.util.List;
 @ObjectHolder(TFCR.MODID)
 public class ModFluids {
 
-    public static final TFCRFluid FRESH_WATER = TFCRFluid.create("fresh_water");
+    // TODO consider overriding calculateCorrectFlowingState to figure out how
+    // salt + fresh water should make new sources next to each other. Brakish?
+    public static final TFCRFluid FRESH_WATER = TFCRFluid.create("fresh_water",
+            new TFCRFluid.Source() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            },
+            new TFCRFluid.Flowing() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            }
+    );
+    public static final TFCRFluid SALT_WATER = TFCRFluid.create("salt_water",
+            new TFCRFluid.Source() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            },
+            new TFCRFluid.Flowing() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            }
+    );
 
+    public static final TFCRFluid BRAKISH_WATER = TFCRFluid.create("brakish_water",
+            new TFCRFluid.Source() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            },
+            new TFCRFluid.Flowing() {
+                @Override
+                public boolean isEquivalentTo(Fluid fluidIn) {
+                    return fluidIn == FRESH_WATER.sourceFluid || fluidIn == FRESH_WATER.flowingFluid ||
+                            fluidIn == SALT_WATER.sourceFluid || fluidIn == SALT_WATER.flowingFluid ||
+                            fluidIn == BRAKISH_WATER.sourceFluid || fluidIn == BRAKISH_WATER.flowingFluid;
+                }
+            }
+    );
+
+    // For compatibility with TFCRWaterFluid
     public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = FRESH_WATER.sourceFluid;
     public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = FRESH_WATER.flowingFluid;
-//    public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = new FreshWaterFluid.Source();
-//    public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = new FreshWaterFluid.Flowing();
+//    public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = new TFCRWaterFluid.Source();
+//    public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = new TFCRWaterFluid.Flowing();
 
+    // For compatibility with TFCRWaterFluid
     public static TFCRFluidBlock FRESH_WATER_FLUID_BLOCK = FRESH_WATER.fluidBlock;
 
-    // TODO go back to using FreshWaterFluid-like classes
+
+    public static final FlowingFluid SALT_WATER_FLUID_SOURCE = SALT_WATER.sourceFluid;
+    public static final FlowingFluid SALT_WATER_FLUID_FLOWING = SALT_WATER.flowingFluid;
+//    public static final FlowingFluid FRESH_WATER_FLUID_SOURCE = new TFCRWaterFluid.Source();
+//    public static final FlowingFluid FRESH_WATER_FLUID_FLOWING = new TFCRWaterFluid.Flowing();
+
+    // For compatibility with TFCRWaterFluid
+    public static TFCRFluidBlock SALT_WATER_FLUID_BLOCK = SALT_WATER.fluidBlock;
+
+    // TODO go back to using TFCRWaterFluid-like classes
     // TODO add interaction where fresh + salt water next to each other react to form
     // brakish water, but otherwise act like water would.
     private static final TFCRFluid[] allFluids = {
             FRESH_WATER,
-//            FRESH_WATER_FLUID_SOURCE,
-//            FRESH_WATER_FLUID_FLOWING,
-            TFCRFluid.create("salt_water")
+            SALT_WATER
     };
 
     private static void initFluids() {
