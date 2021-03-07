@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "half=lower": [
+            { "model": "tfcr:block/plants/cattail/lower_0" },
+            { "model": "tfcr:block/plants/cattail/lower_0_reversed" },
+            { "model": "tfcr:block/plants/cattail/lower_1" },
+            { "model": "tfcr:block/plants/cattail/lower_1_reversed" },
+            { "model": "tfcr:block/plants/cattail/lower_2" },
+            { "model": "tfcr:block/plants/cattail/lower_2_reversed" }
+        ],
+        "half=upper": [
+            { "model": "tfcr:block/plants/cattail/upper_0" },
+            { "model": "tfcr:block/plants/cattail/upper_0_reversed" },
+            { "model": "tfcr:block/plants/cattail/upper_1" },
+            { "model": "tfcr:block/plants/cattail/upper_1_reversed" },
+            { "model": "tfcr:block/plants/cattail/upper_2" },
+            { "model": "tfcr:block/plants/cattail/upper_2_reversed" }
+        ]
+    }
+}

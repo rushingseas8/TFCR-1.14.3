@@ -19,6 +19,7 @@ public enum RiverInitLayer implements IC0Transformer {
         // If this is an ocean, then keep the ocean value.
         // Else, return an absurdly large range random value (?)
 //        return TerrainType.values()[value] == TerrainType.OCEAN ? value : rand.random(299999) + 2;
-        return value == LayerUtilsTFCR.OCEAN ? value : 2 + rand.random(299998);
+//        return value == LayerUtilsTFCR.OCEAN ? value : 2 + rand.random(299998);
+        return LayerUtilsTFCR.isWater(value) ? 0 : 2 + rand.random(299990);
     }
 }

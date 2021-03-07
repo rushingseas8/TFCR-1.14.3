@@ -5,6 +5,7 @@ import net.minecraft.world.gen.layer.traits.ICastleTransformer;
 import tfcr.data.TerrainType;
 import tfcr.worldgen.LayerUtilsTFCR;
 
+import static tfcr.worldgen.LayerUtilsTFCR.ESTUARY;
 import static tfcr.worldgen.LayerUtilsTFCR.RIVER;
 
 /**
@@ -34,7 +35,13 @@ public enum RiverLayer implements ICastleTransformer {
         if (i == riverFilter(north) && i == riverFilter(south) && i == riverFilter(east) && i == riverFilter(west)) {
             return -1;
         } else {
-            return center <= 300000 ? RIVER : LayerUtilsTFCR.ESTUARY;
+//            return center <= 300000 ? RIVER : LayerUtilsTFCR.ESTUARY;
+//            return RIVER;
+            if (LayerUtilsTFCR.hasOcean(south, east, north, west)) {
+                return ESTUARY;
+            } else {
+                return RIVER;
+            }
         }
     }
 
@@ -43,6 +50,7 @@ public enum RiverLayer implements ICastleTransformer {
         // If value >= 2, then take the lowest bit and add 2, so return 2 or 3.
 
 
+//        return value >= 2 ? 2 + (value & 1) : value;
         return value >= 2 ? 2 + (value & 1) : value;
 //        if (LayerUtilsTFCR.isOcean(value)) {
 //            return 1000 + (value & 1);

@@ -58,6 +58,7 @@ public class ModBlocks {
         allBlocks.add(new LeafRoofBlock());
         allBlocks.add(new WickerBlock());
 
+        allBlocks.add(new CattailBlock());
 
 //        ModFluids.FRESH_WATER_FLUID_BLOCK = new TFCRFluidBlock(ModFluids.FRESH_WATER_FLUID_SOURCE, Block.Properties.create(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100f).noDrops());
 //        ModFluids.FRESH_WATER_FLUID_BLOCK.setRegistryName(TFCR.MODID, "fresh_water_block");

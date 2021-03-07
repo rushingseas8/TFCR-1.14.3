@@ -7,7 +7,29 @@ import tfcr.worldgen.LayerUtilsTFCR;
 import static tfcr.worldgen.LayerUtilsTFCR.*;
 
 public enum AddRiverDeltaLayer implements ICastleTransformer {
-    INSTANCE;
+    INSTANCE,
+    SPREAD {
+        @Override
+        public int apply(INoiseRandom rand, int south, int east, int north, int west, int center) {
+            // Water pass-through
+            if (LayerUtilsTFCR.isWater(center)) {
+                return center;
+            }
+
+            // Deltas don't need to spread to themselves
+            if (center == RIVER_DELTA) {
+                return center;
+            }
+
+            // If we're land, and next to a delta, spread delta
+            if (LayerUtilsTFCR.hasTerrain(RIVER_DELTA, south, east, north, west)) {
+                return RIVER_DELTA;
+            }
+
+            // Otherwise don't spread.
+            return center;
+        }
+    };
 
     @Override
     public int apply(INoiseRandom rand, int south, int east, int north, int west, int center) {

@@ -3,6 +3,7 @@ package tfcr.init;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -104,6 +105,42 @@ public class ModFluids {
     };
 
     private static void initFluids() {
+    }
+
+    /**
+     * @param fluidIn Fluid to test against
+     * @return true, if the Fluid is a fresh water source block (or equivalent)
+     */
+    public static boolean isFreshWaterLike(Fluid fluidIn) {
+        if (fluidIn == Fluids.WATER) {
+            return true;
+        }
+        if (fluidIn instanceof TFCRFluid) {
+            TFCRFluid fluid = (TFCRFluid) fluidIn;
+            return fluid.sourceFluid == ModFluids.FRESH_WATER.sourceFluid;
+        }
+        return false;
+    }
+
+    /**
+     * @param fluidIn Fluid to test against
+     * @return true, if the Fluid is a salt water source block (or equivalent)
+     */
+    public static boolean isSaltWaterLike(Fluid fluidIn) {
+        if (fluidIn instanceof TFCRFluid) {
+            TFCRFluid fluid = (TFCRFluid) fluidIn;
+            return fluid.sourceFluid == ModFluids.BRAKISH_WATER.sourceFluid ||
+                    fluid.sourceFluid == ModFluids.SALT_WATER.sourceFluid;
+        }
+        return false;
+    }
+
+    /**
+     * @param fluidIn Fluid to test against
+     * @return true, if the Fluid is any water source block
+     */
+    public static boolean isWaterLike(Fluid fluidIn) {
+        return isFreshWaterLike(fluidIn) || isSaltWaterLike(fluidIn);
     }
 
     public static List<Fluid> getAllFluids() {

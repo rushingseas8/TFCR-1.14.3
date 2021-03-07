@@ -17,7 +17,7 @@ public enum AddRiverEdgeLayer implements ICastleTransformer {
         }
 
         // Okay, so center is a land tile. Check if we're next to river.
-        if (south == RIVER || east == RIVER || north == RIVER || west == RIVER) {
+        if (center != RIVER_DELTA && LayerUtilsTFCR.hasTerrain(RIVER, south, east, north, west)) {
             // If so, then return a river edge logical biome.
             return RIVER_EDGE;
         }

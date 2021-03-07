@@ -360,8 +360,14 @@
 	"block.tfcr.plant.crop.wheat": "Wheat",
 	"block.tfcr.plant.crop.bell_pepper": "Bell Pepper",
 	"block.tfcr.plant.crop.cabbage": "Cabbage",
+	"block.tfcr.plant.crop.beet": "Beet",
+	"block.tfcr.plant.crop.radish": "Radish",
+	"block.tfcr.plant.crop.corn": "Corn",
+	"block.tfcr.plant.crop.tomato": "Tomato",
+	"block.tfcr.plant.crop.pea": "Pea",
 	"block.tfcr.plant.crop.carrot": "Carrot",
 	"block.tfcr.plant.crop.garlic": "Garlic",
+	"block.tfcr.plant.crop.onion": "Onion",
 	"item.tfcr.mud": "Mud",
 
 
@@ -396,6 +402,7 @@
 	"item.tfcr.cordage": "Cordage",
 	"item.tfcr.empty_ceramic_jug": "Empty Ceramic Jug",
 	"item.tfcr.filled_ceramic_jug": "Filled Ceramic Jug",
+	"item.tfcr.cattail": "Cattail",
 
 	"item.tfcr.ore.bismuthinite": "Bismuthinite"
 }

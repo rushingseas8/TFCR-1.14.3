@@ -56,13 +56,30 @@ public class LayerUtilsTFCR {
     }
 
     public static boolean isWater(int terrainType) {
-        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH || terrainType == CLIFF;
+        return terrainType == OCEAN || terrainType == DEEP_OCEAN || terrainType == RIVER || terrainType == BEACH || terrainType == CLIFF || terrainType == ESTUARY;
     }
 
     public static boolean isTechnical(int terrainType) {
-        return isWater(terrainType) || terrainType == RIVER_EDGE || terrainType == RIVER_DELTA || terrainType == RIVER_DELTA_EDGE || terrainType == ESTUARY;
+        return isWater(terrainType) || terrainType == RIVER_EDGE || terrainType == RIVER_DELTA || terrainType == RIVER_DELTA_EDGE;
     }
 
+    /**
+     * Generic method that returns true if any surrounding tiles are equal to
+     * "terrainType".
+     *
+     * @param terrainType
+     * @param south
+     * @param east
+     * @param north
+     * @param west
+     * @return
+     */
+    public static boolean hasTerrain(int terrainType, int south, int east, int north, int west) {
+        return south == terrainType ||
+                east == terrainType ||
+                north == terrainType ||
+                west == terrainType;
+    }
     /**
      * True if any of the surrounding tiles have any ocean terrain
      * @param south
@@ -120,10 +137,11 @@ public class LayerUtilsTFCR {
      * @param transform The Layer we will apply
      * @param base The Layer we apply transform to repeatedly
      * @param count The number of times to repeat the action.
-     * @param contextFactory
-     * @param <T>
-     * @param <C>
-     * @return
+     * @param contextFactory The context for the noiserandom.
+     * @param <T> extends IArea. The returned IAreaFactory matches the Layer's type.
+     * @param <C> extends IExtendedNoiseRandom&lt;T&gt;. The type of the noise
+     *           applied to the layer's transform function.
+     * @return <i>base</i>, with <i>transform</i> applied to it <i>count</i> times
      */
     public static <T extends IArea, C extends IExtendedNoiseRandom<T>> IAreaFactory<T> repeat(long seed, IAreaTransformer1 transform, IAreaFactory<T> base, int count, LongFunction<C> contextFactory) {
         IAreaFactory<T> iareafactory = base;
@@ -406,41 +424,55 @@ public class LayerUtilsTFCR {
         biomesAreaFactory = AddIslandLayer.INSTANCE.apply(contextFactory.apply(3L), biomesAreaFactory); // Add 1 pass of small hill islands
         biomesAreaFactory = MountainMaskLayer.INSTANCE.apply(contextFactory.apply(200L), biomesAreaFactory, mountainAreaFactory); // Mix in mountains
         biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 1L), biomesAreaFactory);
-        biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
-        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 2L), biomesAreaFactory);
-        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 3L), biomesAreaFactory);
+//        biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+//        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 2L), biomesAreaFactory);
+//        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 3L), biomesAreaFactory);
 
-        // Variable used in Vanilla. Affects how large the rivers are.
+        // Variable used in Vanilla. Affects how frequent rivers are. Larger = fewer.
+        // TODO estuaries work better when riversize is 2, look into why?
         int riverSize = 4;
+//        int riverSize = 2;
 
         // Initialize and create rivers
         IAreaFactory<T> riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, baseAreaFactory, 0, contextFactory); // This is a no-op?
         riverAreaFactory = RiverInitLayer.INSTANCE.apply(contextFactory.apply(100L), riverAreaFactory);
         riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
-        riverAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(101L), riverAreaFactory); // Add estuaries for river/ocean boundaries
-        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
+//        riverAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(101L), riverAreaFactory); // Add estuaries for river/ocean boundaries
+        riverAreaFactory = repeat(1003L, ZoomLayer.NORMAL, riverAreaFactory, riverSize, contextFactory);
         riverAreaFactory = RiverLayer.INSTANCE.apply(contextFactory.apply(1L), riverAreaFactory); // Add rivers
+//        riverAreaFactory = repeat(1000L, SpreadEstuaryLayer.TO_RIVER, riverAreaFactory, 8, contextFactory);
+//        riverAreaFactory = repeat(1000L, SpreadEstuaryLayer.TO_OCEAN, riverAreaFactory, 4, contextFactory);
+//        riverAreaFactory = repeat(1000L, ZoomLayer.NORMAL, riverAreaFactory, 2, contextFactory);
         riverAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), riverAreaFactory); // Smooth the region
 
         // We smooth the biome map, and mix in the rivers at this point.
         biomesAreaFactory = SmoothLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Smooth after zoom
         biomesAreaFactory = RiverMaskLayer.INSTANCE.apply(contextFactory.apply(100L), biomesAreaFactory, riverAreaFactory); // Mix in the rivers
 
+        // Add estuaries (brackish boundary between river + ocean)
+        biomesAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory);
+//        biomesAreaFactory = repeat(1000L, SpreadEstuaryLayer.INSTANCE, biomesAreaFactory, 4, contextFactory);
+        biomesAreaFactory = repeat(1000L, SpreadEstuaryLayer.TO_RIVER, biomesAreaFactory, 4, contextFactory);
+        biomesAreaFactory = repeat(1000L, SpreadEstuaryLayer.TO_OCEAN, biomesAreaFactory, 4, contextFactory);
+
         // Add river deltas
-        biomesAreaFactory = repeat(1000L, AddRiverDeltaLayer.INSTANCE, biomesAreaFactory, 16, contextFactory);
+//        biomesAreaFactory = repeat(1000L, AddRiverDeltaLayer.INSTANCE, biomesAreaFactory, 16, contextFactory);
+        biomesAreaFactory = repeat(1000L, AddRiverDeltaLayer.SPREAD, biomesAreaFactory, 2, contextFactory);
 
         // Add river edge biome
         biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory);
-        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
+//        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
 //        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river edge biome
 //        biomesAreaFactory = AddRiverEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river edge biome
 
-        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river delta edge biome
-        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
+//        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add river delta edge biome
+//        biomesAreaFactory = AddRiverDeltaEdgeLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Grow it out one more layer
 
-        // Add estuaries (brackish boundary between river + ocean)
-//        biomesAreaFactory = AddEstuaryLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory);
-//        biomesAreaFactory = repeat(1000L, SpreadEstuaryLayer.INSTANCE, biomesAreaFactory, 32, contextFactory);
+        // Adding beaches/cliffs and two more levels of zoom moved down here, so that
+        // rivers/estuaries/edges/deltas could be zoomed earlier in the generation
+        biomesAreaFactory = ShoreLayer.INSTANCE.apply(contextFactory.apply(1000L), biomesAreaFactory); // Add beaches
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 2L), biomesAreaFactory);
+        biomesAreaFactory = ZoomLayer.NORMAL.apply(contextFactory.apply(1000L + 3L), biomesAreaFactory);
 
         // This lambda replaces TempPrecipLayer, which would normally fill the world with random temp/precip values.
         // "(0 << 8) | 35" maps to a temperature of 0, precip of 35. This means that we get a world that is filled

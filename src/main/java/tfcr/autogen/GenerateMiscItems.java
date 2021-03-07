@@ -32,6 +32,8 @@ public class GenerateMiscItems {
                 "filled_ceramic_jug"
         };
 
+        // TODO add directory logic for things like cattails
+
         for (String name : names) {
             // Item JSON
             String itemModelDir = defaultItemModelLocation.replace("NAME", name);
@@ -43,6 +45,8 @@ public class GenerateMiscItems {
             // Lang file entries
             GenerateBase.appendToLangFile("item.tfcr." + name, GenerateBase.guessName(name));
         }
+
+        GenerateBase.appendToLangFile("item.tfcr.plants.cattail", "Cattails");
         System.out.println("Done");
     }
 }

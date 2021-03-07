@@ -15,7 +15,7 @@ public enum TerrainType {
     CLIFF(0.1f, 0.8f), // Based on stone shore biome
     RIVER(-0.5f, 0.0f), // Based on river biome
     ESTUARY(-0.75f, 0.05f), // Intermediate between river + ocean. Brackish river.
-    RIVER_EDGE(0.2f, 0.05f), // Border between river + land
+    RIVER_EDGE(0.0f, 0.05f), // Border between river + land
     RIVER_DELTA(0.2f, 0.05f), // Borders between river + ocean
     RIVER_DELTA_EDGE(0.2f, 0.05f), // Border between delta + land
 
